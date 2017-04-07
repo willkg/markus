@@ -10,6 +10,7 @@ Markus is a metrics generation library for generating statistics about your app.
 :Documentation: TBD
 :Status:        Alpha
 
+
 Goals
 =====
 
@@ -17,12 +18,27 @@ This library is structured similarly to the Python logging library and provides
 an easy-to-use API for generating metrics across your application.
 
 
+Install
+=======
+
+FIXME(willkg): This doesn't work, yet.
+
+Run::
+
+    $ pip install markus
+
+
+To install Datadog StatsD backend::
+
+    $ pip install markus[datadog]
+
+
 Quick start
 ===========
 
 Similar to using the logging library, every Python module can create a
-``MarkusInterface`` (equivalent to a logging logger) at any time and use that to
-post metrics.
+``MetricsInterface`` (loosely equivalent to a Python logging logger) at any time
+and use that to post metrics.
 
 For example::
 
@@ -81,27 +97,3 @@ Markus comes with a MetricsMock to make testing easier, too::
 
             # Make assertions on metrics published
             assert mm.has_metric(markus.INCR, 'some.key', {'value': 1})
-
-
-Install
-=======
-
-From PyPI
----------
-
-TBD
-
-
-For hacking
------------
-
-Run::
-
-    # Clone the repository
-    $ git clone https://github.com/willkg/markus
-
-    # Create a virtualenvironment
-    ...
-
-    # Install Markus and dev requirements
-    $ pip install -r requirements-dev.txt
