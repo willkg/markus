@@ -14,6 +14,12 @@ class DatadogCloudwatchMetrics(BackendBase):
 
     https://www.datadoghq.com/blog/monitoring-lambda-functions-datadog/#toc-beyond-standard-metrics
 
+    This prints to stdout in this format::
+
+        MONITORING|unix_epoch_timestamp|value|metric_type|my.metric.name|#tag1:value,tag2
+
+    That's the format that Datadog will be watching for in Cloudwatch.
+
     To use, add this to your backends list::
 
         {
@@ -24,8 +30,8 @@ class DatadogCloudwatchMetrics(BackendBase):
 
     .. NOTE::
 
-       Datadog doesn'ts upport metrics other than incr (count) and gauge. Using
-       timing and histogram will send those values as a gauge.
+       Datadog doesn't support metrics other than incr (count) and gauge. This
+       backend will send timing and histogram metrics as gauges.
 
     """
     def _log(self, metrics_kind, stat, value):
@@ -37,10 +43,17 @@ class DatadogCloudwatchMetrics(BackendBase):
         })
 
     def incr(self, stat, value=1):
+        """Increment a counter"""
         self._log('count', stat, value)
 
     def gauge(self, stat, value):
+        """Set a gauge"""
         self._log('gauge', stat, value)
 
-    timing = gauge
-    histogram = gauge
+    def timing(self, stat, value):
+        """Does the same thing as gauge"""
+        self._log('gauge', stat, value)
+
+    def histogram(self, stat, value):
+        """Does the same thing as gauge"""
+        self._log('gauge', stat, value)

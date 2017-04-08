@@ -39,7 +39,7 @@ def split_clspath(clspath):
     return clspath.rsplit('.', 1)
 
 
-def metrics_configure(backends):
+def configure(backends):
     """Instantiates and configures the metrics implementation"""
     good_backends = []
 
@@ -69,13 +69,15 @@ def metrics_configure(backends):
 
 
 class MetricsInterface:
-    """Interface to the underlying client.
+    """Interface to generating metrics
 
     This is the interface to publishing metrics. When you call methods on this
-    instance, it calls the appropriate methods on the configured backends. In
-    this way, code can get a ``MetricsInterface`` at any time even before
-    backends have been configured. Further, backends can be switched around
-    without affecting existing ``MetricsInterface`` instancess.
+    instance, it calls the appropriate methods on the configured backends.
+
+    In this way, code can get a :py:class:`markus.main.MetricsInterface` at any
+    time even before backends have been configured. Further, backends can be
+    switched around without affecting existing
+    :py:class:`markus.main.MetricsInterface` instancess.
 
     For example, at the top of your Python module, you could have this::
 
@@ -209,20 +211,48 @@ def get_metrics(thing, extra=''):
     implementation is globally configured. This allows us to have module-level
     variables without having to worry about bootstrapping order.
 
-    :arg class/instance/str thing: The name to use as a prefix. If this
-        is a class, it uses the dotted Python path. If this is an instance,
-        it uses the dotted Python path plus ``str(instance)``.
+    :arg class/instance/str thing: The name to use as a key prefix.
 
-    :arg str extra: Any extra bits to add to the end of the key.
+        If this is a class, it uses the dotted Python path. If this is an
+        instance, it uses the dotted Python path plus ``str(instance)``.
+
+    :arg str extra: Any extra bits to add to the end of the name.
 
     :returns: a ``MetricsInterface`` instance
 
-    Example:
+    Examples:
 
     >>> from markus import get_metrics
 
+    Create a MetricsInterface with the prefix "myapp":
+
     >>> metrics = get_metrics('myapp')
     >>> metrics.incr('thing1', value=1)
+
+    Create a MetricsInterface with the prefix of the Python module:
+
+    >>> metrics = get_metrics(__name__)
+
+    Create a MetricsInterface with the prefix as the qualname of the class:
+
+    >>> class Foo:
+    ...     def __init__(self):
+    ...         self.metrics = get_metrics(self)
+
+    Create a prefix of the class path plus some identifying information:
+
+    >>> class Foo:
+    ...     def __init__(self, myname):
+    ...         self.metrics = get_metrics(self, extra=myname)
+    ...
+    >>> foo = Foo('jim')
+    >>> foo.metrics.name
+    '__builtin__.Foo.jim'
+
+    .. Note::
+
+       The ``__builtin__`` part in that example is from this running as a
+       doctest. The naming works the same way it does with the logging module.
 
     """
     thing = thing or ''

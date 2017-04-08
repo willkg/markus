@@ -44,13 +44,17 @@ class LoggingMetrics(BackendBase):
         )
 
     def incr(self, stat, **kwargs):
+        """Increment a counter"""
         self._log('INCR', stat, kwargs)
 
     def gauge(self, stat, **kwargs):
+        """Set a gauge"""
         self._log('GAUGE', stat, kwargs)
 
     def timing(self, stat, **kwargs):
+        """Report a timing"""
         self._log('TIMING', stat, kwargs)
 
     def histogram(self, stat, **kwargs):
+        """Report a histogram"""
         self._log('HISTOGRAM', stat, kwargs)

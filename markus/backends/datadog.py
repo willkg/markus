@@ -48,6 +48,11 @@ class DatadogMetrics(BackendBase):
 
       Defaults to ``''``.
 
+
+    .. seealso::
+
+       http://docs.datadoghq.com/guides/metrics/
+
     """
     def __init__(self, options):
         self.host = options.get('statsd_host', 'localhost')
@@ -64,13 +69,17 @@ class DatadogMetrics(BackendBase):
         return DogStatsd(host=host, port=port, namespace=namespace)
 
     def incr(self, stat, value=1):
+        """Increment a counter"""
         self.client.increment(metric=stat, value=value)
 
     def gauge(self, stat, value):
+        """Set a gauge"""
         self.client.gauge(metric=stat, value=value)
 
     def timing(self, stat, value):
+        """Measure a timing for statistical distribution"""
         self.client.timing(metric=stat, value=value)
 
     def histogram(self, stat, value):
+        """Measure a value for statistical distribution"""
         self.client.histogram(metric=stat, value=value)
