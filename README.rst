@@ -7,7 +7,7 @@ Markus is a metrics generation library for generating statistics about your app.
 :Code:          https://github.com/willkg/markus
 :Issues:        https://github.com/willkg/markus/issues
 :License:       MPL v2
-:Documentation: TBD
+:Documentation: http://markus.readthedocs.io/en/latest/
 :Status:        Alpha
 
 
