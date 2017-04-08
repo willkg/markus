@@ -18,7 +18,7 @@ class LoggingMetrics(BackendBase):
             'class': 'markus.backends.logging.LoggingMetrics',
             'options': {
                 'logger_name': 'metrics',
-                'msg_prefix': 'METRICS ',
+                'msg_prefix': 'METRICS',
             }
         }
 

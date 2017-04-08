@@ -5,16 +5,21 @@
 class BackendBase(object):
     """Markus Backend superclass that defines API backends should follow"""
     def __init__(self, options):
+        """Implement this. The options dict is the user-specified options"""
         self.options = options
 
     def incr(self, stat, **kwargs):
+        """Implement this. This is a counter-type metric."""
         raise NotImplementedError
 
     def gauge(self, stat, **kwargs):
+        """Implement this. This is a counter-type metric."""
         raise NotImplementedError
 
     def timing(self, stat, **kwargs):
+        """Implement this. This is a counter-type metric."""
         raise NotImplementedError
 
     def histogram(self, stat, **kwargs):
+        """Implement this. This is a counter-type metric."""
         raise NotImplementedError

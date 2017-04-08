@@ -12,7 +12,7 @@ class DatadogCloudwatchMetrics(BackendBase):
 
     http://docs.datadoghq.com/integrations/awslambda/
 
-    https://www.datadoghq.com/blog/monitoring-lambda-functions-datadog/#toc-beyond-standard-metrics  # noqa
+    https://www.datadoghq.com/blog/monitoring-lambda-functions-datadog/#toc-beyond-standard-metrics
 
     To use, add this to your backends list::
 
