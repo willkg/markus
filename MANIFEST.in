@@ -1,0 +1,13 @@
+include README.rst
+include HISTORY.rst
+include LICENSE
+include setup.cfg
+include setup.py
+include requirements-dev.txt
+include tox.ini
+
+recursive-include docs *.py
+recursive-include docs *.rst
+recursive-include docs Makefile
+recursive-include markus *.py
+recursive-include tests *.py

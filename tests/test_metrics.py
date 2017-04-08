@@ -28,10 +28,6 @@ class Foo(object):
     (Foo, '', 'test_metrics.Foo'),
     (Foo(), '', 'test_metrics.Foo'),
     (__name__, '', 'test_metrics'),
-
-    # These are silly edge cases
-    (int, '', '__builtin__.int'),
-    (5, '', '__builtin__.int'),
     (None, '', 'unnamed'),
 ])
 def test_get_metrics(thing, extra, expected):

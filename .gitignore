@@ -3,3 +3,4 @@
 __pycache__
 markus.egg-info/
 docs/_build/
+.tox/
