@@ -116,22 +116,26 @@ class MetricsInterface:
                 break
             name = new_name
         # Remove . at beginning and end
-        self.name = name.strip('.')
+        name = name.strip('.')
+        # If there's no name, we name it "unnamed"
+        self.name = name or 'unnamed'
 
     def _full_stat(self, stat):
         return self.name + '.' + stat
 
-    def incr(self, stat, value=1):
+    def incr(self, stat, value=1, **extra):
         """Increment a stat by value"""
+        full_stat = self._full_stat(stat)
         for backend in _metrics_backends:
-            backend.incr(self._full_stat(stat), value=value)
+            backend.incr(full_stat, value=value, **extra)
 
-    def gauge(self, stat, value):
+    def gauge(self, stat, value, **extra):
         """Set a gauge stat as value"""
+        full_stat = self._full_stat(stat)
         for backend in _metrics_backends:
-            backend.gauge(self._full_stat(stat), value=value)
+            backend.gauge(full_stat, value=value, **extra)
 
-    def timing(self, stat, value):
+    def timing(self, stat, value, **extra):
         """Send timing information
 
         .. Note::
@@ -139,10 +143,11 @@ class MetricsInterface:
            value is in ms.
 
         """
+        full_stat = self._full_stat(stat)
         for backend in _metrics_backends:
-            backend.timing(self._full_stat(stat), value=value)
+            backend.timing(full_stat, value=value, **extra)
 
-    def histogram(self, stat, value):
+    def histogram(self, stat, value, **extra):
         """Send data information which gets rolled as a histogram
 
         .. Note::
@@ -151,8 +156,9 @@ class MetricsInterface:
            as timing.
 
         """
+        full_stat = self._full_stat(stat)
         for backend in _metrics_backends:
-            backend.histogram(self._full_stat(stat), value=value)
+            backend.histogram(full_stat, value=value, **extra)
 
     @contextlib.contextmanager
     def timer(self, stat):
@@ -209,6 +215,9 @@ def get_metrics(thing, extra=''):
     :arg str extra: Any extra bits to add to the end of the key.
 
     """
+    if not thing:
+        thing = 'unnamed'
+
     if not isinstance(thing, str):
         # If it's not a str, it's either a class or an instance. Handle
         # accordingly.

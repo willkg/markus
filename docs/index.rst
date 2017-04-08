@@ -9,6 +9,7 @@ Contents
 
    usage
    backends
+   testing
    history
    dev
 
