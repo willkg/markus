@@ -40,7 +40,44 @@ def split_clspath(clspath):
 
 
 def configure(backends):
-    """Instantiates and configures the metrics implementation"""
+    """Instantiates and configures backends
+
+    :arg list-of-dicts backends: the backend configuration as a list of dicts where
+        each dict specifies a separate backend.
+
+        Each backend consists of a ``class`` and an ``options`` dict that is
+        passed into the backend class when instantiated to configure it.
+
+        See the documentation for the backends you're using to know what
+        is configurable in the options dict.
+
+
+    For example, this sets up a
+    :py:class:`markus.backends.logging.LoggingMetrics` backend::
+
+        markus.configure([
+            {
+                'class': 'markus.backends.logging.LoggingMetrics',
+                'options': {
+                    'logger_name': 'metrics'
+                }
+            }
+        ])
+
+
+    You can set up as many backends as you like.
+
+    .. Note::
+
+       During application startup, Markus should get configured before the app
+       starts generating metrics. Any metrics generated before Markus is
+       configured will get dropped.
+
+       However, anything can get a :py:class:`markus.main.MetricsInterface` (in
+       other words, call :py:func:`markus.get_metrics`) before Markus has been
+       configured.
+
+    """
     good_backends = []
 
     for backend in backends:
@@ -246,8 +283,9 @@ def get_metrics(thing, extra=''):
     ...         self.metrics = get_metrics(self, extra=myname)
     ...
     >>> foo = Foo('jim')
-    >>> foo.metrics.name
-    'markus.main.Foo.jim'
+
+    Assume that ``Foo`` is defined in the ``myapp`` module. Then this will
+    generate the key ``myapp.Foo.jim``.
 
     """
     thing = thing or ''

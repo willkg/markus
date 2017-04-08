@@ -43,3 +43,38 @@ Writing your own
 
 .. autoclass:: markus.backends.BackendBase
    :members: __init__, incr, gauge, timing, histogram
+
+
+For example, here's a backend that prints metrics to stdout:
+
+    >>> import markus
+    >>> from markus.backends import BackendBase
+
+    >>> class StdoutMetrics(BackendBase):
+    ...     def __init__(self, options):
+    ...         self.prefix = options.get('prefix', '')
+    ...
+    ...     def _publish(self, kind, stat, value, **extras):
+    ...         print('%s %s %s: %s %s' % (self.prefix, kind, stat, value, extras))
+    ...
+    ...     def incr(self, stat, value):
+    ...         self._publish('incr', stat, value)
+    ...
+    ...     def gauge(self, stat, value):
+    ...         self._publish('gauge', stat, value)
+    ...
+    ...     def timing(self, stat, value):
+    ...         self._publish('timing', stat, value)
+    ...
+    ...     def histogram(self, stat, value):
+    ...         self._publish('histogram', stat, value)
+    ...
+    >>> markus.configure([
+    ...     {'class': '__builtin__.StdoutMetrics', 'options': {'prefix': 'foo'}}
+    ... ])
+    ...
+    >>> metrics = markus.get_metrics('test')
+    >>> metrics.incr('key1', value=1)
+
+
+This will print to stdout ``foo incr test.key1 {'value: 1}``.
