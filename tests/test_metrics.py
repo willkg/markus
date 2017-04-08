@@ -10,8 +10,8 @@ def metricsmock():
 
 
 @pytest.mark.parametrize('name, expected', [
-    ('', 'unnamed'),
-    ('.', 'unnamed'),
+    ('', ''),
+    ('.', ''),
     ('abc(123)', 'abc.123'),
     ('...ab..c...', 'ab.c'),
 ])
@@ -24,11 +24,15 @@ class Foo(object):
 
 
 @pytest.mark.parametrize('thing, extra, expected', [
+    # Test base
     ('string', '', 'string'),
     (Foo, '', 'test_metrics.Foo'),
     (Foo(), '', 'test_metrics.Foo'),
     (__name__, '', 'test_metrics'),
-    (None, '', 'unnamed'),
+    (None, '', ''),
+
+    # Test extra
+    ('foo', 'namespace1', 'foo.namespace1'),
 ])
 def test_get_metrics(thing, extra, expected):
     assert get_metrics(thing, extra=extra).name == expected

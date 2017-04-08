@@ -116,12 +116,13 @@ class MetricsInterface:
                 break
             name = new_name
         # Remove . at beginning and end
-        name = name.strip('.')
-        # If there's no name, we name it "unnamed"
-        self.name = name or 'unnamed'
+        self.name = name.strip('.')
 
     def _full_stat(self, stat):
-        return self.name + '.' + stat
+        if self.name:
+            return self.name + '.' + stat
+        else:
+            return stat
 
     def incr(self, stat, value=1, **extra):
         """Increment a stat by value"""
@@ -224,8 +225,7 @@ def get_metrics(thing, extra=''):
     >>> metrics.incr('thing1', value=1)
 
     """
-    if not thing:
-        thing = 'unnamed'
+    thing = thing or ''
 
     if not isinstance(thing, str):
         # If it's not a str, it's either a class or an instance. Handle
