@@ -38,23 +38,23 @@ class LoggingMetrics(BackendBase):
         self.logger = logging.getLogger(options.get('logger_name', 'metrics'))
         self.msg_prefix = options.get('msg_prefix', 'METRICS')
 
-    def _log(self, metrics_kind, stat, kwargs):
+    def _log(self, metrics_kind, stat, value):
         self.logger.info(
-            '%s %s: %s %s', self.msg_prefix, metrics_kind, stat, kwargs
+            '%s %s: %s %s', self.msg_prefix, metrics_kind, stat, value
         )
 
-    def incr(self, stat, **kwargs):
+    def incr(self, stat, value=1):
         """Increment a counter"""
-        self._log('INCR', stat, kwargs)
+        self._log('INCR', stat, value)
 
-    def gauge(self, stat, **kwargs):
+    def gauge(self, stat, value):
         """Set a gauge"""
-        self._log('GAUGE', stat, kwargs)
+        self._log('GAUGE', stat, value)
 
-    def timing(self, stat, **kwargs):
+    def timing(self, stat, value):
         """Report a timing"""
-        self._log('TIMING', stat, kwargs)
+        self._log('TIMING', stat, value)
 
-    def histogram(self, stat, **kwargs):
+    def histogram(self, stat, value):
         """Report a histogram"""
-        self._log('HISTOGRAM', stat, kwargs)
+        self._log('HISTOGRAM', stat, value)

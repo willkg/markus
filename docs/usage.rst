@@ -32,3 +32,4 @@ need to do three things:
 
 .. autoclass:: markus.main.MetricsInterface
    :members:
+   :member-order: bysource

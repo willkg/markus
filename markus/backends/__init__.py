@@ -9,18 +9,18 @@ class BackendBase(object):
         """Implement this. The options dict is the user-specified options."""
         self.options = options
 
-    def incr(self, stat, **kwargs):
+    def incr(self, stat, value=1):
         """Implement this. This is a counter-type metric."""
         raise NotImplementedError
 
-    def gauge(self, stat, **kwargs):
+    def gauge(self, stat, value):
         """Implement this. This is a gauge-type metric."""
         raise NotImplementedError
 
-    def timing(self, stat, **kwargs):
+    def timing(self, stat, value):
         """Implement this. This is a timing-type metric."""
         raise NotImplementedError
 
-    def histogram(self, stat, **kwargs):
+    def histogram(self, stat, value):
         """Implement this. This is a histogram-type metric."""
         raise NotImplementedError

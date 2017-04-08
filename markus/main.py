@@ -163,55 +163,141 @@ class MetricsInterface:
         else:
             return stat
 
-    def incr(self, stat, value=1, **extra):
-        """Increment a stat by value"""
-        full_stat = self._full_stat(stat)
-        for backend in _metrics_backends:
-            backend.incr(full_stat, value=value, **extra)
+    def incr(self, stat, value=1):
+        """Increment a stat by value
 
-    def gauge(self, stat, value, **extra):
-        """Set a gauge stat as value"""
-        full_stat = self._full_stat(stat)
-        for backend in _metrics_backends:
-            backend.gauge(full_stat, value=value, **extra)
+        incr is a counter. Generally, you increment things by 1.
 
-    def timing(self, stat, value, **extra):
-        """Send timing information
+        :arg string stat: A period delimited alphanumeric key.
 
-        .. Note::
+        :arg int value: A value to increment the count by. Usually this is 1.
 
-           value is in ms.
+        For example:
 
-        """
-        full_stat = self._full_stat(stat)
-        for backend in _metrics_backends:
-            backend.timing(full_stat, value=value, **extra)
+        >>> import markus
 
-    def histogram(self, stat, value, **extra):
-        """Send data information which gets rolled as a histogram
-
-        .. Note::
-
-           For metrics systems that don't have histogram, this will do the same
-           as timing.
+        >>> metrics = markus.get_metrics('foo')
+        >>> def chop_vegetable(kind):
+        ...     # chop chop chop
+        ...     metrics.incr('vegetable', value=1)
 
         """
         full_stat = self._full_stat(stat)
         for backend in _metrics_backends:
-            backend.histogram(full_stat, value=value, **extra)
+            backend.incr(full_stat, value=value)
+
+    def gauge(self, stat, value):
+        """Record the value of something over time
+
+        gauges are a measure. For example, file sizes, queue sizes, amount of
+        memory in use, free disk space left, and so on.
+
+        :arg string stat: A period delimited alphanumeric key.
+
+        :arg int value: The measured value of the thing being measured.
+
+        For example:
+
+        >>> import markus
+
+        >>> metrics = markus.get_metrics('foo')
+        >>> def parse_payload(payload):
+        ...     metrics.gauge('payload_size', value=len(payload))
+        ...     # parse parse parse
+
+        """
+        full_stat = self._full_stat(stat)
+        for backend in _metrics_backends:
+            backend.gauge(full_stat, value=value)
+
+    def timing(self, stat, value):
+        """Record the length of time of something to be added to a set of values from
+        which a statistical distribution is derived.
+
+        Depending on the backend, you might end up with count, average, median,
+        95% and max for a set of timing values.
+
+        This is useful for analyzing how long things take to occur. For
+        example, how long it takes for a function to run, to upload files, or
+        for a database query to execute.
+
+        :arg string stat: A period delimited alphanumeric key.
+
+        :arg int value: A timing in milliseconds.
+
+        For example:
+
+        >>> import time
+        >>> import markus
+
+        >>> metrics = markus.get_metrics('foo')
+        >>> def upload_file(payload):
+        ...     start_time = time.time()  # this is in seconds
+        ...     # upload the file
+        ...     timing = (time.time() - start_time) * 1000.0  # convert to ms
+        ...     metrics.timing('upload_file_time', value=timing)
+
+        .. Note::
+
+           If you're timing a function or a block of code, it's probably more
+           convenient to use :py:meth:`markus.main.MetricsInterface.timer` or
+           :py:meth:`markus.main.MetricsInterface.timer_decorator`.
+
+        """
+        full_stat = self._full_stat(stat)
+        for backend in _metrics_backends:
+            backend.timing(full_stat, value=value)
+
+    def histogram(self, stat, value):
+        """Record a value to be added to a set of values from which a statistical
+        distribution is derived.
+
+        Depending on the backend, you might end up with count, average, median,
+        95% and max for a set of values.
+
+        This is useful for analyzing distributions of values. For example,
+        what's the median and 95% upload file size? What's the most expensive
+        thing sold?
+
+        :arg string stat: A period delimited alphanumeric key.
+
+        :arg int value: The value of the thing.
+
+        For example:
+
+        >>> import time
+        >>> import markus
+
+        >>> metrics = markus.get_metrics('foo')
+        >>> def finalize_sale(cart):
+        ...     for item in cart:
+        ...         metrics.histogram('item_cost', value=item.cost)
+        ...     # finish finalizing
+
+        .. Note::
+
+           For metrics backends that don't have histogram, this will do the
+           same as timing.
+
+        """
+        full_stat = self._full_stat(stat)
+        for backend in _metrics_backends:
+            backend.histogram(full_stat, value=value)
 
     @contextlib.contextmanager
     def timer(self, stat):
         """Contextmanager for easily computing timings
 
-        For example::
+        :arg string stat: A period delimited alphanumeric key.
 
-            mymetrics = get_metrics(__name__)
+        For example:
 
-            def long_function():
-                with mymetrics.timer('long_function'):
-                    # perform some thing we want to keep metrics on
-                    ...
+        >>> mymetrics = get_metrics(__name__)
+
+        >>> def long_function():
+        ...     with mymetrics.timer('long_function'):
+        ...         # perform some thing we want to keep metrics on
+        ...         pass
 
         """
         start_time = time.time()
@@ -222,14 +308,16 @@ class MetricsInterface:
     def timer_decorator(self, stat):
         """Timer decorator for easily computing timings
 
-        For example::
+        :arg string stat: A period delimited alphanumeric key.
 
-            mymetrics = get_metrics(__name__)
+        For example:
 
-            @mymetrics.timer_decorator('long_function')
-            def long_function():
-                # perform some thing we want to keep metrics on
-                ...
+        >>> mymetrics = get_metrics(__name__)
+
+        >>> @mymetrics.timer_decorator('long_function')
+        ... def long_function():
+        ...     # perform some thing we want to keep metrics on
+        ...     pass
 
         """
         def _inner(fun):

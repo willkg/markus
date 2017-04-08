@@ -13,7 +13,7 @@ def test_incr(caplog):
     assert (
         caplog.record_tuples ==
         [
-            ('metrics', 20, 'METRICS INCR: foo {\'value\': 10}')
+            ('metrics', 20, 'METRICS INCR: foo 10')
         ]
     )
 
@@ -26,7 +26,7 @@ def test_gauge(caplog):
     assert (
         caplog.record_tuples ==
         [
-            ('metrics', 20, 'METRICS GAUGE: foo {\'value\': 100}')
+            ('metrics', 20, 'METRICS GAUGE: foo 100')
         ]
     )
 
@@ -39,7 +39,7 @@ def test_timing(caplog):
     assert (
         caplog.record_tuples ==
         [
-            ('metrics', 20, 'METRICS TIMING: foo {\'value\': 1234}')
+            ('metrics', 20, 'METRICS TIMING: foo 1234')
         ]
     )
 
@@ -52,6 +52,6 @@ def test_histogram(caplog):
     assert (
         caplog.record_tuples ==
         [
-            ('metrics', 20, 'METRICS HISTOGRAM: foo {\'value\': 4321}')
+            ('metrics', 20, 'METRICS HISTOGRAM: foo 4321')
         ]
     )
