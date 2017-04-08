@@ -214,6 +214,15 @@ def get_metrics(thing, extra=''):
 
     :arg str extra: Any extra bits to add to the end of the key.
 
+    :returns: a ``MetricsInterface`` instance
+
+    Example:
+
+    >>> from markus import get_metrics
+
+    >>> metrics = get_metrics('myapp')
+    >>> metrics.incr('thing1', value=1)
+
     """
     if not thing:
         thing = 'unnamed'
