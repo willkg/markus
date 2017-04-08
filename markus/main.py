@@ -247,12 +247,7 @@ def get_metrics(thing, extra=''):
     ...
     >>> foo = Foo('jim')
     >>> foo.metrics.name
-    '__builtin__.Foo.jim'
-
-    .. Note::
-
-       The ``__builtin__`` part in that example is from this running as a
-       doctest. The naming works the same way it does with the logging module.
+    'markus.main.Foo.jim'
 
     """
     thing = thing or ''
