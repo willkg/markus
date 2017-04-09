@@ -8,42 +8,37 @@ from markus.backends.cloudwatch import DatadogCloudwatchMetrics
 
 
 @freeze_time('2017-03-06 16:30:00', tz_offset=0)
-def test_incr(capsys):
-    ddcm = DatadogCloudwatchMetrics({})
+class TestCloudwatch:
+    def test_incr(self, capsys):
+        ddcm = DatadogCloudwatchMetrics({})
 
-    ddcm.incr('foo', 10)
-    out, err = capsys.readouterr()
-    assert out == 'MONITORING|1488817800|10|count|foo|\n'
-    assert err == ''
+        ddcm.incr('foo', value=10, tags=['key1:val', 'key2:val'])
+        out, err = capsys.readouterr()
+        assert out == 'MONITORING|1488817800|10|count|foo|#key1:val,key2:val\n'
+        assert err == ''
 
+    def test_gauge(self, capsys):
+        ddcm = DatadogCloudwatchMetrics({})
 
-@freeze_time('2017-03-06 16:30:00', tz_offset=0)
-def test_gauge(capsys):
-    ddcm = DatadogCloudwatchMetrics({})
+        ddcm.gauge('foo', value=100, tags=['key1:val', 'key2:val'])
+        out, err = capsys.readouterr()
+        assert out == 'MONITORING|1488817800|100|gauge|foo|#key1:val,key2:val\n'
+        assert err == ''
 
-    ddcm.gauge('foo', 100)
-    out, err = capsys.readouterr()
-    assert out == 'MONITORING|1488817800|100|gauge|foo|\n'
-    assert err == ''
+    def test_timing(self, capsys):
+        # .timing is a gauge
+        ddcm = DatadogCloudwatchMetrics({})
 
+        ddcm.timing('foo', value=100, tags=['key1:val', 'key2:val'])
+        out, err = capsys.readouterr()
+        assert out == 'MONITORING|1488817800|100|gauge|foo|#key1:val,key2:val\n'
+        assert err == ''
 
-@freeze_time('2017-03-06 16:30:00', tz_offset=0)
-def test_timing(capsys):
-    # .timing is a gauge
-    ddcm = DatadogCloudwatchMetrics({})
+    def test_histogram(self, capsys):
+        # .histogram is a gauge
+        ddcm = DatadogCloudwatchMetrics({})
 
-    ddcm.timing('foo', 100)
-    out, err = capsys.readouterr()
-    assert out == 'MONITORING|1488817800|100|gauge|foo|\n'
-    assert err == ''
-
-
-@freeze_time('2017-03-06 16:30:00', tz_offset=0)
-def test_histogram(capsys):
-    # .histogram is a gauge
-    ddcm = DatadogCloudwatchMetrics({})
-
-    ddcm.histogram('foo', 100)
-    out, err = capsys.readouterr()
-    assert out == 'MONITORING|1488817800|100|gauge|foo|\n'
-    assert err == ''
+        ddcm.histogram('foo', value=100, tags=['key1:val', 'key2:val'])
+        out, err = capsys.readouterr()
+        assert out == 'MONITORING|1488817800|100|gauge|foo|#key1:val,key2:val\n'
+        assert err == ''

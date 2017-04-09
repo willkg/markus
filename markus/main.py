@@ -163,7 +163,7 @@ class MetricsInterface:
         else:
             return stat
 
-    def incr(self, stat, value=1):
+    def incr(self, stat, value=1, tags=None):
         """Increment a stat by value
 
         incr is a counter. Generally, you increment things by 1.
@@ -171,6 +171,12 @@ class MetricsInterface:
         :arg string stat: A period delimited alphanumeric key.
 
         :arg int value: A value to increment the count by. Usually this is 1.
+
+        :arg list-of-strings tags: Each string in the tag consists of a key and
+            a value separated by a colon. Tags can make it easier to break down
+            metrics for analysis.
+
+            For example ``['env:stage', 'compressed:yes']``.
 
         For example:
 
@@ -184,9 +190,9 @@ class MetricsInterface:
         """
         full_stat = self._full_stat(stat)
         for backend in _metrics_backends:
-            backend.incr(full_stat, value=value)
+            backend.incr(full_stat, value=value, tags=tags)
 
-    def gauge(self, stat, value):
+    def gauge(self, stat, value, tags=None):
         """Record the value of something over time
 
         gauges are a measure. For example, file sizes, queue sizes, amount of
@@ -195,6 +201,12 @@ class MetricsInterface:
         :arg string stat: A period delimited alphanumeric key.
 
         :arg int value: The measured value of the thing being measured.
+
+        :arg list-of-strings tags: Each string in the tag consists of a key and
+            a value separated by a colon. Tags can make it easier to break down
+            metrics for analysis.
+
+            For example ``['env:stage', 'compressed:yes']``.
 
         For example:
 
@@ -208,9 +220,9 @@ class MetricsInterface:
         """
         full_stat = self._full_stat(stat)
         for backend in _metrics_backends:
-            backend.gauge(full_stat, value=value)
+            backend.gauge(full_stat, value=value, tags=tags)
 
-    def timing(self, stat, value):
+    def timing(self, stat, value, tags=None):
         """Record the length of time of something to be added to a set of values from
         which a statistical distribution is derived.
 
@@ -224,6 +236,12 @@ class MetricsInterface:
         :arg string stat: A period delimited alphanumeric key.
 
         :arg int value: A timing in milliseconds.
+
+        :arg list-of-strings tags: Each string in the tag consists of a key and
+            a value separated by a colon. Tags can make it easier to break down
+            metrics for analysis.
+
+            For example ``['env:stage', 'compressed:yes']``.
 
         For example:
 
@@ -246,9 +264,9 @@ class MetricsInterface:
         """
         full_stat = self._full_stat(stat)
         for backend in _metrics_backends:
-            backend.timing(full_stat, value=value)
+            backend.timing(full_stat, value=value, tags=tags)
 
-    def histogram(self, stat, value):
+    def histogram(self, stat, value, tags=None):
         """Record a value to be added to a set of values from which a statistical
         distribution is derived.
 
@@ -262,6 +280,12 @@ class MetricsInterface:
         :arg string stat: A period delimited alphanumeric key.
 
         :arg int value: The value of the thing.
+
+        :arg list-of-strings tags: Each string in the tag consists of a key and
+            a value separated by a colon. Tags can make it easier to break down
+            metrics for analysis.
+
+            For example ``['env:stage', 'compressed:yes']``.
 
         For example:
 
@@ -282,13 +306,19 @@ class MetricsInterface:
         """
         full_stat = self._full_stat(stat)
         for backend in _metrics_backends:
-            backend.histogram(full_stat, value=value)
+            backend.histogram(full_stat, value=value, tags=tags)
 
     @contextlib.contextmanager
-    def timer(self, stat):
+    def timer(self, stat, tags=None):
         """Contextmanager for easily computing timings
 
         :arg string stat: A period delimited alphanumeric key.
+
+        :arg list-of-strings tags: Each string in the tag consists of a key and
+            a value separated by a colon. Tags can make it easier to break down
+            metrics for analysis.
+
+            For example ``['env:stage', 'compressed:yes']``.
 
         For example:
 
@@ -303,12 +333,18 @@ class MetricsInterface:
         start_time = time.time()
         yield
         delta = time.time() - start_time
-        self.timing(stat, delta * 1000.0)
+        self.timing(stat, value=delta * 1000.0, tags=tags)
 
-    def timer_decorator(self, stat):
+    def timer_decorator(self, stat, tags=None):
         """Timer decorator for easily computing timings
 
         :arg string stat: A period delimited alphanumeric key.
+
+        :arg list-of-strings tags: Each string in the tag consists of a key and
+            a value separated by a colon. Tags can make it easier to break down
+            metrics for analysis.
+
+            For example ``['env:stage', 'compressed:yes']``.
 
         For example:
 
@@ -323,7 +359,7 @@ class MetricsInterface:
         def _inner(fun):
             @wraps(fun)
             def _timer_decorator(*args, **kwargs):
-                with self.timer(stat):
+                with self.timer(stat, tags):
                     return fun(*args, **kwargs)
             return _timer_decorator
         return _inner

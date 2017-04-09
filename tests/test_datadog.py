@@ -36,6 +36,7 @@ class MockDogStatsd(object):
 
 @pytest.yield_fixture
 def mockdogstatsd():
+    """Mocks DogStatsd class to capture method call data"""
     _old_datadog = datadog.DogStatsd
     mock = MockDogStatsd
     datadog.DogStatsd = mock
@@ -74,30 +75,42 @@ def test_options(mockdogstatsd):
 def test_incr(mockdogstatsd):
     ddm = datadog.DatadogMetrics({})
 
-    ddm.incr('foo', 10)
+    ddm.incr('foo', value=10, tags=['key1:val'])
 
-    assert ddm.client.calls == [('increment', (), {'metric': 'foo', 'value': 10})]
+    assert (
+        ddm.client.calls ==
+        [('increment', (), {'metric': 'foo', 'value': 10, 'tags': ['key1:val']})]
+    )
 
 
 def test_gauge(mockdogstatsd):
     ddm = datadog.DatadogMetrics({})
 
-    ddm.gauge('foo', 100)
+    ddm.gauge('foo', value=100, tags=['key1:val'])
 
-    assert ddm.client.calls == [('gauge', (), {'metric': 'foo', 'value': 100})]
+    assert (
+        ddm.client.calls ==
+        [('gauge', (), {'metric': 'foo', 'value': 100, 'tags': ['key1:val']})]
+    )
 
 
 def test_timing(mockdogstatsd):
     ddm = datadog.DatadogMetrics({})
 
-    ddm.timing('foo', 1234)
+    ddm.timing('foo', value=1234, tags=['key1:val'])
 
-    assert ddm.client.calls == [('timing', (), {'metric': 'foo', 'value': 1234})]
+    assert (
+        ddm.client.calls ==
+        [('timing', (), {'metric': 'foo', 'value': 1234, 'tags': ['key1:val']})]
+    )
 
 
 def test_histogram(mockdogstatsd):
     ddm = datadog.DatadogMetrics({})
 
-    ddm.histogram('foo', 4321)
+    ddm.histogram('foo', value=4321, tags=['key1:val'])
 
-    assert ddm.client.calls == [('histogram', (), {'metric': 'foo', 'value': 4321})]
+    assert (
+        ddm.client.calls ==
+        [('histogram', (), {'metric': 'foo', 'value': 4321, 'tags': ['key1:val']})]
+    )

@@ -68,18 +68,18 @@ class DatadogMetrics(BackendBase):
     def get_client(self, host, port, namespace):
         return DogStatsd(host=host, port=port, namespace=namespace)
 
-    def incr(self, stat, value=1):
+    def incr(self, stat, value=1, tags=None):
         """Increment a counter"""
-        self.client.increment(metric=stat, value=value)
+        self.client.increment(metric=stat, value=value, tags=tags)
 
-    def gauge(self, stat, value):
+    def gauge(self, stat, value, tags=None):
         """Set a gauge"""
-        self.client.gauge(metric=stat, value=value)
+        self.client.gauge(metric=stat, value=value, tags=tags)
 
-    def timing(self, stat, value):
+    def timing(self, stat, value, tags=None):
         """Measure a timing for statistical distribution"""
-        self.client.timing(metric=stat, value=value)
+        self.client.timing(metric=stat, value=value, tags=tags)
 
-    def histogram(self, stat, value):
+    def histogram(self, stat, value, tags=None):
         """Measure a value for statistical distribution"""
-        self.client.histogram(metric=stat, value=value)
+        self.client.histogram(metric=stat, value=value, tags=tags)
