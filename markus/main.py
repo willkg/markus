@@ -164,9 +164,7 @@ class MetricsInterface:
             return stat
 
     def incr(self, stat, value=1, tags=None):
-        """Increment a stat by value
-
-        incr is a counter. Generally, you increment things by 1.
+        """Incr is used for counting things
 
         :arg string stat: A period delimited alphanumeric key.
 
@@ -187,16 +185,15 @@ class MetricsInterface:
         ...     # chop chop chop
         ...     metrics.incr('vegetable', value=1)
 
+        You can also use incr to decrement by passing a negative value.
+
         """
         full_stat = self._full_stat(stat)
         for backend in _metrics_backends:
             backend.incr(full_stat, value=value, tags=tags)
 
     def gauge(self, stat, value, tags=None):
-        """Record the value of something over time
-
-        gauges are a measure. For example, file sizes, queue sizes, amount of
-        memory in use, free disk space left, and so on.
+        """Gauges are used for measuring things
 
         :arg string stat: A period delimited alphanumeric key.
 

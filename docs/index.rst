@@ -8,6 +8,7 @@ Contents
    :caption: Contents:
 
    usage
+   metricsoverview
    backends
    testing
    history
