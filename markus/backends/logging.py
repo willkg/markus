@@ -5,62 +5,76 @@
 from __future__ import absolute_import
 
 import logging
+import time
 
 from markus.backends import BackendBase
 
 
 class LoggingMetrics(BackendBase):
-    """Metrics backend that logs the values.
+    """Metrics backend that publishes to Python logging
 
     To use, add this to your backends list::
 
         {
             'class': 'markus.backends.logging.LoggingMetrics',
             'options': {
-                'logger_name': 'metrics',
-                'msg_prefix': 'METRICS',
+                'logger_name': 'markus',
+                'leader': 'METRICS',
             }
         }
 
+    The :py:class:`markus.backends.logging.LoggingMetrics` backend generates
+    a logging ``message`` like::
+
+        METRICS|2017-03-06 11:30:00|histogram|foo|4321|#key1:val
+
+
+    This will log at the ``logging.INFO`` level.
 
     Options:
 
     * logger_name: the name for the logger
 
-      Defaults to ``"metrics"``.
+      Defaults to ``"markus"``.
 
-    * msg_prefix: any prefix to spit out before the metrics data
+    * leader: string at the start of the metrics line
+
+      This makes it easier to parse logs for metrics data--you look for the
+      leader and everything after that is parseable data.
 
       Defaults to ``"METRICS"``.
 
     """
     def __init__(self, options):
-        self.logger = logging.getLogger(options.get('logger_name', 'metrics'))
-        self.msg_prefix = options.get('msg_prefix', 'METRICS')
+        self.logger_name = options.get('logger_name', 'markus')
+        self.logger = logging.getLogger(self.logger_name)
+        self.leader = options.get('leader', 'METRICS')
 
     def _log(self, metrics_kind, stat, value, tags):
-        if tags:
-            tags = ','.join(tags)
-            self.logger.info(
-                '%s %s: %s %s %s', self.msg_prefix, metrics_kind, stat, value, tags
-            )
-        else:
-            self.logger.info(
-                '%s %s: %s %s', self.msg_prefix, metrics_kind, stat, value
-            )
+        self.logger.info(
+            '%(leader)s|%(timestamp)s|%(kind)s|%(stat)s|%(value)s|%(tags)s' % {
+                'leader': self.leader,
+                # FIXME(willkg): Make this utc?
+                'timestamp': time.strftime('%Y-%m-%d %H:%M:%S'),
+                'kind': metrics_kind,
+                'stat': stat,
+                'value': value,
+                'tags': ('#%s' % ','.join(tags)) if tags else ''
+            }
+        )
 
     def incr(self, stat, value=1, tags=None):
         """Increment a counter"""
-        self._log('INCR', stat, value, tags)
+        self._log('incr', stat, value, tags)
 
     def gauge(self, stat, value, tags=None):
         """Set a gauge"""
-        self._log('GAUGE', stat, value, tags)
+        self._log('gauge', stat, value, tags)
 
     def timing(self, stat, value, tags=None):
         """Report a timing"""
-        self._log('TIMING', stat, value, tags)
+        self._log('timing', stat, value, tags)
 
     def histogram(self, stat, value, tags=None):
         """Report a histogram"""
-        self._log('HISTOGRAM', stat, value, tags)
+        self._log('histogram', stat, value, tags)
