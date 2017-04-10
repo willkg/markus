@@ -54,20 +54,20 @@ For example, here's a backend that prints metrics to stdout:
     ...     def __init__(self, options):
     ...         self.prefix = options.get('prefix', '')
     ...
-    ...     def _publish(self, kind, stat, value, **extras):
+    ...     def _generate(self, kind, stat, value, **extras):
     ...         print('%s %s %s: %s %s' % (self.prefix, kind, stat, value, extras))
     ...
     ...     def incr(self, stat, value):
-    ...         self._publish('incr', stat, value)
+    ...         self._generate('incr', stat, value)
     ...
     ...     def gauge(self, stat, value):
-    ...         self._publish('gauge', stat, value)
+    ...         self._generate('gauge', stat, value)
     ...
     ...     def timing(self, stat, value):
-    ...         self._publish('timing', stat, value)
+    ...         self._generate('timing', stat, value)
     ...
     ...     def histogram(self, stat, value):
-    ...         self._publish('histogram', stat, value)
+    ...         self._generate('histogram', stat, value)
     ...
     >>> markus.configure([
     ...     {'class': '__builtin__.StdoutMetrics', 'options': {'prefix': 'foo'}}

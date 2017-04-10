@@ -73,9 +73,9 @@ def configure(backends):
        starts generating metrics. Any metrics generated before Markus is
        configured will get dropped.
 
-       However, anything can get a :py:class:`markus.main.MetricsInterface` (in
-       other words, call :py:func:`markus.get_metrics`) before Markus has been
-       configured.
+       However, anything can call :py:func:`markus.get_metrics` and get a
+       :py:class:`markus.main.MetricsInterface` before Markus has been
+       configured including at module load time.
 
     """
     good_backends = []
@@ -108,34 +108,16 @@ def configure(backends):
 class MetricsInterface:
     """Interface to generating metrics
 
-    This is the interface to publishing metrics. When you call methods on this
-    instance, it calls the appropriate methods on the configured backends.
+    This is the interface to generating metrics. When you call methods on this
+    instance, it publishes those metrics to the configured backends.
 
     In this way, code can get a :py:class:`markus.main.MetricsInterface` at any
     time even before backends have been configured. Further, backends can be
     switched around without affecting existing
     :py:class:`markus.main.MetricsInterface` instancess.
 
-    For example, at the top of your Python module, you could have this::
-
-        import markus
-
-        mymetrics = markus.get_metrics(__name__)
-
-
-    If that Python module was imported with ``antenna.app``, then that'd be the
-    first part of all stats published by that metrics interface instance.
-
-    Maybe you want instance-specific metrics. You could define a class and have
-    it get a metrics in the init::
-
-        class SomeClass:
-            def __init__(self):
-                self.mymetrics = markus.get_metrics(self)
-
-
-    Any use of ``self.mymetrics`` would emit stats that start with
-    ``antenna.app.SomeClass``.
+    See :py:func:`markus.get_metrics` for generating
+    :py:class:`markus.main.MetricsInterface` instances.
 
     """
     def __init__(self, name):
@@ -363,11 +345,15 @@ class MetricsInterface:
 
 
 def get_metrics(thing, extra=''):
-    """Return a MetricsInterface instance with specified name
+    """Return a :py:class:`markus.main.MetricsInterface` instance with specified name
 
-    Note: This is not tied to an actual metrics implementation. The
-    implementation is globally configured. This allows us to have module-level
-    variables without having to worry about bootstrapping order.
+    The name is used as the prefix for all keys generated with this
+    :py:class:`markus.main.MetricsInterface`.
+
+    The :py:class:`markus.main.MetricsInterface` is not tied to metrics
+    backends. The list of active backends are globally configured. This allows
+    us to create :py:class:`markus.main.MetricsInterface` classes without
+    having to worry about bootstrapping order of the app.
 
     :arg class/instance/str thing: The name to use as a key prefix.
 
@@ -382,12 +368,14 @@ def get_metrics(thing, extra=''):
 
     >>> from markus import get_metrics
 
-    Create a MetricsInterface with the prefix "myapp":
+    Create a MetricsInterface with the name "myapp" and generate a count with
+    stat "myapp.thing1" and value 1:
 
     >>> metrics = get_metrics('myapp')
     >>> metrics.incr('thing1', value=1)
 
-    Create a MetricsInterface with the prefix of the Python module:
+    Create a MetricsInterface with the prefix of the Python module it's being
+    called in:
 
     >>> metrics = get_metrics(__name__)
 
@@ -406,7 +394,7 @@ def get_metrics(thing, extra=''):
     >>> foo = Foo('jim')
 
     Assume that ``Foo`` is defined in the ``myapp`` module. Then this will
-    generate the key ``myapp.Foo.jim``.
+    generate the name ``myapp.Foo.jim``.
 
     """
     thing = thing or ''
