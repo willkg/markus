@@ -4,8 +4,8 @@
 
 from __future__ import absolute_import
 
+import datetime
 import logging
-import time
 
 from markus.backends import BackendBase
 
@@ -24,7 +24,12 @@ class LoggingMetrics(BackendBase):
         }
 
     The :py:class:`markus.backends.logging.LoggingMetrics` backend generates
-    a logging ``message`` like::
+    logging messages in this format::
+
+        leader|timestamp|metric_type|stat|value|#tags
+
+
+    For example::
 
         METRICS|2017-03-06 11:30:00|histogram|foo|4321|#key1:val
 
@@ -55,7 +60,7 @@ class LoggingMetrics(BackendBase):
             '%(leader)s|%(timestamp)s|%(kind)s|%(stat)s|%(value)s|%(tags)s' % {
                 'leader': self.leader,
                 # FIXME(willkg): Make this utc?
-                'timestamp': time.strftime('%Y-%m-%d %H:%M:%S'),
+                'timestamp': datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S'),
                 'kind': metrics_kind,
                 'stat': stat,
                 'value': value,

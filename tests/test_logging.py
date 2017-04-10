@@ -17,7 +17,7 @@ class TestLoggingMetrics:
         assert (
             caplog.record_tuples ==
             [
-                ('markus', 20, 'METRICS|2017-03-06 11:30:00|incr|foo|10|#key1:val,key2:val')
+                ('markus', 20, 'METRICS|2017-03-06 16:30:00|incr|foo|10|#key1:val,key2:val')
             ]
         )
 
@@ -29,7 +29,7 @@ class TestLoggingMetrics:
         assert (
             caplog.record_tuples ==
             [
-                ('markus', 20, 'METRICS|2017-03-06 11:30:00|gauge|foo|100|#key1:val,key2:val')
+                ('markus', 20, 'METRICS|2017-03-06 16:30:00|gauge|foo|100|#key1:val,key2:val')
             ]
         )
 
@@ -41,7 +41,7 @@ class TestLoggingMetrics:
         assert (
             caplog.record_tuples ==
             [
-                ('markus', 20, 'METRICS|2017-03-06 11:30:00|timing|foo|1234|#key1:val,key2:val')
+                ('markus', 20, 'METRICS|2017-03-06 16:30:00|timing|foo|1234|#key1:val,key2:val')
             ]
         )
 
@@ -53,6 +53,6 @@ class TestLoggingMetrics:
         assert (
             caplog.record_tuples ==
             [
-                ('markus', 20, 'METRICS|2017-03-06 11:30:00|histogram|foo|4321|#key1:val,key2:val')
+                ('markus', 20, 'METRICS|2017-03-06 16:30:00|histogram|foo|4321|#key1:val,key2:val')
             ]
         )
