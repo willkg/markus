@@ -4,6 +4,7 @@ include LICENSE
 include setup.cfg
 include setup.py
 include requirements-dev.txt
+include readthedocs.yml
 include tox.ini
 
 recursive-include docs *.py

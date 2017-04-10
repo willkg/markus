@@ -29,8 +29,6 @@ Markus makes it easier to add metrics generation to your app by:
 Install
 =======
 
-FIXME(willkg): This won't work until we do a release.
-
 Run::
 
     $ pip install markus
