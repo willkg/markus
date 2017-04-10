@@ -67,7 +67,7 @@ Then you can use it anywhere in that module::
 At application startup, configure Markus with the backends you want to use to
 publish metrics and any options they require.
 
-For example, lets configure metrics to publish to logs and a StatsD host::
+For example, lets configure metrics to publish to logs and Datadog::
 
     import markus
 
@@ -75,11 +75,11 @@ For example, lets configure metrics to publish to logs and a StatsD host::
         backends=[
             {
                 # Log metrics to the logs
-                'class': 'markus.backend.LoggingBackend',
+                'class': 'markus.backend.logging.LoggingMetrics',
             },
             {
-                # Log metrics to StatsD
-                'class': 'markus_statsd.backend.StatsDBackend',
+                # Log metrics to Datadog
+                'class': 'markus.backend.datadog.DatadogMetrics',
                 'options': {
                     'host': 'example.com',
                     'port': 8125,
