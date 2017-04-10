@@ -21,10 +21,10 @@ Datadog metrics
    :special-members:
 
 
-Datadog Cloudwatch metrics
-==========================
+Cloudwatch metrics
+==================
 
-.. autoclass:: markus.backends.cloudwatch.DatadogCloudwatchMetrics
+.. autoclass:: markus.backends.cloudwatch.CloudwatchMetrics
    :members:
    :special-members:
 

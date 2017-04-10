@@ -4,13 +4,13 @@
 
 from freezegun import freeze_time
 
-from markus.backends.cloudwatch import DatadogCloudwatchMetrics
+from markus.backends.cloudwatch import CloudwatchMetrics
 
 
 @freeze_time('2017-03-06 16:30:00', tz_offset=0)
 class TestCloudwatch:
     def test_incr(self, capsys):
-        ddcm = DatadogCloudwatchMetrics({})
+        ddcm = CloudwatchMetrics({})
 
         ddcm.incr('foo', value=10, tags=['key1:val', 'key2:val'])
         out, err = capsys.readouterr()
@@ -18,7 +18,7 @@ class TestCloudwatch:
         assert err == ''
 
     def test_gauge(self, capsys):
-        ddcm = DatadogCloudwatchMetrics({})
+        ddcm = CloudwatchMetrics({})
 
         ddcm.gauge('foo', value=100, tags=['key1:val', 'key2:val'])
         out, err = capsys.readouterr()
@@ -27,7 +27,7 @@ class TestCloudwatch:
 
     def test_timing(self, capsys):
         # .timing is a gauge
-        ddcm = DatadogCloudwatchMetrics({})
+        ddcm = CloudwatchMetrics({})
 
         ddcm.timing('foo', value=100, tags=['key1:val', 'key2:val'])
         out, err = capsys.readouterr()
@@ -36,7 +36,7 @@ class TestCloudwatch:
 
     def test_histogram(self, capsys):
         # .histogram is a gauge
-        ddcm = DatadogCloudwatchMetrics({})
+        ddcm = CloudwatchMetrics({})
 
         ddcm.histogram('foo', value=100, tags=['key1:val', 'key2:val'])
         out, err = capsys.readouterr()

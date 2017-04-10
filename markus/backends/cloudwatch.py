@@ -7,24 +7,28 @@ import time
 from markus.backends import BackendBase
 
 
-class DatadogCloudwatchMetrics(BackendBase):
-    """Publishes metrics to stdout for Datadog AWS Lambda support
+class CloudwatchMetrics(BackendBase):
+    """Publishes metrics to stdout for Cloudwatch
 
     This prints to stdout in this format::
 
         MONITORING|unix_epoch_timestamp|value|metric_type|my.metric.name|#tag1:value,tag2
 
-    That's the format that Datadog will be watching for in Cloudwatch.
+    It lets you generate metrics for reading/consuming in Cloudwatch.
+
+    For example, Datadog can consume metrics formatted this way from Cloudwatch
+    allowing you to generate metrics in AWS Lambda functions and have them show
+    up in Datadog.
 
     To use, add this to your backends list::
 
         {
-            'class': 'markus.backends.cloudwatch.DatadogCloudwatchMetrics',
+            'class': 'markus.backends.cloudwatch.CloudwatchMetrics',
         }
 
     This backend doesn't take any options.
 
-    .. NOTE::
+    .. Note::
 
        Datadog doesn't support metrics other than incr (count) and gauge. This
        backend will send timing and histogram metrics as gauges.
