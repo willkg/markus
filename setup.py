@@ -7,7 +7,25 @@
 
 import os
 import re
+import sys
 from setuptools import setup
+from setuptools.command.test import test as TestCommand
+
+
+class PyTest(TestCommand):
+    user_options = [('pytest-args=', 'a', "Arguments to pass to pytest")]
+
+    def initialize_options(self):
+        TestCommand.initialize_options(self)
+        self.pytest_args = []
+
+    def run_tests(self):
+        import shlex
+        # import here, cause outside the eggs aren't loaded
+        import pytest
+        pytest_args = shlex.split(self.pytest_args) if self.pytest_args else []
+        errno = pytest.main(pytest_args)
+        sys.exit(errno)
 
 
 def get_version():
@@ -38,11 +56,15 @@ setup(
     extra_requires={
         'datadog': ['datadog']
     },
+    tests_requires=['pytest'],
     packages=[
         'markus',
     ],
     package_dir={
         'markus': 'markus',
+    },
+    cmdclass={
+        'test': PyTest
     },
     include_package_data=True,
     license="MPLv2",
