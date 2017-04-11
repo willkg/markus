@@ -29,12 +29,13 @@ Markus makes it easier to add metrics generation to your app by:
 Install
 =======
 
-Run::
+To install Markus, run::
 
     $ pip install markus
 
 
-To install Datadog StatsD backend::
+(Optional) To install the requirements for the
+``markus.backends.datadog.DatadogMetrics`` backend::
 
     $ pip install markus[datadog]
 
