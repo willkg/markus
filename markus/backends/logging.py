@@ -85,7 +85,7 @@ class LoggingMetrics(BackendBase):
         self._log('histogram', stat, value, tags)
 
 
-def LoggingRollupMetrics(BackendBase):
+class LoggingRollupMetrics(BackendBase):
     """EXPERIMENTAL BACKEND FOR ROLLUPS"""
     def __init__(self, options):
         self.options = options
@@ -102,6 +102,7 @@ def LoggingRollupMetrics(BackendBase):
             for key, value in sorted(self.stats.items()):
                 self.logger.info('%s: %s/minute', key, value)
                 self.stats[key] = 0
+                self.rollup_time = datetime.datetime.now()
 
     def incr(self, stat, value=1, tags=None):
         self.stats[stat] = self.stats.get(stat, 0) + 1
