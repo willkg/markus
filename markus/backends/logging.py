@@ -83,3 +83,35 @@ class LoggingMetrics(BackendBase):
     def histogram(self, stat, value, tags=None):
         """Report a histogram"""
         self._log('histogram', stat, value, tags)
+
+
+def LoggingRollupMetrics(BackendBase):
+    """EXPERIMENTAL BACKEND FOR ROLLUPS"""
+    def __init__(self, options):
+        self.options = options
+        self.logger = logging.getLogger('markus')
+        self.stats = {}
+        self.rollup_time = None
+
+    def rollup(self):
+        if self.rollup_time is None:
+            self.rollup_time = datetime.datetime.now()
+            return
+
+        if datetime.datetime.now() - self.rollup_time > datetime.timedelta(minutes=1):
+            for key, value in sorted(self.stats.items()):
+                self.logger.info('%s: %s/minute', key, value)
+                self.stats[key] = 0
+
+    def incr(self, stat, value=1, tags=None):
+        self.stats[stat] = self.stats.get(stat, 0) + 1
+        self.rollup()
+
+    def gauge(self, stat, value, tags=None):
+        pass
+
+    def timing(self, stat, value, tags=None):
+        pass
+
+    def histogram(self, stat, value, tags=None):
+        pass
