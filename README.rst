@@ -74,11 +74,11 @@ For example, lets configure metrics to publish to logs and Datadog::
         backends=[
             {
                 # Log metrics to the logs
-                'class': 'markus.backend.logging.LoggingMetrics',
+                'class': 'markus.backends.logging.LoggingMetrics',
             },
             {
                 # Log metrics to Datadog
-                'class': 'markus.backend.datadog.DatadogMetrics',
+                'class': 'markus.backends.datadog.DatadogMetrics',
                 'options': {
                     'host': 'example.com',
                     'port': 8125,
