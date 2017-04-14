@@ -80,9 +80,9 @@ For example, lets configure metrics to publish to logs and Datadog::
                 # Log metrics to Datadog
                 'class': 'markus.backends.datadog.DatadogMetrics',
                 'options': {
-                    'host': 'example.com',
-                    'port': 8125,
-                    'namespace': ''
+                    'statsd_host': 'example.com',
+                    'statsd_port': 8125,
+                    'statsd_namespace': ''
                 }
             }
         ]
