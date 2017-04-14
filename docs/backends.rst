@@ -47,6 +47,8 @@ Writing your own
 
 For example, here's a backend that prints metrics to stdout:
 
+.. doctest::
+
     >>> import markus
     >>> from markus.backends import BackendBase
 
@@ -54,27 +56,32 @@ For example, here's a backend that prints metrics to stdout:
     ...     def __init__(self, options):
     ...         self.prefix = options.get('prefix', '')
     ...
-    ...     def _generate(self, kind, stat, value, **extras):
-    ...         print('%s %s %s: %s %s' % (self.prefix, kind, stat, value, extras))
+    ...     def _generate(self, kind, stat, value, tags, **extras):
+    ...         print('%s %s %s %s tags=%s %s' % (kind, self.prefix, stat, value, tags, extras))
     ...
-    ...     def incr(self, stat, value):
-    ...         self._generate('incr', stat, value)
+    ...     def incr(self, stat, value, tags=None):
+    ...         self._generate('incr', stat, value, tags)
     ...
-    ...     def gauge(self, stat, value):
-    ...         self._generate('gauge', stat, value)
+    ...     def gauge(self, stat, value, tags=None):
+    ...         self._generate('gauge', stat, value, tags)
     ...
-    ...     def timing(self, stat, value):
-    ...         self._generate('timing', stat, value)
+    ...     def timing(self, stat, value, tags=None):
+    ...         self._generate('timing', stat, value, tags)
     ...
-    ...     def histogram(self, stat, value):
-    ...         self._generate('histogram', stat, value)
+    ...     def histogram(self, stat, value, tags=None):
+    ...         self._generate('histogram', stat, value, tags)
     ...
-    >>> markus.configure([
-    ...     {'class': '__builtin__.StdoutMetrics', 'options': {'prefix': 'foo'}}
-    ... ])
-    ...
+    >>> markus.configure([{'class': StdoutMetrics, 'options': {'prefix': 'foo'}}], raise_errors=True)
+
     >>> metrics = markus.get_metrics('test')
     >>> metrics.incr('key1', value=1)
+    incr foo test.key1 1 tags=None {}
 
 
-This will print to stdout ``foo incr test.key1 {'value: 1}``.
+.. testcleanup:: *
+
+   import markus
+   markus.configure([])
+
+
+This will print to stdout ``foo incr test.key1 1 None {}``.

@@ -39,18 +39,26 @@ def split_clspath(clspath):
     return clspath.rsplit('.', 1)
 
 
-def configure(backends):
+def configure(backends, raise_errors=False):
     """Instantiates and configures backends
 
     :arg list-of-dicts backends: the backend configuration as a list of dicts where
         each dict specifies a separate backend.
 
-        Each backend consists of a ``class`` and an ``options`` dict that is
-        passed into the backend class when instantiated to configure it.
+        Each backend dict consists of two things:
 
-        See the documentation for the backends you're using to know what
-        is configurable in the options dict.
+        1. ``class`` with a value that is either a Python class or a dotted
+           Python path to one
 
+        2. ``options`` dict with options for the backend in question to
+           configure it
+
+        See the documentation for the backends you're using to know what is
+        configurable in the options dict.
+
+    :arg raise_errors bool: whether or not to raise an exception if something
+        happens in configuration; if it doesn't raise an exception, it'll log
+        the exception
 
     For example, this sets up a
     :py:class:`markus.backends.logging.LoggingMetrics` backend::
@@ -84,14 +92,19 @@ def configure(backends):
         clspath = backend['class']
         options = backend.get('options', {})
 
-        modpath, clsname = split_clspath(clspath)
-        try:
-            __import__(modpath)
-            module = sys.modules[modpath]
-            cls = getattr(module, clsname)
-        except Exception:
-            logger.exception('Exception while importing %s', clspath)
-            continue
+        if isinstance(clspath, str):
+            modpath, clsname = split_clspath(clspath)
+            try:
+                __import__(modpath)
+                module = sys.modules[modpath]
+                cls = getattr(module, clsname)
+            except Exception:
+                logger.exception('Exception while importing %s', clspath)
+                if raise_errors:
+                    raise
+                continue
+        else:
+            cls = clspath
 
         try:
             good_backends.append(cls(options))
@@ -101,6 +114,8 @@ def configure(backends):
                 clspath,
                 options
             )
+            if raise_errors:
+                raise
 
     _change_metrics(good_backends)
 
