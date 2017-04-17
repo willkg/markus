@@ -45,7 +45,7 @@ Quick start
 
 Similar to using the logging library, every Python module can create a
 ``MetricsInterface`` (loosely equivalent to a Python logging logger) at any time
-and use that to post metrics including module import time.
+including at module import time and use that to generate metrics.
 
 For example::
 
@@ -54,7 +54,11 @@ For example::
     metrics = markus.get_metrics(__name__)
 
 
-Then you can use it anywhere in that module::
+Creating a ``MetricsImplementation`` using ``__name__`` will cause it to
+generate all stats keys with a prefix determined from ``__name__`` which
+is a dotted Python path to that module.
+
+Then you can use the ``MetricsImplementation`` anywhere in that module::
 
     @metrics.timer_decorator('chopping_vegetables')
     def some_long_function(vegetable):
