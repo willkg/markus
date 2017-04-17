@@ -25,7 +25,7 @@ class MetricsMock:
                 # do things that might record metrics
 
                 # Print the metrics recorded (helps with debugging)
-                mm.print_metrics()
+                mm.print_records()
 
                 # Assert something about the metrics recorded
                 assert mm.has_record(INCR, 'some.random.key', {'value': 1})

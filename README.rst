@@ -104,7 +104,7 @@ When you're writing your tests, use the ``MetricsMock`` to make testing easier::
             # ... Do things that might publish metrics
 
             # This helps you debug and write your test
-            mm.print_metrics()
+            mm.print_records()
 
             # Make assertions on metrics published
             assert mm.has_metric(markus.INCR, 'some.key', {'value': 1})
