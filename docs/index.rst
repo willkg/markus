@@ -12,7 +12,7 @@ Contents
    backends
    testing
    history
-   dev
+   contributing
 
 
 Indices and tables
