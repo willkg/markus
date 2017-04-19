@@ -6,6 +6,8 @@ from __future__ import absolute_import
 
 import datetime
 import logging
+import statistics
+import time
 
 from markus.backends import BackendBase
 
@@ -38,11 +40,11 @@ class LoggingMetrics(BackendBase):
 
     Options:
 
-    * logger_name: the name for the logger
+    * ``logger_name``: the name for the logger
 
       Defaults to ``"markus"``.
 
-    * leader: string at the start of the metrics line
+    * ``leader``: string at the start of the metrics line
 
       This makes it easier to parse logs for metrics data--you look for the
       leader and everything after that is parseable data.
@@ -86,33 +88,139 @@ class LoggingMetrics(BackendBase):
 
 
 class LoggingRollupMetrics(BackendBase):
-    """EXPERIMENTAL BACKEND FOR ROLLUPS"""
+    """EXPERIMENTAL BACKEND FOR ROLLUPS
+
+    To use, add this to your backends list::
+
+        {
+            'class': 'markus.backends.logging.LoggingRollupMetrics',
+            'options': {
+                'logger_name': 'markus',
+                'leader': 'ROLLUP',
+                'flush_interval': 10
+            }
+        }
+
+    The :py:class:`markus.backends.logging.LoggingRollupMetrics` backend
+    generates rollups every *flush_interval* of stats generated during that
+    period.
+
+    For incr stats, it shows count and rate.
+
+    For gauge stats, it shows count, current value, min value, and max value
+    for the period.
+
+    For timing and histogram stats, it shows count, min, average, median, 95%,
+    and max for the period.
+
+    This will log at the ``logging.INFO`` level.
+
+    Options:
+
+    * ``logger_name``: the name for the logger
+
+      Defaults to ``"markus"``.
+
+    * ``leader``: string at the start of the metrics line
+
+      This makes it easier to parse logs for metrics data--you look for the
+      leader and everything after that is parseable data.
+
+      Defaults to ``"ROLLUP"``.
+
+    * ``flush_interval``: interval to generate rollup data
+
+      :py:class:`markus.backends.logging.LoggingRollupMetrics` will spit out
+      rollup data every ``flush_interval`` seconds.
+
+      Defaults to ``10`` seconds.
+
+    """
     def __init__(self, options):
-        self.options = options
-        self.logger = logging.getLogger('markus')
-        self.stats = {}
-        self.rollup_time = None
+        self.flush_interval = options.get('flush_interval', 10)
+        self.logger_name = options.get('logger_name', 'markus')
+        self.leader = options.get('leader', 'ROLLUP')
+
+        self.logger = logging.getLogger(self.logger_name)
+
+        # Next time to rollup in seconds since epoch
+        self.next_rollup = time.time() + self.flush_interval
+
+        # Map of key -> values list
+        self.incr_stats = {}
+        self.gauge_stats = {}
+        self.histogram_stats = {}
 
     def rollup(self):
-        if self.rollup_time is None:
-            self.rollup_time = datetime.datetime.now()
+        now = time.time()
+        if now < self.next_rollup:
             return
 
-        if datetime.datetime.now() - self.rollup_time > datetime.timedelta(minutes=1):
-            for key, value in sorted(self.stats.items()):
-                self.logger.info('%s: %s/minute', key, value)
-                self.stats[key] = 0
-                self.rollup_time = datetime.datetime.now()
+        self.next_rollup = now + self.flush_interval
+
+        for key, values in sorted(self.incr_stats.items()):
+            self.logger.info(
+                '%s INCR %s: count:%d|rate:%d/%d',
+                self.leader,
+                key,
+                len(values),
+                sum(values),
+                self.flush_interval
+            )
+            self.incr_stats[key] = []
+
+        for key, values in sorted(self.gauge_stats.items()):
+            if values:
+                self.logger.info(
+                    '%s GAUGE %s: count:%d|current:%s|min:%s|max:%s',
+                    self.leader,
+                    key,
+                    len(values),
+                    values[-1],
+                    min(values),
+                    max(values),
+                )
+            else:
+                self.logger.info('%s (gauge) %s: no data', self.leader, key)
+
+            self.gauge_stats[key] = []
+
+        for key, values in sorted(self.histogram_stats.items()):
+            if values:
+                self.logger.info(
+                    '%s HISTOGRAM %s: count:%d|min:%.2f|avg:%.2f|median:%.2f|ninety-five:%.2f|max:%.2f',
+                    self.leader,
+                    key,
+                    len(values),
+                    min(values),
+                    statistics.mean(values),
+                    statistics.median(values),
+                    values[int(len(values) * 95 / 100)],
+                    max(values)
+                )
+            else:
+                self.logger.info('%s (histogram) %s: no data', self.leader, key)
+
+            self.histogram_stats[key] = []
 
     def incr(self, stat, value=1, tags=None):
-        self.stats[stat] = self.stats.get(stat, 0) + 1
         self.rollup()
 
+        # FIXME(willkg): what to do with tags?
+        self.incr_stats.setdefault(stat, []).append(value)
+
     def gauge(self, stat, value, tags=None):
-        pass
+        self.rollup()
+
+        # FIXME(willkg): what to do with tags?
+        self.gauge_stats.setdefault(stat, []).append(value)
 
     def timing(self, stat, value, tags=None):
-        pass
+        # timing is a special case for histogram
+        self.histogram(stat, value, tags)
 
     def histogram(self, stat, value, tags=None):
-        pass
+        self.rollup()
+
+        # FIXME(willkg): what to do with tags?
+        self.histogram_stats.setdefault(stat, []).append(value)
