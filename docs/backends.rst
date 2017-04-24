@@ -13,6 +13,11 @@ Logging metrics
    :special-members:
 
 
+.. autoclass:: markus.backends.logging.LoggingRollupMetrics
+   :members:
+   :special-members:
+
+
 Datadog metrics
 ===============
 
