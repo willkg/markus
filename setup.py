@@ -54,7 +54,8 @@ setup(
         'six',
     ],
     extra_requires={
-        'datadog': ['datadog']
+        'datadog': ['datadog'],
+        'statsd': ['statd'],
     },
     tests_requires=['pytest'],
     packages=[

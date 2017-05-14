@@ -1,6 +1,7 @@
 -e .
 
 datadog==0.15.0
+statsd==3.2.1
 
 freezegun==0.3.8
 pytest==3.0.7

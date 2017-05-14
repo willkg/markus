@@ -16,8 +16,8 @@ Goals
 
 Markus makes it easier to add metrics generation to your app by:
 
-* providing multiple backends (Datadog statsd, logging, and so on) for sending
-  data to multiple places
+* providing multiple backends (Datadog statsd, statsd, logging, and so on) for
+  sending data to multiple places
 * sending metrics to multiple backends
 * providing a testing framework for easy testing
 * providing a decoupled infrastructure making it easier to use metrics without
