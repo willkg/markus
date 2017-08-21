@@ -81,6 +81,10 @@ class TestLoggingRollupMetrics:
                 ('markus', 20, 'ROLLUP INCR bar: count:1|rate:1/10'),
                 ('markus', 20, 'ROLLUP INCR foo: count:3|rate:3/10'),
                 ('markus', 20, 'ROLLUP GAUGE widget: count:3|current:5|min:5|max:20'),
-                ('markus', 20, 'ROLLUP HISTOGRAM save_time: count:2|min:50.00|avg:55.00|median:55.00|ninety-five:60.00|max:60.00')
+                (
+                    'markus', 20,
+                    'ROLLUP HISTOGRAM save_time: '
+                    'count:2|min:50.00|avg:55.00|median:55.00|ninety-five:60.00|max:60.00'
+                )
             ]
         )

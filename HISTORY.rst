@@ -4,6 +4,11 @@ History
 0.3 (In development)
 --------------------
 
+Changed:
+
+* Added a ``markus.backends.statsd.StatsdMetrics`` backend that uses
+  pystatsd client for statsd pings. Thank you, Javier!
+
 
 0.2 (April 19th, 2017)
 ----------------------

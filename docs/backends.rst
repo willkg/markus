@@ -18,6 +18,14 @@ Logging metrics
    :special-members:
 
 
+Statsd metrics
+===============
+
+.. autoclass:: markus.backends.statsd.StatsdMetrics
+   :members:
+   :special-members:
+
+
 Datadog metrics
 ===============
 

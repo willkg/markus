@@ -188,7 +188,10 @@ class LoggingRollupMetrics(BackendBase):
         for key, values in sorted(self.histogram_stats.items()):
             if values:
                 self.logger.info(
-                    '%s HISTOGRAM %s: count:%d|min:%.2f|avg:%.2f|median:%.2f|ninety-five:%.2f|max:%.2f',
+                    (
+                        '%s HISTOGRAM %s: '
+                        'count:%d|min:%.2f|avg:%.2f|median:%.2f|ninety-five:%.2f|max:%.2f'
+                    ),
                     self.leader,
                     key,
                     len(values),
