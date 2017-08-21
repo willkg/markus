@@ -56,7 +56,7 @@ class StatsdMetrics(BackendBase):
 
     .. seealso::
 
-       http://docs.datadoghq.com/guides/metrics/
+       http://statsd.readthedocs.io/en/latest/configure.html
 
     """
     def __init__(self, options):
@@ -93,5 +93,5 @@ class StatsdMetrics(BackendBase):
         self.client.timing(stat=stat, delta=value)
 
     def histogram(self, stat, value, tags=None):
-        """Measure a value for statistical distribution"""
+        """Does the same thing as timing"""
         self.client.timing(stat=stat, delta=value)
