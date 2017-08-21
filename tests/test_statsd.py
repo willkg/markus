@@ -44,12 +44,15 @@ def test_default_options(mockstatsd):
 
     assert ddm.host == 'localhost'
     assert ddm.port == 8125
-    assert ddm.prefix == None
+    assert ddm.prefix is None
     assert ddm.maxudpsize == 512
 
     # NOTE: ddm.client is the mock instance
     assert ddm.client.initargs == ()
-    assert ddm.client.initkwargs == {'host': 'localhost', 'port': 8125, 'prefix': None, 'maxudpsize': 512}
+    assert (
+        ddm.client.initkwargs ==
+        {'host': 'localhost', 'port': 8125, 'prefix': None, 'maxudpsize': 512}
+    )
 
 
 def test_options(mockstatsd):
@@ -67,7 +70,10 @@ def test_options(mockstatsd):
 
     # NOTE: ddm.client is the mock instance
     assert ddm.client.initargs == ()
-    assert ddm.client.initkwargs == {'host': 'example.com', 'port': 5000, 'prefix': 'joe', 'maxudpsize': 256}
+    assert (
+        ddm.client.initkwargs ==
+        {'host': 'example.com', 'port': 5000, 'prefix': 'joe', 'maxudpsize': 256}
+    )
 
 
 def test_incr(mockstatsd):
