@@ -5,8 +5,9 @@ Contributing
 How to help
 ===========
 
-Markus is alpha-quality software. The API can change. I'd love to know how
-you use Markus and whether the API makes that easy or hard.
+Markus is used in production in a few places, but I'd love to know how
+you use Markus and how Markus' API works for you. Is it easy? Are there 
+thing that are hard?
 
 If you encounter any bugs, please write up an issue in the issue tracker.
 
