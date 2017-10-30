@@ -2,28 +2,33 @@
 Markus
 ======
 
-Markus is a metrics generation library for generating statistics about your app.
+Markus is a Python library for generating metrics.
 
 :Code:          https://github.com/willkg/markus
 :Issues:        https://github.com/willkg/markus/issues
 :License:       MPL v2
 :Documentation: http://markus.readthedocs.io/en/latest/
-:Status:        Alpha
 
 
 Goals
 =====
 
-Markus makes it easier to add metrics generation to your app by:
+Markus makes it easier to generate metrics in your program by:
 
-* providing multiple backends (Datadog statsd, statsd, logging, and so on) for
-  sending data to multiple places
-* sending metrics to multiple backends
+* providing multiple backends (Datadog statsd, statsd, logging, logging rollup,
+  and so on) for sending data to different places
+
+* sending metrics to multiple backends at the same time
+
 * providing a testing framework for easy testing
-* providing a decoupled infrastructure making it easier to use metrics without
-  having to worry about making sure your metrics client is configured and
-  instantiated before the things that want to use it; it's similar to the Python
-  logging module in this way
+
+* providing a decoupled architecture making it easier to write code to generate
+  metrics without having to worry about making sure creating and configuring a
+  metrics client has been done--similar to the Python logging Python logging
+  module in this way
+
+I use it at Mozilla in the collector of our crash ingestion pipeline. Peter used
+it to build our symbols lookup server, too.
 
 
 Install
