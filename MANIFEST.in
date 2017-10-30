@@ -2,6 +2,7 @@ include README.rst
 include HISTORY.rst
 include CONTRIBUTING.rst
 include LICENSE
+include CONTRIBUTORS
 include setup.cfg
 include setup.py
 include requirements-dev.txt
