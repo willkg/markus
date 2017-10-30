@@ -53,7 +53,8 @@ setup(
     install_requires=[
         'six',
     ],
-    extra_requires={
+    extras_require={
+        ":python_version<'3.4'": ['statistics'],
         'datadog': ['datadog'],
         'statsd': ['statsd'],
     },
@@ -76,6 +77,8 @@ setup(
         'Intended Audience :: Developers',
         'License :: OSI Approved :: Mozilla Public License 2.0 (MPL 2.0)',
         'Natural Language :: English',
+        'Programming Language :: Python :: 2',
+        'Programming Language :: Python :: 2.7',
         'Programming Language :: Python :: 3',
         'Programming Language :: Python :: 3.4',
         'Programming Language :: Python :: 3.5',
