@@ -1,6 +1,14 @@
 History
 =======
 
+1.1 (November 13th, 2017)
+-------------------------
+
+**Features**
+
+* Added ``markus.utils.generate_tag`` utility function
+
+
 1.0 (October 30th, 2017)
 ------------------------
 
