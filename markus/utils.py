@@ -67,7 +67,6 @@ def generate_tag(key, value=None):
     # Build the tag
     if value is None or not value.strip():
         tag = key
-
     else:
         value = BAD_TAG_CHAR_REGEXP.sub('_', value).strip()
         tag = '%s:%s' % (key, value)
