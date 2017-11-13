@@ -101,3 +101,9 @@ Generally, if you follow these rules, your tags should work across all backends:
    tag names.
 2. Tag names should begin with a letter.
 3. Tag names should be short.
+4. Tag values should be limited to a small (under 1,000) set of possible values.
+   Be wary of using ip addresses, usernames, and other things that can have many
+   values.
+
+To help with that, use :py:func:`markus.utils.generate_tag` which will sanitize
+tags and key/val tags for use with all Markus backends.
