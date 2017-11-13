@@ -33,3 +33,10 @@ need to do three things:
 .. autoclass:: markus.main.MetricsInterface
    :members:
    :member-order: bysource
+
+
+``markus.utils``
+================
+
+.. automodule:: markus.utils
+   :members:
