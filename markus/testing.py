@@ -28,7 +28,7 @@ class MetricsMock:
                 mm.print_records()
 
                 # Assert something about the metrics recorded
-                assert mm.has_record(INCR, 'some.random.key', {'value': 1})
+                assert mm.has_record(INCR, stat='some.random.key', value=1)
 
     """
     def __init__(self):
