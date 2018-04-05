@@ -144,3 +144,22 @@ class TestMetricsMock:
                 stat='foobar.key1',
                 value=5,
             )
+
+    def test_configure_doesnt_affect_override(self):
+        with MetricsMock() as mm:
+            markus.configure([{'class': 'markus.backends.logging.LoggingMetrics'}])
+            mymetrics = markus.get_metrics('foobar')
+            mymetrics.incr('key1', value=1)
+
+            assert mm.has_record(
+                fun_name='incr',
+                stat='foobar.key1',
+                value=1,
+            )
+
+            assert not mm.has_record(
+                fun_name='incr',
+                stat='foobar.key1',
+                value=5,
+            )
+
