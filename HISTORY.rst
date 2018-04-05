@@ -1,6 +1,19 @@
 History
 =======
 
+1.1.1 (April 5th, 2017)
+-----------------------
+
+**Features**
+
+* Official switch to semver.
+
+**Bug fixes**
+
+* Fix ``MetricsMock`` so it continues to work even if ``configure``
+  is called. #27
+
+
 1.1 (November 13th, 2017)
 -------------------------
 
