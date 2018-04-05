@@ -1,6 +1,14 @@
 History
 =======
 
+1.1.2 (April 5th, 2018)
+-----------------------
+
+**Typo fix**
+
+* Fix the date from the previous release. Ugh.
+
+
 1.1.1 (April 5th, 2018)
 -----------------------
 

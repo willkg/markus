@@ -19,4 +19,4 @@ __email__ = 'willkg@mozilla.com'
 # yyyymmdd
 __releasedate__ = '20180405'
 # x.y.z or x.y.z.dev0 -- semver
-__version__ = '1.1.1'
+__version__ = '1.1.2'
