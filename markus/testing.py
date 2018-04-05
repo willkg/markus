@@ -4,7 +4,7 @@
 
 from markus import INCR, GAUGE, TIMING, HISTOGRAM
 
-from markus.main import _change_metrics, _get_metrics_backends
+from markus.main import _override_metrics
 
 
 class MetricsMock:
@@ -33,7 +33,6 @@ class MetricsMock:
     """
     def __init__(self):
         self.records = []
-        self._old_backends = None
 
     def _add_record(self, fun_name, stat, value, tags):
         self.records.append((fun_name, stat, value, tags))
@@ -52,13 +51,11 @@ class MetricsMock:
 
     def __enter__(self):
         self.records = []
-        self._old_backends = _get_metrics_backends()
-        _change_metrics([self])
+        _override_metrics([self])
         return self
 
     def __exit__(self, exc_type, exc_value, traceback):
-        _change_metrics(self._old_backends)
-        self._old_backends = None
+        _override_metrics(None)
 
     def get_records(self):
         """Returns set of collected metrics records"""

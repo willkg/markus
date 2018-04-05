@@ -16,7 +16,14 @@ NOT_ALPHANUM_RE = re.compile(r'[^a-z0-9_\.]', re.I)
 logger = logging.getLogger(__name__)
 
 
+_override_backends = None
 _metrics_backends = []
+
+
+def _override_metrics(backends):
+    """Override backends for testing"""
+    global _override_backends
+    _override_backends = backends
 
 
 def _change_metrics(backends):
@@ -26,7 +33,7 @@ def _change_metrics(backends):
 
 
 def _get_metrics_backends():
-    return _metrics_backends
+    return _override_backends or _metrics_backends
 
 
 def split_clspath(clspath):
@@ -186,7 +193,7 @@ class MetricsInterface:
 
         """
         full_stat = self._full_stat(stat)
-        for backend in _metrics_backends:
+        for backend in _get_metrics_backends():
             backend.incr(full_stat, value=value, tags=tags)
 
     def gauge(self, stat, value, tags=None):
@@ -213,7 +220,7 @@ class MetricsInterface:
 
         """
         full_stat = self._full_stat(stat)
-        for backend in _metrics_backends:
+        for backend in _get_metrics_backends():
             backend.gauge(full_stat, value=value, tags=tags)
 
     def timing(self, stat, value, tags=None):
@@ -257,7 +264,7 @@ class MetricsInterface:
 
         """
         full_stat = self._full_stat(stat)
-        for backend in _metrics_backends:
+        for backend in _get_metrics_backends():
             backend.timing(full_stat, value=value, tags=tags)
 
     def histogram(self, stat, value, tags=None):
@@ -299,7 +306,7 @@ class MetricsInterface:
 
         """
         full_stat = self._full_stat(stat)
-        for backend in _metrics_backends:
+        for backend in _get_metrics_backends():
             backend.histogram(full_stat, value=value, tags=tags)
 
     @contextlib.contextmanager
