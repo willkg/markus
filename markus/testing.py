@@ -98,3 +98,7 @@ class MetricsMock:
         """Prints all the collected metrics"""
         for record in self.get_records():
             print(record)
+
+    def clear_records(self):
+        """Clears the records list"""
+        self.records = []

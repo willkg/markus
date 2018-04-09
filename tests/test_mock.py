@@ -18,6 +18,17 @@ class TestMetricsMock:
 
             mm.print_records()
 
+    def test_clear_records(self):
+        with MetricsMock() as mm:
+            mymetrics = markus.get_metrics('foobar')
+            mymetrics.incr('key1', value=1, tags=['env:stage'])
+
+            assert len(mm.get_records()) == 1
+
+            mm.clear_records()
+
+            assert len(mm.get_records()) == 0
+
     def test_filter_records_fun_name(self):
         with MetricsMock() as mm:
             mymetrics = markus.get_metrics('foobar')
