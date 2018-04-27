@@ -28,16 +28,11 @@ class CloudwatchMetrics(BackendBase):
 
     This backend doesn't take any options.
 
-    .. Note::
-
-       Datadog doesn't support metrics other than incr (count) and gauge. This
-       backend will send timing and histogram metrics as gauges.
-
     .. seealso::
 
-       http://docs.datadoghq.com/integrations/awslambda/
+       https://docs.datadoghq.com/integrations/amazon_lambda/
 
-       https://www.datadoghq.com/blog/monitoring-lambda-functions-datadog/#toc-beyond-standard-metrics
+       https://docs.datadoghq.com/developers/metrics/#metric-names
 
     """
     def _log(self, metrics_kind, stat, value, tags):
@@ -58,9 +53,10 @@ class CloudwatchMetrics(BackendBase):
         self._log('gauge', stat, value, tags)
 
     def timing(self, stat, value, tags=None):
-        """Does the same thing as gauge"""
-        self._log('gauge', stat, value, tags)
+        """Set a timing"""
+        # NOTE(willkg): timing is a special case of histogram
+        self._log('histogram', stat, value, tags)
 
     def histogram(self, stat, value, tags=None):
-        """Does the same thing as gauge"""
-        self._log('gauge', stat, value, tags)
+        """Set a histogram"""
+        self._log('histogram', stat, value, tags)

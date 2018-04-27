@@ -26,19 +26,18 @@ class TestCloudwatch:
         assert err == ''
 
     def test_timing(self, capsys):
-        # .timing is a gauge
+        # .timing is a histogram
         ddcm = CloudwatchMetrics({})
 
         ddcm.timing('foo', value=100, tags=['key1:val', 'key2:val'])
         out, err = capsys.readouterr()
-        assert out == 'MONITORING|1488817800|100|gauge|foo|#key1:val,key2:val\n'
+        assert out == 'MONITORING|1488817800|100|histogram|foo|#key1:val,key2:val\n'
         assert err == ''
 
     def test_histogram(self, capsys):
-        # .histogram is a gauge
         ddcm = CloudwatchMetrics({})
 
         ddcm.histogram('foo', value=100, tags=['key1:val', 'key2:val'])
         out, err = capsys.readouterr()
-        assert out == 'MONITORING|1488817800|100|gauge|foo|#key1:val,key2:val\n'
+        assert out == 'MONITORING|1488817800|100|histogram|foo|#key1:val,key2:val\n'
         assert err == ''
