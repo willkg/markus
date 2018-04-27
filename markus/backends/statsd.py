@@ -56,7 +56,7 @@ class StatsdMetrics(BackendBase):
 
     .. seealso::
 
-       http://statsd.readthedocs.io/en/latest/configure.html
+       https://statsd.readthedocs.io/en/latest/configure.html
 
     """
     def __init__(self, options):

@@ -51,7 +51,7 @@ class DatadogMetrics(BackendBase):
 
     .. seealso::
 
-       http://docs.datadoghq.com/guides/metrics/
+       https://docs.datadoghq.com/developers/metrics/
 
     """
     def __init__(self, options):
