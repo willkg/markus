@@ -1,6 +1,21 @@
 History
 =======
 
+1.2.0 (April 27th, 2018)
+------------------------
+
+**Features**
+
+* Add ``.clear()`` to ``MetricsMock`` making it easier to build a pytest
+  fixture with the ``MetricsMock`` context and manipulate records for easy
+  testing. #29
+
+**Bug fix**
+
+* Update Cloudwatch backend fixing ``.timing()`` and ``.histogram()`` to
+  send ``histogram`` metrics type which Datadog now supports. #31
+
+
 1.1.2 (April 5th, 2018)
 -----------------------
 
