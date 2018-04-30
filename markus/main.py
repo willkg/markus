@@ -330,6 +330,11 @@ class MetricsInterface:
         ...         # perform some thing we want to keep metrics on
         ...         pass
 
+
+        .. Note::
+
+           All timings generated with this are in milliseconds.
+
         """
         start_time = time.time()
         yield
@@ -355,6 +360,11 @@ class MetricsInterface:
         ... def long_function():
         ...     # perform some thing we want to keep metrics on
         ...     pass
+
+
+        .. Note::
+
+           All timings generated with this are in milliseconds.
 
         """
         def _inner(fun):
