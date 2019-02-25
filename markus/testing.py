@@ -8,7 +8,7 @@ from markus.main import _override_metrics
 
 
 class MetricsMock:
-    """Mock for recording metrics events and testing them
+    """Mock for recording metrics events and testing them.
 
     Mimics a metrics backend as a context manager. Keeps records of what got
     metricfied so that you can print them out, filter them, assert various
@@ -31,6 +31,7 @@ class MetricsMock:
                 assert mm.has_record(INCR, stat='some.random.key', value=1)
 
     """
+
     def __init__(self):
         self.records = []
 
@@ -38,15 +39,19 @@ class MetricsMock:
         self.records.append((fun_name, stat, value, tags))
 
     def incr(self, stat, value=1, tags=None):
+        """Increment a counter."""
         self._add_record(INCR, stat, value, tags)
 
     def gauge(self, stat, value, tags=None):
+        """Set a gauge."""
         self._add_record(GAUGE, stat, value, tags)
 
     def timing(self, stat, value, tags=None):
+        """Measure a timing for statistical distribution."""
         self._add_record(TIMING, stat, value, tags)
 
     def histogram(self, stat, value, tags=None):
+        """Measure a value for statistical distribution."""
         self._add_record(HISTOGRAM, stat, value, tags)
 
     def __enter__(self):
@@ -58,11 +63,11 @@ class MetricsMock:
         _override_metrics(None)
 
     def get_records(self):
-        """Returns set of collected metrics records"""
+        """Return set of collected metrics records."""
         return self.records
 
     def filter_records(self, fun_name=None, stat=None, value=None, tags=None):
-        """Filters collected metircs records for ones that match specified criteria"""
+        """Filter collected metircs records for ones that match specified criteria."""
         def match_fun_name(record_fun_name):
             return fun_name is None or fun_name == record_fun_name
 
@@ -84,7 +89,7 @@ class MetricsMock:
         ]
 
     def has_record(self, fun_name=None, stat=None, value=None, tags=None):
-        """Returns True/False regarding whether collected metrics match specified criteria"""
+        """Return True/False regarding whether collected metrics match specified criteria."""
         return bool(
             self.filter_records(
                 fun_name=fun_name,
@@ -95,10 +100,10 @@ class MetricsMock:
         )
 
     def print_records(self):
-        """Prints all the collected metrics"""
+        """Print all the collected metrics."""
         for record in self.get_records():
             print(record)
 
     def clear_records(self):
-        """Clears the records list"""
+        """Clear the records list."""
         self.records = []

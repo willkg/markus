@@ -14,7 +14,7 @@ logger = logging.getLogger(__name__)
 
 
 class DatadogMetrics(BackendBase):
-    """Uses the Datadog DogStatsd client for statsd pings.
+    """Use the Datadog DogStatsd client for statsd pings.
 
     This requires the Datadog backend and requirements be installed.
     To install those bits, do::
@@ -54,32 +54,33 @@ class DatadogMetrics(BackendBase):
        https://docs.datadoghq.com/developers/metrics/
 
     """
+
     def __init__(self, options):
         self.host = options.get('statsd_host', 'localhost')
         self.port = options.get('statsd_port', 8125)
         self.namespace = options.get('statsd_namespace', '')
 
-        self.client = self.get_client(self.host, self.port, self.namespace)
+        self.client = self._get_client(self.host, self.port, self.namespace)
         logger.info(
             '%s configured: %s:%s %s',
             self.__class__.__name__, self.host, self.port, self.namespace
         )
 
-    def get_client(self, host, port, namespace):
+    def _get_client(self, host, port, namespace):
         return DogStatsd(host=host, port=port, namespace=namespace)
 
     def incr(self, stat, value=1, tags=None):
-        """Increment a counter"""
+        """Increment a counter."""
         self.client.increment(metric=stat, value=value, tags=tags)
 
     def gauge(self, stat, value, tags=None):
-        """Set a gauge"""
+        """Set a gauge."""
         self.client.gauge(metric=stat, value=value, tags=tags)
 
     def timing(self, stat, value, tags=None):
-        """Measure a timing for statistical distribution"""
+        """Measure a timing for statistical distribution."""
         self.client.timing(metric=stat, value=value, tags=tags)
 
     def histogram(self, stat, value, tags=None):
-        """Measure a value for statistical distribution"""
+        """Measure a value for statistical distribution."""
         self.client.histogram(metric=stat, value=value, tags=tags)

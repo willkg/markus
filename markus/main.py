@@ -21,13 +21,13 @@ _metrics_backends = []
 
 
 def _override_metrics(backends):
-    """Override backends for testing"""
+    """Override backends for testing."""
     global _override_backends
     _override_backends = backends
 
 
 def _change_metrics(backends):
-    """Convenience function for setting backends"""
+    """Set a new backend."""
     global _metrics_backends
     _metrics_backends = backends
 
@@ -37,7 +37,7 @@ def _get_metrics_backends():
 
 
 def split_clspath(clspath):
-    """Simple split of clspath into a module and class name
+    """Split of clspath into module and class name.
 
     NOTE(willkg): This is really simple. Maybe we should use something more
     sophisticated?
@@ -47,7 +47,7 @@ def split_clspath(clspath):
 
 
 def configure(backends, raise_errors=False):
-    """Instantiates and configures backends
+    """Instantiate and configures backends.
 
     :arg list-of-dicts backends: the backend configuration as a list of dicts where
         each dict specifies a separate backend.
@@ -128,7 +128,7 @@ def configure(backends, raise_errors=False):
 
 
 class MetricsInterface:
-    """Interface to generating metrics
+    """Interface to generating metrics.
 
     This is the interface to generating metrics. When you call methods on this
     instance, it publishes those metrics to the configured backends.
@@ -142,8 +142,9 @@ class MetricsInterface:
     :py:class:`markus.main.MetricsInterface` instances.
 
     """
+
     def __init__(self, name):
-        """Creates a MetricsInterface
+        """Create a MetricsInterface.
 
         :arg str name: Use alphanumeric characters and underscore and period.
             Anything else gets converted to a period. Sequences of periods get
@@ -168,7 +169,7 @@ class MetricsInterface:
             return stat
 
     def incr(self, stat, value=1, tags=None):
-        """Incr is used for counting things
+        """Incr is used for counting things.
 
         :arg string stat: A period delimited alphanumeric key.
 
@@ -197,7 +198,7 @@ class MetricsInterface:
             backend.incr(full_stat, value=value, tags=tags)
 
     def gauge(self, stat, value, tags=None):
-        """Gauges are used for measuring things
+        """Gauges are used for measuring things.
 
         :arg string stat: A period delimited alphanumeric key.
 
@@ -224,7 +225,9 @@ class MetricsInterface:
             backend.gauge(full_stat, value=value, tags=tags)
 
     def timing(self, stat, value, tags=None):
-        """Record the length of time of something to be added to a set of values from
+        """Record a timing value.
+
+        Record the length of time of something to be added to a set of values from
         which a statistical distribution is derived.
 
         Depending on the backend, you might end up with count, average, median,
@@ -268,7 +271,9 @@ class MetricsInterface:
             backend.timing(full_stat, value=value, tags=tags)
 
     def histogram(self, stat, value, tags=None):
-        """Record a value to be added to a set of values from which a statistical
+        """Record a histogram value.
+
+        Record a value to be added to a set of values from which a statistical
         distribution is derived.
 
         Depending on the backend, you might end up with count, average, median,
@@ -311,7 +316,7 @@ class MetricsInterface:
 
     @contextlib.contextmanager
     def timer(self, stat, tags=None):
-        """Contextmanager for easily computing timings
+        """Contextmanager for easily computing timings.
 
         :arg string stat: A period delimited alphanumeric key.
 
@@ -342,7 +347,7 @@ class MetricsInterface:
         self.timing(stat, value=delta * 1000.0, tags=tags)
 
     def timer_decorator(self, stat, tags=None):
-        """Timer decorator for easily computing timings
+        """Timer decorator for easily computing timings.
 
         :arg string stat: A period delimited alphanumeric key.
 
@@ -377,7 +382,7 @@ class MetricsInterface:
 
 
 def get_metrics(thing, extra=''):
-    """Return a :py:class:`markus.main.MetricsInterface` instance with specified name
+    """Return MetricsInterface instance with specified name.
 
     The name is used as the prefix for all keys generated with this
     :py:class:`markus.main.MetricsInterface`.

@@ -13,7 +13,7 @@ from markus.backends import BackendBase
 
 
 class LoggingMetrics(BackendBase):
-    """Metrics backend that publishes to Python logging
+    """Metrics backend that publishes to Python logging.
 
     To use, add this to your backends list::
 
@@ -52,6 +52,7 @@ class LoggingMetrics(BackendBase):
       Defaults to ``"METRICS"``.
 
     """
+
     def __init__(self, options):
         self.logger_name = options.get('logger_name', 'markus')
         self.logger = logging.getLogger(self.logger_name)
@@ -71,24 +72,24 @@ class LoggingMetrics(BackendBase):
         )
 
     def incr(self, stat, value=1, tags=None):
-        """Increment a counter"""
+        """Increment a counter."""
         self._log('incr', stat, value, tags)
 
     def gauge(self, stat, value, tags=None):
-        """Set a gauge"""
+        """Set a gauge."""
         self._log('gauge', stat, value, tags)
 
     def timing(self, stat, value, tags=None):
-        """Report a timing"""
+        """Report a timing."""
         self._log('timing', stat, value, tags)
 
     def histogram(self, stat, value, tags=None):
-        """Report a histogram"""
+        """Report a histogram."""
         self._log('histogram', stat, value, tags)
 
 
 class LoggingRollupMetrics(BackendBase):
-    """EXPERIMENTAL BACKEND FOR ROLLUPS
+    """Experimental logging backend for rolling up stats over a period.
 
     To use, add this to your backends list::
 
@@ -136,6 +137,7 @@ class LoggingRollupMetrics(BackendBase):
       Defaults to ``10`` seconds.
 
     """
+
     def __init__(self, options):
         self.flush_interval = options.get('flush_interval', 10)
         self.logger_name = options.get('logger_name', 'markus')
@@ -152,6 +154,7 @@ class LoggingRollupMetrics(BackendBase):
         self.histogram_stats = {}
 
     def rollup(self):
+        """Roll up stats and log them."""
         now = time.time()
         if now < self.next_rollup:
             return
@@ -207,22 +210,29 @@ class LoggingRollupMetrics(BackendBase):
             self.histogram_stats[key] = []
 
     def incr(self, stat, value=1, tags=None):
+        """Increment a counter."""
         self.rollup()
 
         # FIXME(willkg): what to do with tags?
         self.incr_stats.setdefault(stat, []).append(value)
 
     def gauge(self, stat, value, tags=None):
+        """Set a gauge."""
         self.rollup()
 
         # FIXME(willkg): what to do with tags?
         self.gauge_stats.setdefault(stat, []).append(value)
 
     def timing(self, stat, value, tags=None):
-        # timing is a special case for histogram
+        """Measure a timing for statistical distribution.
+
+        Note: timing is a special case of histogram.
+
+        """
         self.histogram(stat, value, tags)
 
     def histogram(self, stat, value, tags=None):
+        """Measure a value for statistical distribution."""
         self.rollup()
 
         # FIXME(willkg): what to do with tags?

@@ -14,7 +14,7 @@ logger = logging.getLogger(__name__)
 
 
 class StatsdMetrics(BackendBase):
-    """Uses pystatsd client for statsd pings.
+    """Use pystatsd client for statsd pings.
 
     This requires the pystatsd module and requirements to be installed.
     To install those bits, do::
@@ -59,13 +59,14 @@ class StatsdMetrics(BackendBase):
        https://statsd.readthedocs.io/en/latest/configure.html
 
     """
+
     def __init__(self, options):
         self.host = options.get('statsd_host', 'localhost')
         self.port = options.get('statsd_port', 8125)
         self.prefix = options.get('statsd_prefix')
         self.maxudpsize = options.get('statsd_maxudpsize', 512)
 
-        self.client = self.get_client(
+        self.client = self._get_client(
             self.host, self.port, self.prefix, self.maxudpsize)
 
         logger.info(
@@ -76,22 +77,27 @@ class StatsdMetrics(BackendBase):
             self.prefix,
         )
 
-    def get_client(self, host, port, prefix, maxudpsize):
+    def _get_client(self, host, port, prefix, maxudpsize):
         return StatsClient(
             host=host, port=port, prefix=prefix, maxudpsize=maxudpsize)
 
     def incr(self, stat, value=1, tags=None):
-        """Increment a counter"""
+        """Increment a counter."""
         self.client.incr(stat=stat, count=value)
 
     def gauge(self, stat, value, tags=None):
-        """Set a gauge"""
+        """Set a gauge."""
         self.client.gauge(stat=stat, value=value)
 
     def timing(self, stat, value, tags=None):
-        """Measure a timing for statistical distribution"""
+        """Measure a timing for statistical distribution."""
         self.client.timing(stat=stat, delta=value)
 
     def histogram(self, stat, value, tags=None):
-        """Does the same thing as timing"""
+        """Measure a value for statistical distribution.
+
+        Note: Since pystatsd has no "histogram", this does the same thing
+        as timing.
+
+        """
         self.client.timing(stat=stat, delta=value)
