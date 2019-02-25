@@ -10,6 +10,7 @@ from markus.backends.logging import LoggingMetrics, LoggingRollupMetrics
 @freeze_time('2017-03-06 16:30:00', tz_offset=0)
 class TestLoggingMetrics:
     def test_incr(self, caplog):
+        caplog.set_level('DEBUG')
         lm = LoggingMetrics({})
 
         lm.incr('foo', value=10, tags=['key1:val', 'key2:val'])
@@ -22,6 +23,7 @@ class TestLoggingMetrics:
         )
 
     def test_gauge(self, caplog):
+        caplog.set_level('DEBUG')
         lm = LoggingMetrics({})
 
         lm.gauge('foo', value=100, tags=['key1:val', 'key2:val'])
@@ -34,6 +36,7 @@ class TestLoggingMetrics:
         )
 
     def test_timing(self, caplog):
+        caplog.set_level('DEBUG')
         lm = LoggingMetrics({})
 
         lm.timing('foo', value=1234, tags=['key1:val', 'key2:val'])
@@ -46,6 +49,7 @@ class TestLoggingMetrics:
         )
 
     def test_histogram(self, caplog):
+        caplog.set_level('DEBUG')
         lm = LoggingMetrics({})
 
         lm.histogram('foo', value=4321, tags=['key1:val', 'key2:val'])
@@ -60,6 +64,7 @@ class TestLoggingMetrics:
 
 class TestLoggingRollupMetrics:
     def test_rollup(self, caplog):
+        caplog.set_level('DEBUG')
         with freeze_time('2017-04-19 12:00:00'):
             lm = LoggingRollupMetrics({})
             lm.incr('foo')
