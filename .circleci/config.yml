@@ -1,0 +1,13 @@
+version: 2
+jobs:
+  build:
+    docker:
+      - image: themattrix/tox
+
+    working_directory: ~/repo
+
+    steps:
+      - checkout
+      - run:
+          name: run tests
+          command: tox
