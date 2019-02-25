@@ -8,7 +8,7 @@ from markus.backends import BackendBase
 
 
 class CloudwatchMetrics(BackendBase):
-    """Publishes metrics to stdout for Cloudwatch
+    """Publish metrics to stdout for Cloudwatch.
 
     This prints to stdout in this format::
 
@@ -35,6 +35,7 @@ class CloudwatchMetrics(BackendBase):
        https://docs.datadoghq.com/developers/metrics/#metric-names
 
     """
+
     def _log(self, metrics_kind, stat, value, tags):
         print('MONITORING|%(timestamp)s|%(value)s|%(kind)s|%(stat)s|%(tags)s' % {
             'timestamp': int(time.time()),
@@ -45,18 +46,21 @@ class CloudwatchMetrics(BackendBase):
         })
 
     def incr(self, stat, value=1, tags=None):
-        """Increment a counter"""
+        """Increment a counter."""
         self._log('count', stat, value, tags)
 
     def gauge(self, stat, value, tags=None):
-        """Set a gauge"""
+        """Set a gauge."""
         self._log('gauge', stat, value, tags)
 
     def timing(self, stat, value, tags=None):
-        """Set a timing"""
-        # NOTE(willkg): timing is a special case of histogram
+        """Set a timing.
+
+        Note: Does the same thing as histogram.
+
+        """
         self._log('histogram', stat, value, tags)
 
     def histogram(self, stat, value, tags=None):
-        """Set a histogram"""
+        """Set a histogram."""
         self._log('histogram', stat, value, tags)

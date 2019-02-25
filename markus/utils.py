@@ -14,7 +14,7 @@ BAD_TAG_CHAR_REGEXP = re.compile(r'[^0-9a-zA-Z\._\-/]')
 
 
 def generate_tag(key, value=None):
-    """Generates a tag for use with the tag backends
+    """Generate a tag for use with the tag backends.
 
     The key and value (if there is one) are sanitized according to the
     following rules:
