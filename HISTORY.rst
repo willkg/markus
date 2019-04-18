@@ -11,6 +11,8 @@ History
 
 **Bug fix**
 
+* Drop support for Python 3.4. (#39)
+
 
 1.2.0 (April 27th, 2018)
 ------------------------
