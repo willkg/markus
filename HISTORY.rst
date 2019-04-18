@@ -1,6 +1,17 @@
 History
 =======
 
+2.0.0 (in development)
+----------------------
+
+**Features**
+
+* Use ``time.perf_counter()`` if available. Thank you, Mike! (#34)
+* Support Python 3.7 more officially.
+
+**Bug fix**
+
+
 1.2.0 (April 27th, 2018)
 ------------------------
 
@@ -8,12 +19,12 @@ History
 
 * Add ``.clear()`` to ``MetricsMock`` making it easier to build a pytest
   fixture with the ``MetricsMock`` context and manipulate records for easy
-  testing. #29
+  testing. (#29)
 
 **Bug fix**
 
 * Update Cloudwatch backend fixing ``.timing()`` and ``.histogram()`` to
-  send ``histogram`` metrics type which Datadog now supports. #31
+  send ``histogram`` metrics type which Datadog now supports. (#31)
 
 
 1.1.2 (April 5th, 2018)
@@ -34,7 +45,7 @@ History
 **Bug fixes**
 
 * Fix ``MetricsMock`` so it continues to work even if ``configure``
-  is called. #27
+  is called. (#27)
 
 
 1.1 (November 13th, 2017)
