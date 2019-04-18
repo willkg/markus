@@ -9,6 +9,8 @@ import re
 import sys
 import time
 
+import six
+
 
 NOT_ALPHANUM_RE = re.compile(r'[^a-z0-9_\.]', re.I)
 
@@ -254,9 +256,9 @@ class MetricsInterface:
 
         >>> metrics = markus.get_metrics('foo')
         >>> def upload_file(payload):
-        ...     start_time = time.time()  # this is in seconds
+        ...     start_time = time.perf_counter()  # this is in seconds
         ...     # upload the file
-        ...     timing = (time.time() - start_time) * 1000.0  # convert to ms
+        ...     timing = (time.perf_counter() - start_time) * 1000.0  # convert to ms
         ...     metrics.timing('upload_file_time', value=timing)
 
         .. Note::
@@ -341,9 +343,19 @@ class MetricsInterface:
            All timings generated with this are in milliseconds.
 
         """
-        start_time = time.time()
+        if six.PY3:
+            start_time = time.perf_counter()
+        else:
+            start_time = time.time()
+
         yield
-        delta = time.time() - start_time
+
+        if six.PY3:
+            end_time = time.perf_counter()
+        else:
+            end_time = time.time()
+
+        delta = end_time - start_time
         self.timing(stat, value=delta * 1000.0, tags=tags)
 
     def timer_decorator(self, stat, tags=None):
