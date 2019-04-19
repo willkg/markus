@@ -5,6 +5,7 @@
 import pytest
 
 from markus.backends import datadog
+from markus.main import MetricsRecord
 
 
 class MockDogStatsd(object):
@@ -73,10 +74,9 @@ def test_options(mockdogstatsd):
 
 
 def test_incr(mockdogstatsd):
+    rec = MetricsRecord('incr', key='foo', value=10, tags=['key1:val'])
     ddm = datadog.DatadogMetrics({})
-
-    ddm.incr('foo', value=10, tags=['key1:val'])
-
+    ddm.emit(rec)
     assert (
         ddm.client.calls ==
         [('increment', (), {'metric': 'foo', 'value': 10, 'tags': ['key1:val']})]
@@ -84,10 +84,9 @@ def test_incr(mockdogstatsd):
 
 
 def test_gauge(mockdogstatsd):
+    rec = MetricsRecord('gauge', key='foo', value=100, tags=['key1:val'])
     ddm = datadog.DatadogMetrics({})
-
-    ddm.gauge('foo', value=100, tags=['key1:val'])
-
+    ddm.emit(rec)
     assert (
         ddm.client.calls ==
         [('gauge', (), {'metric': 'foo', 'value': 100, 'tags': ['key1:val']})]
@@ -95,10 +94,9 @@ def test_gauge(mockdogstatsd):
 
 
 def test_timing(mockdogstatsd):
+    rec = MetricsRecord('timing', key='foo', value=1234, tags=['key1:val'])
     ddm = datadog.DatadogMetrics({})
-
-    ddm.timing('foo', value=1234, tags=['key1:val'])
-
+    ddm.emit(rec)
     assert (
         ddm.client.calls ==
         [('timing', (), {'metric': 'foo', 'value': 1234, 'tags': ['key1:val']})]
@@ -106,10 +104,9 @@ def test_timing(mockdogstatsd):
 
 
 def test_histogram(mockdogstatsd):
+    rec = MetricsRecord('histogram', key='foo', value=4321, tags=['key1:val'])
     ddm = datadog.DatadogMetrics({})
-
-    ddm.histogram('foo', value=4321, tags=['key1:val'])
-
+    ddm.emit(rec)
     assert (
         ddm.client.calls ==
         [('histogram', (), {'metric': 'foo', 'value': 4321, 'tags': ['key1:val']})]

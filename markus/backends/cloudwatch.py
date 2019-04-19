@@ -36,31 +36,17 @@ class CloudwatchMetrics(BackendBase):
 
     """
 
-    def _log(self, metrics_kind, stat, value, tags):
+    def emit(self, record):
+        stat_type_to_kind = {
+            'incr': 'count',
+            'gauge': 'gauge',
+            'timing': 'histogram',
+            'histogram': 'histogram'
+        }
         print('MONITORING|%(timestamp)s|%(value)s|%(kind)s|%(stat)s|%(tags)s' % {
             'timestamp': int(time.time()),
-            'kind': metrics_kind,
-            'stat': stat,
-            'value': value,
-            'tags': ('#%s' % ','.join(tags)) if tags else ''
+            'kind': stat_type_to_kind[record.stat_type],
+            'stat': record.key,
+            'value': record.value,
+            'tags': ('#%s' % ','.join(record.tags)) if record.tags else ''
         })
-
-    def incr(self, stat, value=1, tags=None):
-        """Increment a counter."""
-        self._log('count', stat, value, tags)
-
-    def gauge(self, stat, value, tags=None):
-        """Set a gauge."""
-        self._log('gauge', stat, value, tags)
-
-    def timing(self, stat, value, tags=None):
-        """Set a timing.
-
-        Note: Does the same thing as histogram.
-
-        """
-        self._log('histogram', stat, value, tags)
-
-    def histogram(self, stat, value, tags=None):
-        """Set a histogram."""
-        self._log('histogram', stat, value, tags)

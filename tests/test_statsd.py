@@ -5,6 +5,7 @@
 import pytest
 
 from markus.backends import statsd
+from markus.main import MetricsRecord
 
 
 class MockStatsd(object):
@@ -77,10 +78,9 @@ def test_options(mockstatsd):
 
 
 def test_incr(mockstatsd):
+    rec = MetricsRecord('incr', key='foo', value=10, tags=['key1:val'])
     ddm = statsd.StatsdMetrics({})
-
-    ddm.incr('foo', value=10, tags=['key1:val'])
-
+    ddm.emit(rec)
     assert (
         ddm.client.calls ==
         [('incr', (), {'stat': 'foo', 'count': 10})]
@@ -88,10 +88,9 @@ def test_incr(mockstatsd):
 
 
 def test_gauge(mockstatsd):
+    rec = MetricsRecord('gauge', key='foo', value=100, tags=['key1:val'])
     ddm = statsd.StatsdMetrics({})
-
-    ddm.gauge('foo', value=100, tags=['key1:val'])
-
+    ddm.emit(rec)
     assert (
         ddm.client.calls ==
         [('gauge', (), {'stat': 'foo', 'value': 100})]
@@ -99,10 +98,9 @@ def test_gauge(mockstatsd):
 
 
 def test_timing(mockstatsd):
+    rec = MetricsRecord('timing', key='foo', value=1234, tags=['key1:val'])
     ddm = statsd.StatsdMetrics({})
-
-    ddm.timing('foo', value=1234, tags=['key1:val'])
-
+    ddm.emit(rec)
     assert (
         ddm.client.calls ==
         [('timing', (), {'stat': 'foo', 'delta': 1234})]
@@ -110,10 +108,9 @@ def test_timing(mockstatsd):
 
 
 def test_histogram(mockstatsd):
+    rec = MetricsRecord('histogram', key='foo', value=4321, tags=['key1:val'])
     ddm = statsd.StatsdMetrics({})
-
-    ddm.histogram('foo', value=4321, tags=['key1:val'])
-
+    ddm.emit(rec)
     assert (
         ddm.client.calls ==
         [('timing', (), {'stat': 'foo', 'delta': 4321})]

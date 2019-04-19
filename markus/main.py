@@ -12,6 +12,12 @@ import time
 import six
 
 
+if six.PY3:
+    time_func = time.perf_counter
+else:
+    time_func = time.time
+
+
 NOT_ALPHANUM_RE = re.compile(r'[^a-z0-9_\.]', re.I)
 CONSECUTIVE_PERIODS_RE = re.compile(r'\.+')
 
@@ -130,6 +136,19 @@ def configure(backends, raise_errors=False):
     _change_metrics(good_backends)
 
 
+class MetricsRecord:
+    """Record for a single emitted metric."""
+
+    def __init__(self, stat_type, key, value, tags):
+        self.stat_type = stat_type
+        self.key = key
+        self.value = value
+        self.tags = tags
+
+    def __repr__(self):
+        return '<MetricsRecord %r %r %r %r>' % (self.stat_type, self.key, self.value, self.tags)
+
+
 class MetricsInterface:
     """Interface to generating metrics.
 
@@ -195,9 +214,13 @@ class MetricsInterface:
         You can also use incr to decrement by passing a negative value.
 
         """
-        full_stat = self._full_stat(stat)
         for backend in _get_metrics_backends():
-            backend.incr(full_stat, value=value, tags=tags)
+            backend.emit(MetricsRecord(
+                stat_type='incr',
+                key=self._full_stat(stat),
+                value=value,
+                tags=tags
+            ))
 
     def gauge(self, stat, value, tags=None):
         """Gauges are used for measuring things.
@@ -222,9 +245,13 @@ class MetricsInterface:
         ...     # parse parse parse
 
         """
-        full_stat = self._full_stat(stat)
         for backend in _get_metrics_backends():
-            backend.gauge(full_stat, value=value, tags=tags)
+            backend.emit(MetricsRecord(
+                stat_type='gauge',
+                key=self._full_stat(stat),
+                value=value,
+                tags=tags
+            ))
 
     def timing(self, stat, value, tags=None):
         """Record a timing value.
@@ -268,9 +295,13 @@ class MetricsInterface:
            :py:meth:`markus.main.MetricsInterface.timer_decorator`.
 
         """
-        full_stat = self._full_stat(stat)
         for backend in _get_metrics_backends():
-            backend.timing(full_stat, value=value, tags=tags)
+            backend.emit(MetricsRecord(
+                stat_type='timing',
+                key=self._full_stat(stat),
+                value=value,
+                tags=tags
+            ))
 
     def histogram(self, stat, value, tags=None):
         """Record a histogram value.
@@ -312,9 +343,13 @@ class MetricsInterface:
            same as timing.
 
         """
-        full_stat = self._full_stat(stat)
         for backend in _get_metrics_backends():
-            backend.histogram(full_stat, value=value, tags=tags)
+            backend.emit(MetricsRecord(
+                stat_type='histogram',
+                key=self._full_stat(stat),
+                value=value,
+                tags=tags
+            ))
 
     @contextlib.contextmanager
     def timer(self, stat, tags=None):
@@ -343,17 +378,11 @@ class MetricsInterface:
            All timings generated with this are in milliseconds.
 
         """
-        if six.PY3:
-            start_time = time.perf_counter()
-        else:
-            start_time = time.time()
+        start_time = time_func()
 
         yield
 
-        if six.PY3:
-            end_time = time.perf_counter()
-        else:
-            end_time = time.time()
+        end_time = time_func()
 
         delta = end_time - start_time
         self.timing(stat, value=delta * 1000.0, tags=tags)

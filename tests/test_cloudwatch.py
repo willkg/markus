@@ -5,39 +5,40 @@
 from freezegun import freeze_time
 
 from markus.backends.cloudwatch import CloudwatchMetrics
+from markus.main import MetricsRecord
 
 
 @freeze_time('2017-03-06 16:30:00', tz_offset=0)
 class TestCloudwatch:
     def test_incr(self, capsys):
+        rec = MetricsRecord('incr', key='foo', value=10, tags=['key1:val', 'key2:val'])
         ddcm = CloudwatchMetrics({})
-
-        ddcm.incr('foo', value=10, tags=['key1:val', 'key2:val'])
+        ddcm.emit(rec)
         out, err = capsys.readouterr()
         assert out == 'MONITORING|1488817800|10|count|foo|#key1:val,key2:val\n'
         assert err == ''
 
     def test_gauge(self, capsys):
+        rec = MetricsRecord('gauge', key='foo', value=100, tags=['key1:val', 'key2:val'])
         ddcm = CloudwatchMetrics({})
-
-        ddcm.gauge('foo', value=100, tags=['key1:val', 'key2:val'])
+        ddcm.emit(rec)
         out, err = capsys.readouterr()
         assert out == 'MONITORING|1488817800|100|gauge|foo|#key1:val,key2:val\n'
         assert err == ''
 
     def test_timing(self, capsys):
         # .timing is a histogram
+        rec = MetricsRecord('timing', key='foo', value=100, tags=['key1:val', 'key2:val'])
         ddcm = CloudwatchMetrics({})
-
-        ddcm.timing('foo', value=100, tags=['key1:val', 'key2:val'])
+        ddcm.emit(rec)
         out, err = capsys.readouterr()
         assert out == 'MONITORING|1488817800|100|histogram|foo|#key1:val,key2:val\n'
         assert err == ''
 
     def test_histogram(self, capsys):
+        rec = MetricsRecord('histogram', key='foo', value=100, tags=['key1:val', 'key2:val'])
         ddcm = CloudwatchMetrics({})
-
-        ddcm.histogram('foo', value=100, tags=['key1:val', 'key2:val'])
+        ddcm.emit(rec)
         out, err = capsys.readouterr()
         assert out == 'MONITORING|1488817800|100|histogram|foo|#key1:val,key2:val\n'
         assert err == ''

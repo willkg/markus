@@ -16,7 +16,7 @@ def metricsmock():
     ('...ab..c...', 'ab.c'),
 ])
 def test_get_metrics_fix_name(prefix, expected):
-    assert get_metrics(prefix).prefix== expected
+    assert get_metrics(prefix).prefix == expected
 
 
 class Foo(object):

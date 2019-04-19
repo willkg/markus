@@ -40,6 +40,7 @@ def generate_tag(key, value=None):
 
     Examples:
 
+    >>> from markus.utils import generate_tag
     >>> generate_tag('yellow')
     'yellow'
     >>> generate_tag('rule', 'is_yellow')
@@ -48,6 +49,7 @@ def generate_tag(key, value=None):
     Example with ``incr``:
 
     >>> import markus
+    >>> from markus.utils import generate_tag
     >>> mymetrics = markus.get_metrics(__name__)
 
     >>> mymetrics.incr('somekey', value=1,
