@@ -69,7 +69,7 @@ Then you can use the ``MetricsImplementation`` anywhere in that module::
     def some_long_function(vegetable):
         for veg in vegetable:
             chop_vegetable()
-            metrics.incr('vegetable', 1)
+            metrics.incr('vegetable', value=1)
 
 
 At application startup, configure Markus with the backends you want to use to

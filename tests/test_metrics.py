@@ -47,7 +47,7 @@ def test_incr(metricsmock):
     assert (
         mm.get_records() ==
         [
-            ('incr', 'thing.foo', 5, None)
+            ('incr', 'thing.foo', 5, [])
         ]
     )
 
@@ -61,7 +61,7 @@ def test_gauge(metricsmock):
     assert (
         mm.get_records() ==
         [
-            ('gauge', 'thing.foo', 10, None)
+            ('gauge', 'thing.foo', 10, [])
         ]
     )
 
@@ -75,7 +75,7 @@ def test_timing(metricsmock):
     assert (
         mm.get_records() ==
         [
-            ('timing', 'thing.foo', 1234, None)
+            ('timing', 'thing.foo', 1234, [])
         ]
     )
 
@@ -89,7 +89,7 @@ def test_histogram(metricsmock):
     assert (
         mm.get_records() ==
         [
-            ('histogram', 'thing.foo', 4321, None)
+            ('histogram', 'thing.foo', 4321, [])
         ]
     )
 

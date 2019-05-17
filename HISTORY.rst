@@ -9,6 +9,11 @@ History
 * Use ``time.perf_counter()`` if available. Thank you, Mike! (#34)
 * Support Python 3.7 more officially.
 
+**Backwards incompatible changes**
+
+* ``tags`` now defaults to ``[]`` instead of ``None`` which may affect some
+  expected test output.
+
 **Bug fix**
 
 * Drop support for Python 3.4. (#39)

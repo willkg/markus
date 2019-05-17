@@ -143,7 +143,7 @@ class MetricsRecord:
         self.stat_type = stat_type
         self.key = key
         self.value = value
-        self.tags = tags
+        self.tags = tags or []
 
     def __repr__(self):
         return '<MetricsRecord %r %r %r %r>' % (self.stat_type, self.key, self.value, self.tags)

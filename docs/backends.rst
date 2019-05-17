@@ -83,13 +83,10 @@ For example, here's a backend that prints metrics to stdout:
 
     >>> metrics = markus.get_metrics('test')
     >>> metrics.incr('key1')
-    incr foo test.key1 1 tags=None
+    incr foo test.key1 1 tags=[]
 
 
 .. testcleanup:: *
 
    import markus
    markus.configure([])
-
-
-This will print to stdout ``foo incr test.key1 1 None {}``.
