@@ -5,16 +5,16 @@
 from freezegun import freeze_time
 
 from markus.backends.logging import LoggingMetrics, LoggingRollupMetrics
+from markus.main import MetricsRecord
 
 
 @freeze_time('2017-03-06 16:30:00', tz_offset=0)
 class TestLoggingMetrics:
     def test_incr(self, caplog):
         caplog.set_level('DEBUG')
+        rec = MetricsRecord('incr', key='foo', value=10, tags=['key1:val', 'key2:val'])
         lm = LoggingMetrics({})
-
-        lm.incr('foo', value=10, tags=['key1:val', 'key2:val'])
-
+        lm.emit(rec)
         assert (
             caplog.record_tuples ==
             [
@@ -24,10 +24,9 @@ class TestLoggingMetrics:
 
     def test_gauge(self, caplog):
         caplog.set_level('DEBUG')
+        rec = MetricsRecord('gauge', key='foo', value=100, tags=['key1:val', 'key2:val'])
         lm = LoggingMetrics({})
-
-        lm.gauge('foo', value=100, tags=['key1:val', 'key2:val'])
-
+        lm.emit(rec)
         assert (
             caplog.record_tuples ==
             [
@@ -37,10 +36,9 @@ class TestLoggingMetrics:
 
     def test_timing(self, caplog):
         caplog.set_level('DEBUG')
+        rec = MetricsRecord('timing', key='foo', value=1234, tags=['key1:val', 'key2:val'])
         lm = LoggingMetrics({})
-
-        lm.timing('foo', value=1234, tags=['key1:val', 'key2:val'])
-
+        lm.emit(rec)
         assert (
             caplog.record_tuples ==
             [
@@ -50,10 +48,9 @@ class TestLoggingMetrics:
 
     def test_histogram(self, caplog):
         caplog.set_level('DEBUG')
+        rec = MetricsRecord('histogram', key='foo', value=4321, tags=['key1:val', 'key2:val'])
         lm = LoggingMetrics({})
-
-        lm.histogram('foo', value=4321, tags=['key1:val', 'key2:val'])
-
+        lm.emit(rec)
         assert (
             caplog.record_tuples ==
             [
@@ -67,18 +64,18 @@ class TestLoggingRollupMetrics:
         caplog.set_level('DEBUG')
         with freeze_time('2017-04-19 12:00:00'):
             lm = LoggingRollupMetrics({})
-            lm.incr('foo')
-            lm.incr('foo')
-            lm.gauge('widget', value=10)
-            lm.incr('foo')
-            lm.incr('bar')
-            lm.gauge('widget', value=20)
-            lm.gauge('widget', value=5)
-            lm.histogram('save_time', value=50)
-            lm.histogram('save_time', value=60)
+            lm.emit(MetricsRecord('incr', key='foo', value=1, tags=None))
+            lm.emit(MetricsRecord('incr', key='foo', value=1, tags=None))
+            lm.emit(MetricsRecord('gauge', key='widget', value=10, tags=None))
+            lm.emit(MetricsRecord('incr', key='foo', value=1, tags=None))
+            lm.emit(MetricsRecord('incr', key='bar', value=1, tags=None))
+            lm.emit(MetricsRecord('gauge', key='widget', value=20, tags=None))
+            lm.emit(MetricsRecord('gauge', key='widget', value=5, tags=None))
+            lm.emit(MetricsRecord('histogram', key='save_time', value=50, tags=None))
+            lm.emit(MetricsRecord('histogram', key='save_time', value=60, tags=None))
 
         with freeze_time('2017-04-19 12:00:11'):
-            lm.incr('bar')
+            lm.emit(MetricsRecord('incr', key='bar', value=1, tags=None))
 
         assert (
             caplog.record_tuples ==

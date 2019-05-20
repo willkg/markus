@@ -58,34 +58,18 @@ class LoggingMetrics(BackendBase):
         self.logger = logging.getLogger(self.logger_name)
         self.leader = options.get('leader', 'METRICS')
 
-    def _log(self, metrics_kind, stat, value, tags):
+    def emit(self, record):
         self.logger.info(
             '%(leader)s|%(timestamp)s|%(kind)s|%(stat)s|%(value)s|%(tags)s' % {
                 'leader': self.leader,
                 # FIXME(willkg): Make this utc?
                 'timestamp': datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S'),
-                'kind': metrics_kind,
-                'stat': stat,
-                'value': value,
-                'tags': ('#%s' % ','.join(tags)) if tags else ''
+                'kind': record.stat_type,
+                'stat': record.key,
+                'value': record.value,
+                'tags': ('#%s' % ','.join(record.tags)) if record.tags else ''
             }
         )
-
-    def incr(self, stat, value=1, tags=None):
-        """Increment a counter."""
-        self._log('incr', stat, value, tags)
-
-    def gauge(self, stat, value, tags=None):
-        """Set a gauge."""
-        self._log('gauge', stat, value, tags)
-
-    def timing(self, stat, value, tags=None):
-        """Report a timing."""
-        self._log('timing', stat, value, tags)
-
-    def histogram(self, stat, value, tags=None):
-        """Report a histogram."""
-        self._log('histogram', stat, value, tags)
 
 
 class LoggingRollupMetrics(BackendBase):
@@ -209,31 +193,15 @@ class LoggingRollupMetrics(BackendBase):
 
             self.histogram_stats[key] = []
 
-    def incr(self, stat, value=1, tags=None):
-        """Increment a counter."""
+    def emit(self, record):
+        stat_type_to_list = {
+            'incr': self.incr_stats,
+            'gauge': self.gauge_stats,
+            'timing': self.histogram_stats,
+            'histogram': self.histogram_stats
+        }
+
         self.rollup()
 
         # FIXME(willkg): what to do with tags?
-        self.incr_stats.setdefault(stat, []).append(value)
-
-    def gauge(self, stat, value, tags=None):
-        """Set a gauge."""
-        self.rollup()
-
-        # FIXME(willkg): what to do with tags?
-        self.gauge_stats.setdefault(stat, []).append(value)
-
-    def timing(self, stat, value, tags=None):
-        """Measure a timing for statistical distribution.
-
-        Note: timing is a special case of histogram.
-
-        """
-        self.histogram(stat, value, tags)
-
-    def histogram(self, stat, value, tags=None):
-        """Measure a value for statistical distribution."""
-        self.rollup()
-
-        # FIXME(willkg): what to do with tags?
-        self.histogram_stats.setdefault(stat, []).append(value)
+        stat_type_to_list[record.stat_type].setdefault(record.key, []).append(record.value)

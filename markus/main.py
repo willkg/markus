@@ -12,7 +12,14 @@ import time
 import six
 
 
+if six.PY3:
+    time_func = time.perf_counter
+else:
+    time_func = time.time
+
+
 NOT_ALPHANUM_RE = re.compile(r'[^a-z0-9_\.]', re.I)
+CONSECUTIVE_PERIODS_RE = re.compile(r'\.+')
 
 
 logger = logging.getLogger(__name__)
@@ -129,6 +136,27 @@ def configure(backends, raise_errors=False):
     _change_metrics(good_backends)
 
 
+class MetricsRecord:
+    """Record for a single emitted metric.
+
+    :attribute stat_type: the type of the stat ('incr', 'gauge', 'timing',
+        'histogram')
+    :attribute key: the full key for this record
+    :attribute value: the value for this record
+    :attribute tags: list of tag strings
+
+    """
+
+    def __init__(self, stat_type, key, value, tags):
+        self.stat_type = stat_type
+        self.key = key
+        self.value = value
+        self.tags = tags or []
+
+    def __repr__(self):
+        return '<MetricsRecord %r %r %r %r>' % (self.stat_type, self.key, self.value, self.tags)
+
+
 class MetricsInterface:
     """Interface to generating metrics.
 
@@ -145,28 +173,27 @@ class MetricsInterface:
 
     """
 
-    def __init__(self, name):
+    def __init__(self, prefix):
         """Create a MetricsInterface.
 
-        :arg str name: Use alphanumeric characters and underscore and period.
+        :arg str prefix: Use alphanumeric characters and underscore and period.
             Anything else gets converted to a period. Sequences of periods get
             collapsed to a single period.
 
+            The prefix is prepended to all keys emitted by this metrics
+            interface.
+
         """
         # Convert all bad characters to .
-        name = NOT_ALPHANUM_RE.sub('.', name)
+        prefix = NOT_ALPHANUM_RE.sub('.', prefix)
         # Collapse sequences of . to a single .
-        while True:
-            new_name = name.replace('..', '.')
-            if new_name == name:
-                break
-            name = new_name
+        prefix = CONSECUTIVE_PERIODS_RE.sub('.', prefix)
         # Remove . at beginning and end
-        self.name = name.strip('.')
+        self.prefix = prefix.strip('.')
 
     def _full_stat(self, stat):
-        if self.name:
-            return self.name + '.' + stat
+        if self.prefix:
+            return self.prefix + '.' + stat
         else:
             return stat
 
@@ -183,6 +210,8 @@ class MetricsInterface:
 
             For example ``['env:stage', 'compressed:yes']``.
 
+            To pass no tags, either pass an empty list or ``None``.
+
         For example:
 
         >>> import markus
@@ -195,9 +224,13 @@ class MetricsInterface:
         You can also use incr to decrement by passing a negative value.
 
         """
-        full_stat = self._full_stat(stat)
         for backend in _get_metrics_backends():
-            backend.incr(full_stat, value=value, tags=tags)
+            backend.emit(MetricsRecord(
+                stat_type='incr',
+                key=self._full_stat(stat),
+                value=value,
+                tags=tags
+            ))
 
     def gauge(self, stat, value, tags=None):
         """Gauges are used for measuring things.
@@ -212,6 +245,8 @@ class MetricsInterface:
 
             For example ``['env:stage', 'compressed:yes']``.
 
+            To pass no tags, either pass an empty list or ``None``.
+
         For example:
 
         >>> import markus
@@ -222,9 +257,13 @@ class MetricsInterface:
         ...     # parse parse parse
 
         """
-        full_stat = self._full_stat(stat)
         for backend in _get_metrics_backends():
-            backend.gauge(full_stat, value=value, tags=tags)
+            backend.emit(MetricsRecord(
+                stat_type='gauge',
+                key=self._full_stat(stat),
+                value=value,
+                tags=tags
+            ))
 
     def timing(self, stat, value, tags=None):
         """Record a timing value.
@@ -249,6 +288,8 @@ class MetricsInterface:
 
             For example ``['env:stage', 'compressed:yes']``.
 
+            To pass no tags, either pass an empty list or ``None``.
+
         For example:
 
         >>> import time
@@ -268,9 +309,13 @@ class MetricsInterface:
            :py:meth:`markus.main.MetricsInterface.timer_decorator`.
 
         """
-        full_stat = self._full_stat(stat)
         for backend in _get_metrics_backends():
-            backend.timing(full_stat, value=value, tags=tags)
+            backend.emit(MetricsRecord(
+                stat_type='timing',
+                key=self._full_stat(stat),
+                value=value,
+                tags=tags
+            ))
 
     def histogram(self, stat, value, tags=None):
         """Record a histogram value.
@@ -295,6 +340,8 @@ class MetricsInterface:
 
             For example ``['env:stage', 'compressed:yes']``.
 
+            To pass no tags, either pass an empty list or ``None``.
+
         For example:
 
         >>> import time
@@ -312,9 +359,13 @@ class MetricsInterface:
            same as timing.
 
         """
-        full_stat = self._full_stat(stat)
         for backend in _get_metrics_backends():
-            backend.histogram(full_stat, value=value, tags=tags)
+            backend.emit(MetricsRecord(
+                stat_type='histogram',
+                key=self._full_stat(stat),
+                value=value,
+                tags=tags
+            ))
 
     @contextlib.contextmanager
     def timer(self, stat, tags=None):
@@ -327,6 +378,8 @@ class MetricsInterface:
             metrics for analysis.
 
             For example ``['env:stage', 'compressed:yes']``.
+
+            To pass no tags, either pass an empty list or ``None``.
 
         For example:
 
@@ -343,17 +396,11 @@ class MetricsInterface:
            All timings generated with this are in milliseconds.
 
         """
-        if six.PY3:
-            start_time = time.perf_counter()
-        else:
-            start_time = time.time()
+        start_time = time_func()
 
         yield
 
-        if six.PY3:
-            end_time = time.perf_counter()
-        else:
-            end_time = time.time()
+        end_time = time_func()
 
         delta = end_time - start_time
         self.timing(stat, value=delta * 1000.0, tags=tags)
@@ -368,6 +415,8 @@ class MetricsInterface:
             metrics for analysis.
 
             For example ``['env:stage', 'compressed:yes']``.
+
+            To pass no tags, either pass an empty list or ``None``.
 
         For example:
 
@@ -394,9 +443,9 @@ class MetricsInterface:
 
 
 def get_metrics(thing, extra=''):
-    """Return MetricsInterface instance with specified name.
+    """Return MetricsInterface instance with specified prefix.
 
-    The name is used as the prefix for all keys generated with this
+    The prefix is prepended to all keys emitted with this
     :py:class:`markus.main.MetricsInterface`.
 
     The :py:class:`markus.main.MetricsInterface` is not tied to metrics
@@ -404,12 +453,12 @@ def get_metrics(thing, extra=''):
     us to create :py:class:`markus.main.MetricsInterface` classes without
     having to worry about bootstrapping order of the app.
 
-    :arg class/instance/str thing: The name to use as a key prefix.
+    :arg class/instance/str thing: The prefix to use for keys.
 
         If this is a class, it uses the dotted Python path. If this is an
         instance, it uses the dotted Python path plus ``str(instance)``.
 
-    :arg str extra: Any extra bits to add to the end of the name.
+    :arg str extra: Any extra bits to add to the end of the prefix.
 
     :returns: a ``MetricsInterface`` instance
 
@@ -417,7 +466,7 @@ def get_metrics(thing, extra=''):
 
     >>> from markus import get_metrics
 
-    Create a MetricsInterface with the name "myapp" and generate a count with
+    Create a MetricsInterface with the prefix "myapp" and generate a count with
     stat "myapp.thing1" and value 1:
 
     >>> metrics = get_metrics('myapp')
@@ -437,13 +486,13 @@ def get_metrics(thing, extra=''):
     Create a prefix of the class path plus some identifying information:
 
     >>> class Foo:
-    ...     def __init__(self, myname):
-    ...         self.metrics = get_metrics(self, extra=myname)
+    ...     def __init__(self, myprefix):
+    ...         self.metrics = get_metrics(self, extra=myprefix)
     ...
     >>> foo = Foo('jim')
 
     Assume that ``Foo`` is defined in the ``myapp`` module. Then this will
-    generate the name ``myapp.Foo.jim``.
+    generate the prefix ``myapp.Foo.jim``.
 
     """
     thing = thing or ''

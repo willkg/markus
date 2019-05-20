@@ -9,14 +9,14 @@ def metricsmock():
     return MetricsMock()
 
 
-@pytest.mark.parametrize('name, expected', [
+@pytest.mark.parametrize('prefix, expected', [
     ('', ''),
     ('.', ''),
     ('abc(123)', 'abc.123'),
     ('...ab..c...', 'ab.c'),
 ])
-def test_get_metrics_fix_name(name, expected):
-    assert get_metrics(name).name == expected
+def test_get_metrics_fix_name(prefix, expected):
+    assert get_metrics(prefix).prefix == expected
 
 
 class Foo(object):
@@ -35,7 +35,7 @@ class Foo(object):
     ('foo', 'namespace1', 'foo.namespace1'),
 ])
 def test_get_metrics(thing, extra, expected):
-    assert get_metrics(thing, extra=extra).name == expected
+    assert get_metrics(thing, extra=extra).prefix == expected
 
 
 def test_incr(metricsmock):
@@ -47,7 +47,7 @@ def test_incr(metricsmock):
     assert (
         mm.get_records() ==
         [
-            ('incr', 'thing.foo', 5, None)
+            ('incr', 'thing.foo', 5, [])
         ]
     )
 
@@ -61,7 +61,7 @@ def test_gauge(metricsmock):
     assert (
         mm.get_records() ==
         [
-            ('gauge', 'thing.foo', 10, None)
+            ('gauge', 'thing.foo', 10, [])
         ]
     )
 
@@ -75,7 +75,7 @@ def test_timing(metricsmock):
     assert (
         mm.get_records() ==
         [
-            ('timing', 'thing.foo', 1234, None)
+            ('timing', 'thing.foo', 1234, [])
         ]
     )
 
@@ -89,7 +89,7 @@ def test_histogram(metricsmock):
     assert (
         mm.get_records() ==
         [
-            ('histogram', 'thing.foo', 4321, None)
+            ('histogram', 'thing.foo', 4321, [])
         ]
     )
 

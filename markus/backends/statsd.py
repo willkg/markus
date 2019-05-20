@@ -66,9 +66,7 @@ class StatsdMetrics(BackendBase):
         self.prefix = options.get('statsd_prefix')
         self.maxudpsize = options.get('statsd_maxudpsize', 512)
 
-        self.client = self._get_client(
-            self.host, self.port, self.prefix, self.maxudpsize)
-
+        self.client = self._get_client(self.host, self.port, self.prefix, self.maxudpsize)
         logger.info(
             '%s configured: %s:%s %s',
             self.__class__.__name__,
@@ -81,23 +79,11 @@ class StatsdMetrics(BackendBase):
         return StatsClient(
             host=host, port=port, prefix=prefix, maxudpsize=maxudpsize)
 
-    def incr(self, stat, value=1, tags=None):
-        """Increment a counter."""
-        self.client.incr(stat=stat, count=value)
-
-    def gauge(self, stat, value, tags=None):
-        """Set a gauge."""
-        self.client.gauge(stat=stat, value=value)
-
-    def timing(self, stat, value, tags=None):
-        """Measure a timing for statistical distribution."""
-        self.client.timing(stat=stat, delta=value)
-
-    def histogram(self, stat, value, tags=None):
-        """Measure a value for statistical distribution.
-
-        Note: Since pystatsd has no "histogram", this does the same thing
-        as timing.
-
-        """
-        self.client.timing(stat=stat, delta=value)
+    def emit(self, record):
+        stat_type = record.stat_type
+        if stat_type == 'incr':
+            self.client.incr(stat=record.key, count=record.value)
+        elif stat_type == 'gauge':
+            self.client.gauge(stat=record.key, value=record.value)
+        elif stat_type in ('timing', 'histogram'):
+            self.client.timing(stat=record.key, delta=record.value)

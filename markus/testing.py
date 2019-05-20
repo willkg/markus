@@ -2,7 +2,7 @@
 # License, v. 2.0. If a copy of the MPL was not distributed with this
 # file, You can obtain one at http://mozilla.org/MPL/2.0/.
 
-from markus import INCR, GAUGE, TIMING, HISTOGRAM
+from markus import INCR, GAUGE, TIMING, HISTOGRAM  # noqa
 
 from markus.main import _override_metrics
 
@@ -38,21 +38,8 @@ class MetricsMock:
     def _add_record(self, fun_name, stat, value, tags):
         self.records.append((fun_name, stat, value, tags))
 
-    def incr(self, stat, value=1, tags=None):
-        """Increment a counter."""
-        self._add_record(INCR, stat, value, tags)
-
-    def gauge(self, stat, value, tags=None):
-        """Set a gauge."""
-        self._add_record(GAUGE, stat, value, tags)
-
-    def timing(self, stat, value, tags=None):
-        """Measure a timing for statistical distribution."""
-        self._add_record(TIMING, stat, value, tags)
-
-    def histogram(self, stat, value, tags=None):
-        """Measure a value for statistical distribution."""
-        self._add_record(HISTOGRAM, stat, value, tags)
+    def emit(self, record):
+        self._add_record(record.stat_type, record.key, record.value, record.tags)
 
     def __enter__(self):
         self.records = []
