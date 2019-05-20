@@ -137,7 +137,15 @@ def configure(backends, raise_errors=False):
 
 
 class MetricsRecord:
-    """Record for a single emitted metric."""
+    """Record for a single emitted metric.
+
+    :attribute stat_type: the type of the stat ('incr', 'gauge', 'timing',
+        'histogram')
+    :attribute key: the full key for this record
+    :attribute value: the value for this record
+    :attribute tags: list of tag strings
+
+    """
 
     def __init__(self, stat_type, key, value, tags):
         self.stat_type = stat_type
@@ -202,6 +210,8 @@ class MetricsInterface:
 
             For example ``['env:stage', 'compressed:yes']``.
 
+            To pass no tags, either pass an empty list or ``None``.
+
         For example:
 
         >>> import markus
@@ -234,6 +244,8 @@ class MetricsInterface:
             metrics for analysis.
 
             For example ``['env:stage', 'compressed:yes']``.
+
+            To pass no tags, either pass an empty list or ``None``.
 
         For example:
 
@@ -275,6 +287,8 @@ class MetricsInterface:
             metrics for analysis.
 
             For example ``['env:stage', 'compressed:yes']``.
+
+            To pass no tags, either pass an empty list or ``None``.
 
         For example:
 
@@ -326,6 +340,8 @@ class MetricsInterface:
 
             For example ``['env:stage', 'compressed:yes']``.
 
+            To pass no tags, either pass an empty list or ``None``.
+
         For example:
 
         >>> import time
@@ -363,6 +379,8 @@ class MetricsInterface:
 
             For example ``['env:stage', 'compressed:yes']``.
 
+            To pass no tags, either pass an empty list or ``None``.
+
         For example:
 
         >>> mymetrics = get_metrics(__name__)
@@ -397,6 +415,8 @@ class MetricsInterface:
             metrics for analysis.
 
             For example ``['env:stage', 'compressed:yes']``.
+
+            To pass no tags, either pass an empty list or ``None``.
 
         For example:
 

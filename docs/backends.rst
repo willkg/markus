@@ -58,7 +58,12 @@ Writing your own
    :members: __init__, emit
 
 
-For example, here's a backend that prints metrics to stdout:
+The records that get emitted are ``markus.main.MetricsRecord`` instances.
+
+.. autoclass:: markus.main.MetricsRecord
+
+
+Here's an example backend that prints metrics to stdout:
 
 .. doctest::
 
