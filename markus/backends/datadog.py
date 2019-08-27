@@ -55,7 +55,10 @@ class DatadogMetrics(BackendBase):
 
     """
 
-    def __init__(self, options):
+    def __init__(self, options=None, filters=None):
+        options = options or {}
+        self.filters = filters or []
+
         self.host = options.get('statsd_host', 'localhost')
         self.port = options.get('statsd_port', 8125)
         self.namespace = options.get('statsd_namespace', '')

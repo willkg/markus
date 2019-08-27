@@ -60,11 +60,14 @@ class StatsdMetrics(BackendBase):
 
     """
 
-    def __init__(self, options):
+    def __init__(self, options=None, filters=None):
+        options = options or {}
         self.host = options.get('statsd_host', 'localhost')
         self.port = options.get('statsd_port', 8125)
         self.prefix = options.get('statsd_prefix')
         self.maxudpsize = options.get('statsd_maxudpsize', 512)
+
+        self.filters = filters or []
 
         self.client = self._get_client(self.host, self.port, self.prefix, self.maxudpsize)
         logger.info(

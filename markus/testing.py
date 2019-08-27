@@ -38,6 +38,9 @@ class MetricsMock:
     def _add_record(self, fun_name, stat, value, tags):
         self.records.append((fun_name, stat, value, tags))
 
+    def emit_to_backend(self, record):
+        self.emit(record)
+
     def emit(self, record):
         self._add_record(record.stat_type, record.key, record.value, record.tags)
 

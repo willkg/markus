@@ -10,6 +10,7 @@ Contents
    usage
    metricsoverview
    backends
+   filters
    testing
    history
    contributing

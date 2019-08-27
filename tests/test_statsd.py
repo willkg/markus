@@ -5,7 +5,7 @@
 import pytest
 
 from markus.backends import statsd
-from markus.main import MetricsRecord
+from markus.main import MetricsFilter, MetricsRecord
 
 
 class MockStatsd(object):
@@ -41,7 +41,7 @@ def mockstatsd():
 
 
 def test_default_options(mockstatsd):
-    ddm = statsd.StatsdMetrics({})
+    ddm = statsd.StatsdMetrics()
 
     assert ddm.host == 'localhost'
     assert ddm.port == 8125
@@ -79,8 +79,8 @@ def test_options(mockstatsd):
 
 def test_incr(mockstatsd):
     rec = MetricsRecord('incr', key='foo', value=10, tags=['key1:val'])
-    ddm = statsd.StatsdMetrics({})
-    ddm.emit(rec)
+    ddm = statsd.StatsdMetrics()
+    ddm.emit_to_backend(rec)
     assert (
         ddm.client.calls ==
         [('incr', (), {'stat': 'foo', 'count': 10})]
@@ -89,8 +89,8 @@ def test_incr(mockstatsd):
 
 def test_gauge(mockstatsd):
     rec = MetricsRecord('gauge', key='foo', value=100, tags=['key1:val'])
-    ddm = statsd.StatsdMetrics({})
-    ddm.emit(rec)
+    ddm = statsd.StatsdMetrics()
+    ddm.emit_to_backend(rec)
     assert (
         ddm.client.calls ==
         [('gauge', (), {'stat': 'foo', 'value': 100})]
@@ -99,8 +99,8 @@ def test_gauge(mockstatsd):
 
 def test_timing(mockstatsd):
     rec = MetricsRecord('timing', key='foo', value=1234, tags=['key1:val'])
-    ddm = statsd.StatsdMetrics({})
-    ddm.emit(rec)
+    ddm = statsd.StatsdMetrics()
+    ddm.emit_to_backend(rec)
     assert (
         ddm.client.calls ==
         [('timing', (), {'stat': 'foo', 'delta': 1234})]
@@ -109,9 +109,25 @@ def test_timing(mockstatsd):
 
 def test_histogram(mockstatsd):
     rec = MetricsRecord('histogram', key='foo', value=4321, tags=['key1:val'])
-    ddm = statsd.StatsdMetrics({})
-    ddm.emit(rec)
+    ddm = statsd.StatsdMetrics()
+    ddm.emit_to_backend(rec)
     assert (
         ddm.client.calls ==
         [('timing', (), {'stat': 'foo', 'delta': 4321})]
+    )
+
+
+def test_filters(mockstatsd):
+    class BlueFilter(MetricsFilter):
+        def filter(self, record):
+            if 'blue' not in record.key:
+                return
+            return record
+
+    ddm = statsd.StatsdMetrics(filters=[BlueFilter()])
+    ddm.emit_to_backend(MetricsRecord('incr', key='foo', value=1, tags=[]))
+    ddm.emit_to_backend(MetricsRecord('incr', key='foo.blue', value=2, tags=[]))
+    assert (
+        ddm.client.calls ==
+        [('incr', (), {'stat': 'foo.blue', 'count': 2})]
     )

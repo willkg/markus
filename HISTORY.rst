@@ -8,15 +8,19 @@ History
 
 * Use ``time.perf_counter()`` if available. Thank you, Mike! (#34)
 * Support Python 3.7 more officially.
+* Add filters for adjusting and dropping metrics getting emitted.
+  See documentation for more details. (#40)
 
 **Backwards incompatible changes**
 
 * ``tags`` now defaults to ``[]`` instead of ``None`` which may affect some
   expected test output.
-
-**Bug fix**
-
+* Adjust internals to run ``.emit()`` on backends. If you wrote your own
+  backend, you may need to adjust it.
 * Drop support for Python 3.4. (#39)
+
+**Bug fixes**
+
 
 
 1.2.0 (April 27th, 2018)
@@ -28,7 +32,7 @@ History
   fixture with the ``MetricsMock`` context and manipulate records for easy
   testing. (#29)
 
-**Bug fix**
+**Bug fixes**
 
 * Update Cloudwatch backend fixing ``.timing()`` and ``.histogram()`` to
   send ``histogram`` metrics type which Datadog now supports. (#31)
@@ -37,7 +41,7 @@ History
 1.1.2 (April 5th, 2018)
 -----------------------
 
-**Typo fix**
+**Typo fixes**
 
 * Fix the date from the previous release. Ugh.
 
