@@ -28,6 +28,12 @@ class CloudwatchMetrics(BackendBase):
 
     This backend doesn't take any options.
 
+    .. Note::
+
+       Datadog's Cloudwatch through Lambda logs supports four metrics types:
+       count, gauge, histogram, and check. Thus all timing metrics are treated
+       as histogram metrics.
+
     .. seealso::
 
        https://docs.datadoghq.com/integrations/amazon_lambda/

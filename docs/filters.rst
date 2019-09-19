@@ -113,6 +113,8 @@ You could do this::
 Metrics generated with ``debug:true`` will show up in the logs, but not get
 sent to the Datadog backend.
 
+.. versionadded:: 2.0.0
+
 
 Included filters
 ================

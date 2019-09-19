@@ -53,6 +53,15 @@ class StatsdMetrics(BackendBase):
 
       Defaults to ``512``.
 
+    .. Note::
+
+       The StatsdMetrics backend does not support tags. All tags will
+       be dropped when metrics are emitted by this backend.
+
+    .. Note::
+
+       statsd doesn't support histograms so histogram metrics are
+       reported as timing metrics.
 
     .. seealso::
 
