@@ -72,7 +72,9 @@ Here's an example backend that prints metrics to stdout:
     >>> from markus.main import MetricsRecord
 
     >>> class StdoutMetrics(BackendBase):
-    ...     def __init__(self, options):
+    ...     def __init__(self, options=None, filters=None):
+    ...         options = options or {}
+    ...         self.filters = filters or []
     ...         self.prefix = options.get('prefix', '')
     ...
     ...     def emit(self, record):

@@ -5,7 +5,7 @@
 import pytest
 
 from markus.backends import datadog
-from markus.main import MetricsRecord
+from markus.main import MetricsFilter, MetricsRecord
 
 
 class MockDogStatsd(object):
@@ -46,7 +46,7 @@ def mockdogstatsd():
 
 
 def test_default_options(mockdogstatsd):
-    ddm = datadog.DatadogMetrics({})
+    ddm = datadog.DatadogMetrics()
 
     assert ddm.host == 'localhost'
     assert ddm.port == 8125
@@ -75,8 +75,8 @@ def test_options(mockdogstatsd):
 
 def test_incr(mockdogstatsd):
     rec = MetricsRecord('incr', key='foo', value=10, tags=['key1:val'])
-    ddm = datadog.DatadogMetrics({})
-    ddm.emit(rec)
+    ddm = datadog.DatadogMetrics()
+    ddm.emit_to_backend(rec)
     assert (
         ddm.client.calls ==
         [('increment', (), {'metric': 'foo', 'value': 10, 'tags': ['key1:val']})]
@@ -85,8 +85,8 @@ def test_incr(mockdogstatsd):
 
 def test_gauge(mockdogstatsd):
     rec = MetricsRecord('gauge', key='foo', value=100, tags=['key1:val'])
-    ddm = datadog.DatadogMetrics({})
-    ddm.emit(rec)
+    ddm = datadog.DatadogMetrics()
+    ddm.emit_to_backend(rec)
     assert (
         ddm.client.calls ==
         [('gauge', (), {'metric': 'foo', 'value': 100, 'tags': ['key1:val']})]
@@ -95,8 +95,8 @@ def test_gauge(mockdogstatsd):
 
 def test_timing(mockdogstatsd):
     rec = MetricsRecord('timing', key='foo', value=1234, tags=['key1:val'])
-    ddm = datadog.DatadogMetrics({})
-    ddm.emit(rec)
+    ddm = datadog.DatadogMetrics()
+    ddm.emit_to_backend(rec)
     assert (
         ddm.client.calls ==
         [('timing', (), {'metric': 'foo', 'value': 1234, 'tags': ['key1:val']})]
@@ -105,9 +105,25 @@ def test_timing(mockdogstatsd):
 
 def test_histogram(mockdogstatsd):
     rec = MetricsRecord('histogram', key='foo', value=4321, tags=['key1:val'])
-    ddm = datadog.DatadogMetrics({})
-    ddm.emit(rec)
+    ddm = datadog.DatadogMetrics()
+    ddm.emit_to_backend(rec)
     assert (
         ddm.client.calls ==
         [('histogram', (), {'metric': 'foo', 'value': 4321, 'tags': ['key1:val']})]
+    )
+
+
+def test_filters(mockdogstatsd):
+    class BlueFilter(MetricsFilter):
+        def filter(self, record):
+            if 'blue' not in record.key:
+                return
+            return record
+
+    ddm = datadog.DatadogMetrics(filters=[BlueFilter()])
+    ddm.emit_to_backend(MetricsRecord('incr', key='foo', value=1, tags=[]))
+    ddm.emit_to_backend(MetricsRecord('incr', key='foo.blue', value=2, tags=[]))
+    assert (
+        ddm.client.calls ==
+        [('increment', (), {'metric': 'foo.blue', 'value': 2, 'tags': []})]
     )

@@ -55,7 +55,7 @@ def split_clspath(clspath):
     return clspath.rsplit('.', 1)
 
 
-def configure(backends, raise_errors=False):
+def configure(backends, filters=None, raise_errors=False):
     """Instantiate and configures backends.
 
     :arg list-of-dicts backends: the backend configuration as a list of dicts where
@@ -71,6 +71,9 @@ def configure(backends, raise_errors=False):
 
         See the documentation for the backends you're using to know what is
         configurable in the options dict.
+
+    :arg list of MetricsFilters filters: filters that apply to all emitted
+        records
 
     :arg raise_errors bool: whether or not to raise an exception if something
         happens in configuration; if it doesn't raise an exception, it'll log
@@ -156,6 +159,29 @@ class MetricsRecord:
     def __repr__(self):
         return '<MetricsRecord %r %r %r %r>' % (self.stat_type, self.key, self.value, self.tags)
 
+    def __copy__(self):
+        # NOTE(willkg): the only attribute that's mutable is tags--the rest
+        # we can just copy verbatim
+        return MetricsRecord(self.stat_type, self.key, self.value, list(self.tags))
+
+
+class MetricsFilter:
+    """Filter class for augmenting metrics.
+
+    Subclass MetricsFilter to build filters that augment metrics as they're
+    published.
+
+    """
+
+    def filter(self, record):
+        """Filter a record
+
+        You can adjust a record, return the record as-is, or return ``None``
+        which will drop the record from publishing.
+
+        """
+        return record
+
 
 class MetricsInterface:
     """Interface to generating metrics.
@@ -173,7 +199,7 @@ class MetricsInterface:
 
     """
 
-    def __init__(self, prefix):
+    def __init__(self, prefix, filters=None):
         """Create a MetricsInterface.
 
         :arg str prefix: Use alphanumeric characters and underscore and period.
@@ -183,6 +209,9 @@ class MetricsInterface:
             The prefix is prepended to all keys emitted by this metrics
             interface.
 
+        :arg list of MetricsFilter filters: list of filters to apply to
+            records being emitted
+
         """
         # Convert all bad characters to .
         prefix = NOT_ALPHANUM_RE.sub('.', prefix)
@@ -191,11 +220,35 @@ class MetricsInterface:
         # Remove . at beginning and end
         self.prefix = prefix.strip('.')
 
+        self.filters = filters or []
+
+    def __repr__(self):
+        return '<MetricsInterface %s %s>' % (self.prefix, repr(self.filters))
+
     def _full_stat(self, stat):
         if self.prefix:
             return self.prefix + '.' + stat
         else:
             return stat
+
+    def _publish(self, record):
+        """Publish a record to backends.
+
+        If one of the filters rejects the record, then the record does not get
+        published.
+
+        """
+        # First run filters configured on the MetricsInterface
+        for metrics_filter in self.filters:
+            record = metrics_filter.filter(record)
+            if record is None:
+                return
+
+        for backend in _get_metrics_backends():
+            # Copy the record so filtering in one backend doesn't affect other
+            # backends
+            fresh_record = record.__copy__()
+            backend.emit_to_backend(fresh_record)
 
     def incr(self, stat, value=1, tags=None):
         """Incr is used for counting things.
@@ -224,13 +277,12 @@ class MetricsInterface:
         You can also use incr to decrement by passing a negative value.
 
         """
-        for backend in _get_metrics_backends():
-            backend.emit(MetricsRecord(
-                stat_type='incr',
-                key=self._full_stat(stat),
-                value=value,
-                tags=tags
-            ))
+        self._publish(MetricsRecord(
+            stat_type='incr',
+            key=self._full_stat(stat),
+            value=value,
+            tags=tags
+        ))
 
     def gauge(self, stat, value, tags=None):
         """Gauges are used for measuring things.
@@ -257,13 +309,12 @@ class MetricsInterface:
         ...     # parse parse parse
 
         """
-        for backend in _get_metrics_backends():
-            backend.emit(MetricsRecord(
-                stat_type='gauge',
-                key=self._full_stat(stat),
-                value=value,
-                tags=tags
-            ))
+        self._publish(MetricsRecord(
+            stat_type='gauge',
+            key=self._full_stat(stat),
+            value=value,
+            tags=tags
+        ))
 
     def timing(self, stat, value, tags=None):
         """Record a timing value.
@@ -309,13 +360,12 @@ class MetricsInterface:
            :py:meth:`markus.main.MetricsInterface.timer_decorator`.
 
         """
-        for backend in _get_metrics_backends():
-            backend.emit(MetricsRecord(
-                stat_type='timing',
-                key=self._full_stat(stat),
-                value=value,
-                tags=tags
-            ))
+        self._publish(MetricsRecord(
+            stat_type='timing',
+            key=self._full_stat(stat),
+            value=value,
+            tags=tags
+        ))
 
     def histogram(self, stat, value, tags=None):
         """Record a histogram value.
@@ -359,13 +409,12 @@ class MetricsInterface:
            same as timing.
 
         """
-        for backend in _get_metrics_backends():
-            backend.emit(MetricsRecord(
-                stat_type='histogram',
-                key=self._full_stat(stat),
-                value=value,
-                tags=tags
-            ))
+        self._publish(MetricsRecord(
+            stat_type='histogram',
+            key=self._full_stat(stat),
+            value=value,
+            tags=tags
+        ))
 
     @contextlib.contextmanager
     def timer(self, stat, tags=None):
@@ -442,7 +491,7 @@ class MetricsInterface:
         return _inner
 
 
-def get_metrics(thing, extra=''):
+def get_metrics(thing, extra='', filters=None):
     """Return MetricsInterface instance with specified prefix.
 
     The prefix is prepended to all keys emitted with this
@@ -459,6 +508,9 @@ def get_metrics(thing, extra=''):
         instance, it uses the dotted Python path plus ``str(instance)``.
 
     :arg str extra: Any extra bits to add to the end of the prefix.
+
+    :arg list of MetricsFilters filters: any filters to apply to all metrics
+        generated using this MetricsInterface
 
     :returns: a ``MetricsInterface`` instance
 
@@ -494,6 +546,16 @@ def get_metrics(thing, extra=''):
     Assume that ``Foo`` is defined in the ``myapp`` module. Then this will
     generate the prefix ``myapp.Foo.jim``.
 
+    Create a MetricsFilter and add it to the metrics interface:
+
+    >>> from markus.main import MetricsFilter
+    >>> class BlueTagFilter(MetricsFilter):
+    ...     def filter(self, record):
+    ...         record.tags.append('color:blue')
+    ...         return record
+    ...
+    >>> metrics = get_metrics('foo', filters=[BlueTagFilter()])
+
     """
     thing = thing or ''
 
@@ -510,4 +572,4 @@ def get_metrics(thing, extra=''):
     if extra:
         thing = '%s.%s' % (thing, extra)
 
-    return MetricsInterface(thing)
+    return MetricsInterface(thing, filters=filters)

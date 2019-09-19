@@ -53,7 +53,9 @@ class LoggingMetrics(BackendBase):
 
     """
 
-    def __init__(self, options):
+    def __init__(self, options=None, filters=None):
+        options = options or {}
+        self.filters = filters or []
         self.logger_name = options.get('logger_name', 'markus')
         self.logger = logging.getLogger(self.logger_name)
         self.leader = options.get('leader', 'METRICS')
@@ -122,7 +124,10 @@ class LoggingRollupMetrics(BackendBase):
 
     """
 
-    def __init__(self, options):
+    def __init__(self, options=None, filters=None):
+        options = options or {}
+        self.filters = filters or []
+
         self.flush_interval = options.get('flush_interval', 10)
         self.logger_name = options.get('logger_name', 'markus')
         self.leader = options.get('leader', 'ROLLUP')
