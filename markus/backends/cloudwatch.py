@@ -38,15 +38,18 @@ class CloudwatchMetrics(BackendBase):
 
     def emit(self, record):
         stat_type_to_kind = {
-            'incr': 'count',
-            'gauge': 'gauge',
-            'timing': 'histogram',
-            'histogram': 'histogram'
+            "incr": "count",
+            "gauge": "gauge",
+            "timing": "histogram",
+            "histogram": "histogram",
         }
-        print('MONITORING|%(timestamp)s|%(value)s|%(kind)s|%(stat)s|%(tags)s' % {
-            'timestamp': int(time.time()),
-            'kind': stat_type_to_kind[record.stat_type],
-            'stat': record.key,
-            'value': record.value,
-            'tags': ('#%s' % ','.join(record.tags)) if record.tags else ''
-        })
+        print(
+            "MONITORING|%(timestamp)s|%(value)s|%(kind)s|%(stat)s|%(tags)s"
+            % {
+                "timestamp": int(time.time()),
+                "kind": stat_type_to_kind[record.stat_type],
+                "stat": record.key,
+                "value": record.value,
+                "tags": ("#%s" % ",".join(record.tags)) if record.tags else "",
+            }
+        )

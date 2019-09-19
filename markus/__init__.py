@@ -4,19 +4,17 @@
 
 from markus.main import configure, get_metrics  # noqa
 
-INCR = 'incr'
-GAUGE = 'gauge'
-TIMING = 'timing'
-HISTOGRAM = 'histogram'
+INCR = "incr"
+GAUGE = "gauge"
+TIMING = "timing"
+HISTOGRAM = "histogram"
 
-__all__ = [
-    'configure', 'get_metrics', 'INCR', 'GAUGE', 'TIMING', 'HISTOGRAM'
-]
+__all__ = ["configure", "get_metrics", "INCR", "GAUGE", "TIMING", "HISTOGRAM"]
 
-__author__ = 'Will Kahn-Greene'
-__email__ = 'willkg@mozilla.com'
+__author__ = "Will Kahn-Greene"
+__email__ = "willkg@mozilla.com"
 
 # yyyymmdd
-__releasedate__ = ''
+__releasedate__ = ""
 # x.y.z or x.y.z.dev0 -- semver
-__version__ = '2.0.0.dev0'
+__version__ = "2.0.0.dev0"

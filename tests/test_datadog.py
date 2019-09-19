@@ -15,24 +15,16 @@ class MockDogStatsd(object):
         self.calls = []
 
     def increment(self, *args, **kwargs):
-        self.calls.append(
-            ('increment', args, kwargs),
-        )
+        self.calls.append(("increment", args, kwargs))
 
     def gauge(self, *args, **kwargs):
-        self.calls.append(
-            ('gauge', args, kwargs)
-        )
+        self.calls.append(("gauge", args, kwargs))
 
     def timing(self, *args, **kwargs):
-        self.calls.append(
-            ('timing', args, kwargs)
-        )
+        self.calls.append(("timing", args, kwargs))
 
     def histogram(self, *args, **kwargs):
-        self.calls.append(
-            ('histogram', args, kwargs)
-        )
+        self.calls.append(("histogram", args, kwargs))
 
 
 @pytest.yield_fixture
@@ -48,82 +40,79 @@ def mockdogstatsd():
 def test_default_options(mockdogstatsd):
     ddm = datadog.DatadogMetrics()
 
-    assert ddm.host == 'localhost'
+    assert ddm.host == "localhost"
     assert ddm.port == 8125
-    assert ddm.namespace == ''
+    assert ddm.namespace == ""
 
     # NOTE(willkg): ddm.client is the mock instance
     assert ddm.client.initargs == ()
-    assert ddm.client.initkwargs == {'host': 'localhost', 'port': 8125, 'namespace': ''}
+    assert ddm.client.initkwargs == {"host": "localhost", "port": 8125, "namespace": ""}
 
 
 def test_options(mockdogstatsd):
-    ddm = datadog.DatadogMetrics({
-        'statsd_host': 'example.com',
-        'statsd_port': 5000,
-        'statsd_namespace': 'joe',
-    })
+    ddm = datadog.DatadogMetrics(
+        {"statsd_host": "example.com", "statsd_port": 5000, "statsd_namespace": "joe"}
+    )
 
-    assert ddm.host == 'example.com'
+    assert ddm.host == "example.com"
     assert ddm.port == 5000
-    assert ddm.namespace == 'joe'
+    assert ddm.namespace == "joe"
 
     # NOTE(willkg): ddm.client is the mock instance
     assert ddm.client.initargs == ()
-    assert ddm.client.initkwargs == {'host': 'example.com', 'port': 5000, 'namespace': 'joe'}
+    assert ddm.client.initkwargs == {
+        "host": "example.com",
+        "port": 5000,
+        "namespace": "joe",
+    }
 
 
 def test_incr(mockdogstatsd):
-    rec = MetricsRecord('incr', key='foo', value=10, tags=['key1:val'])
+    rec = MetricsRecord("incr", key="foo", value=10, tags=["key1:val"])
     ddm = datadog.DatadogMetrics()
     ddm.emit_to_backend(rec)
-    assert (
-        ddm.client.calls ==
-        [('increment', (), {'metric': 'foo', 'value': 10, 'tags': ['key1:val']})]
-    )
+    assert ddm.client.calls == [
+        ("increment", (), {"metric": "foo", "value": 10, "tags": ["key1:val"]})
+    ]
 
 
 def test_gauge(mockdogstatsd):
-    rec = MetricsRecord('gauge', key='foo', value=100, tags=['key1:val'])
+    rec = MetricsRecord("gauge", key="foo", value=100, tags=["key1:val"])
     ddm = datadog.DatadogMetrics()
     ddm.emit_to_backend(rec)
-    assert (
-        ddm.client.calls ==
-        [('gauge', (), {'metric': 'foo', 'value': 100, 'tags': ['key1:val']})]
-    )
+    assert ddm.client.calls == [
+        ("gauge", (), {"metric": "foo", "value": 100, "tags": ["key1:val"]})
+    ]
 
 
 def test_timing(mockdogstatsd):
-    rec = MetricsRecord('timing', key='foo', value=1234, tags=['key1:val'])
+    rec = MetricsRecord("timing", key="foo", value=1234, tags=["key1:val"])
     ddm = datadog.DatadogMetrics()
     ddm.emit_to_backend(rec)
-    assert (
-        ddm.client.calls ==
-        [('timing', (), {'metric': 'foo', 'value': 1234, 'tags': ['key1:val']})]
-    )
+    assert ddm.client.calls == [
+        ("timing", (), {"metric": "foo", "value": 1234, "tags": ["key1:val"]})
+    ]
 
 
 def test_histogram(mockdogstatsd):
-    rec = MetricsRecord('histogram', key='foo', value=4321, tags=['key1:val'])
+    rec = MetricsRecord("histogram", key="foo", value=4321, tags=["key1:val"])
     ddm = datadog.DatadogMetrics()
     ddm.emit_to_backend(rec)
-    assert (
-        ddm.client.calls ==
-        [('histogram', (), {'metric': 'foo', 'value': 4321, 'tags': ['key1:val']})]
-    )
+    assert ddm.client.calls == [
+        ("histogram", (), {"metric": "foo", "value": 4321, "tags": ["key1:val"]})
+    ]
 
 
 def test_filters(mockdogstatsd):
     class BlueFilter(MetricsFilter):
         def filter(self, record):
-            if 'blue' not in record.key:
+            if "blue" not in record.key:
                 return
             return record
 
     ddm = datadog.DatadogMetrics(filters=[BlueFilter()])
-    ddm.emit_to_backend(MetricsRecord('incr', key='foo', value=1, tags=[]))
-    ddm.emit_to_backend(MetricsRecord('incr', key='foo.blue', value=2, tags=[]))
-    assert (
-        ddm.client.calls ==
-        [('increment', (), {'metric': 'foo.blue', 'value': 2, 'tags': []})]
-    )
+    ddm.emit_to_backend(MetricsRecord("incr", key="foo", value=1, tags=[]))
+    ddm.emit_to_backend(MetricsRecord("incr", key="foo.blue", value=2, tags=[]))
+    assert ddm.client.calls == [
+        ("increment", (), {"metric": "foo.blue", "value": 2, "tags": []})
+    ]

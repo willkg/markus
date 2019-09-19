@@ -56,20 +56,21 @@ class LoggingMetrics(BackendBase):
     def __init__(self, options=None, filters=None):
         options = options or {}
         self.filters = filters or []
-        self.logger_name = options.get('logger_name', 'markus')
+        self.logger_name = options.get("logger_name", "markus")
         self.logger = logging.getLogger(self.logger_name)
-        self.leader = options.get('leader', 'METRICS')
+        self.leader = options.get("leader", "METRICS")
 
     def emit(self, record):
         self.logger.info(
-            '%(leader)s|%(timestamp)s|%(kind)s|%(stat)s|%(value)s|%(tags)s' % {
-                'leader': self.leader,
+            "%(leader)s|%(timestamp)s|%(kind)s|%(stat)s|%(value)s|%(tags)s"
+            % {
+                "leader": self.leader,
                 # FIXME(willkg): Make this utc?
-                'timestamp': datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S'),
-                'kind': record.stat_type,
-                'stat': record.key,
-                'value': record.value,
-                'tags': ('#%s' % ','.join(record.tags)) if record.tags else ''
+                "timestamp": datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S"),
+                "kind": record.stat_type,
+                "stat": record.key,
+                "value": record.value,
+                "tags": ("#%s" % ",".join(record.tags)) if record.tags else "",
             }
         )
 
@@ -128,9 +129,9 @@ class LoggingRollupMetrics(BackendBase):
         options = options or {}
         self.filters = filters or []
 
-        self.flush_interval = options.get('flush_interval', 10)
-        self.logger_name = options.get('logger_name', 'markus')
-        self.leader = options.get('leader', 'ROLLUP')
+        self.flush_interval = options.get("flush_interval", 10)
+        self.logger_name = options.get("logger_name", "markus")
+        self.leader = options.get("leader", "ROLLUP")
 
         self.logger = logging.getLogger(self.logger_name)
 
@@ -152,19 +153,19 @@ class LoggingRollupMetrics(BackendBase):
 
         for key, values in sorted(self.incr_stats.items()):
             self.logger.info(
-                '%s INCR %s: count:%d|rate:%d/%d',
+                "%s INCR %s: count:%d|rate:%d/%d",
                 self.leader,
                 key,
                 len(values),
                 sum(values),
-                self.flush_interval
+                self.flush_interval,
             )
             self.incr_stats[key] = []
 
         for key, values in sorted(self.gauge_stats.items()):
             if values:
                 self.logger.info(
-                    '%s GAUGE %s: count:%d|current:%s|min:%s|max:%s',
+                    "%s GAUGE %s: count:%d|current:%s|min:%s|max:%s",
                     self.leader,
                     key,
                     len(values),
@@ -173,7 +174,7 @@ class LoggingRollupMetrics(BackendBase):
                     max(values),
                 )
             else:
-                self.logger.info('%s (gauge) %s: no data', self.leader, key)
+                self.logger.info("%s (gauge) %s: no data", self.leader, key)
 
             self.gauge_stats[key] = []
 
@@ -181,8 +182,8 @@ class LoggingRollupMetrics(BackendBase):
             if values:
                 self.logger.info(
                     (
-                        '%s HISTOGRAM %s: '
-                        'count:%d|min:%.2f|avg:%.2f|median:%.2f|ninety-five:%.2f|max:%.2f'
+                        "%s HISTOGRAM %s: "
+                        "count:%d|min:%.2f|avg:%.2f|median:%.2f|ninety-five:%.2f|max:%.2f"
                     ),
                     self.leader,
                     key,
@@ -191,22 +192,24 @@ class LoggingRollupMetrics(BackendBase):
                     statistics.mean(values),
                     statistics.median(values),
                     values[int(len(values) * 95 / 100)],
-                    max(values)
+                    max(values),
                 )
             else:
-                self.logger.info('%s (histogram) %s: no data', self.leader, key)
+                self.logger.info("%s (histogram) %s: no data", self.leader, key)
 
             self.histogram_stats[key] = []
 
     def emit(self, record):
         stat_type_to_list = {
-            'incr': self.incr_stats,
-            'gauge': self.gauge_stats,
-            'timing': self.histogram_stats,
-            'histogram': self.histogram_stats
+            "incr": self.incr_stats,
+            "gauge": self.gauge_stats,
+            "timing": self.histogram_stats,
+            "histogram": self.histogram_stats,
         }
 
         self.rollup()
 
         # FIXME(willkg): what to do with tags?
-        stat_type_to_list[record.stat_type].setdefault(record.key, []).append(record.value)
+        stat_type_to_list[record.stat_type].setdefault(record.key, []).append(
+            record.value
+        )

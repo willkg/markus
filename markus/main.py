@@ -18,8 +18,8 @@ else:
     time_func = time.time
 
 
-NOT_ALPHANUM_RE = re.compile(r'[^a-z0-9_\.]', re.I)
-CONSECUTIVE_PERIODS_RE = re.compile(r'\.+')
+NOT_ALPHANUM_RE = re.compile(r"[^a-z0-9_\.]", re.I)
+CONSECUTIVE_PERIODS_RE = re.compile(r"\.+")
 
 
 logger = logging.getLogger(__name__)
@@ -52,7 +52,7 @@ def split_clspath(clspath):
     sophisticated?
 
     """
-    return clspath.rsplit('.', 1)
+    return clspath.rsplit(".", 1)
 
 
 def configure(backends, filters=None, raise_errors=False):
@@ -108,8 +108,8 @@ def configure(backends, filters=None, raise_errors=False):
     good_backends = []
 
     for backend in backends:
-        clspath = backend['class']
-        options = backend.get('options', {})
+        clspath = backend["class"]
+        options = backend.get("options", {})
 
         if isinstance(clspath, str):
             modpath, clsname = split_clspath(clspath)
@@ -118,7 +118,7 @@ def configure(backends, filters=None, raise_errors=False):
                 module = sys.modules[modpath]
                 cls = getattr(module, clsname)
             except Exception:
-                logger.exception('Exception while importing %s', clspath)
+                logger.exception("Exception while importing %s", clspath)
                 if raise_errors:
                     raise
                 continue
@@ -129,9 +129,7 @@ def configure(backends, filters=None, raise_errors=False):
             good_backends.append(cls(options))
         except Exception:
             logger.exception(
-                'Exception thrown while instantiating %s, %s',
-                clspath,
-                options
+                "Exception thrown while instantiating %s, %s", clspath, options
             )
             if raise_errors:
                 raise
@@ -157,7 +155,12 @@ class MetricsRecord:
         self.tags = tags or []
 
     def __repr__(self):
-        return '<MetricsRecord %r %r %r %r>' % (self.stat_type, self.key, self.value, self.tags)
+        return "<MetricsRecord %r %r %r %r>" % (
+            self.stat_type,
+            self.key,
+            self.value,
+            self.tags,
+        )
 
     def __copy__(self):
         # NOTE(willkg): the only attribute that's mutable is tags--the rest
@@ -214,20 +217,20 @@ class MetricsInterface:
 
         """
         # Convert all bad characters to .
-        prefix = NOT_ALPHANUM_RE.sub('.', prefix)
+        prefix = NOT_ALPHANUM_RE.sub(".", prefix)
         # Collapse sequences of . to a single .
-        prefix = CONSECUTIVE_PERIODS_RE.sub('.', prefix)
+        prefix = CONSECUTIVE_PERIODS_RE.sub(".", prefix)
         # Remove . at beginning and end
-        self.prefix = prefix.strip('.')
+        self.prefix = prefix.strip(".")
 
         self.filters = filters or []
 
     def __repr__(self):
-        return '<MetricsInterface %s %s>' % (self.prefix, repr(self.filters))
+        return "<MetricsInterface %s %s>" % (self.prefix, repr(self.filters))
 
     def _full_stat(self, stat):
         if self.prefix:
-            return self.prefix + '.' + stat
+            return self.prefix + "." + stat
         else:
             return stat
 
@@ -277,12 +280,11 @@ class MetricsInterface:
         You can also use incr to decrement by passing a negative value.
 
         """
-        self._publish(MetricsRecord(
-            stat_type='incr',
-            key=self._full_stat(stat),
-            value=value,
-            tags=tags
-        ))
+        self._publish(
+            MetricsRecord(
+                stat_type="incr", key=self._full_stat(stat), value=value, tags=tags
+            )
+        )
 
     def gauge(self, stat, value, tags=None):
         """Gauges are used for measuring things.
@@ -309,12 +311,11 @@ class MetricsInterface:
         ...     # parse parse parse
 
         """
-        self._publish(MetricsRecord(
-            stat_type='gauge',
-            key=self._full_stat(stat),
-            value=value,
-            tags=tags
-        ))
+        self._publish(
+            MetricsRecord(
+                stat_type="gauge", key=self._full_stat(stat), value=value, tags=tags
+            )
+        )
 
     def timing(self, stat, value, tags=None):
         """Record a timing value.
@@ -360,12 +361,11 @@ class MetricsInterface:
            :py:meth:`markus.main.MetricsInterface.timer_decorator`.
 
         """
-        self._publish(MetricsRecord(
-            stat_type='timing',
-            key=self._full_stat(stat),
-            value=value,
-            tags=tags
-        ))
+        self._publish(
+            MetricsRecord(
+                stat_type="timing", key=self._full_stat(stat), value=value, tags=tags
+            )
+        )
 
     def histogram(self, stat, value, tags=None):
         """Record a histogram value.
@@ -409,12 +409,11 @@ class MetricsInterface:
            same as timing.
 
         """
-        self._publish(MetricsRecord(
-            stat_type='histogram',
-            key=self._full_stat(stat),
-            value=value,
-            tags=tags
-        ))
+        self._publish(
+            MetricsRecord(
+                stat_type="histogram", key=self._full_stat(stat), value=value, tags=tags
+            )
+        )
 
     @contextlib.contextmanager
     def timer(self, stat, tags=None):
@@ -482,16 +481,19 @@ class MetricsInterface:
            All timings generated with this are in milliseconds.
 
         """
+
         def _inner(fun):
             @wraps(fun)
             def _timer_decorator(*args, **kwargs):
                 with self.timer(stat, tags):
                     return fun(*args, **kwargs)
+
             return _timer_decorator
+
         return _inner
 
 
-def get_metrics(thing, extra='', filters=None):
+def get_metrics(thing, extra="", filters=None):
     """Return MetricsInterface instance with specified prefix.
 
     The prefix is prepended to all keys emitted with this
@@ -557,19 +559,17 @@ def get_metrics(thing, extra='', filters=None):
     >>> metrics = get_metrics('foo', filters=[BlueTagFilter()])
 
     """
-    thing = thing or ''
+    thing = thing or ""
 
     if not isinstance(thing, str):
         # If it's not a str, it's either a class or an instance. Handle
         # accordingly.
         if type(thing) == type:
-            thing = '%s.%s' % (thing.__module__, thing.__name__)
+            thing = "%s.%s" % (thing.__module__, thing.__name__)
         else:
-            thing = '%s.%s' % (
-                thing.__class__.__module__, thing.__class__.__name__
-            )
+            thing = "%s.%s" % (thing.__class__.__module__, thing.__class__.__name__)
 
     if extra:
-        thing = '%s.%s' % (thing, extra)
+        thing = "%s.%s" % (thing, extra)
 
     return MetricsInterface(thing, filters=filters)

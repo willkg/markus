@@ -58,6 +58,7 @@ class MetricsMock:
 
     def filter_records(self, fun_name=None, stat=None, value=None, tags=None):
         """Filter collected metircs records for ones that match specified criteria."""
+
         def match_fun_name(record_fun_name):
             return fun_name is None or fun_name == record_fun_name
 
@@ -71,22 +72,20 @@ class MetricsMock:
             return tags is None or list(sorted(tags)) == list(sorted(record_tags))
 
         return [
-            record for record in self.get_records()
-            if (match_fun_name(record[0]) and
-                match_stat(record[1]) and
-                match_value(record[2]) and
-                match_tags(record[3]))
+            record
+            for record in self.get_records()
+            if (
+                match_fun_name(record[0])
+                and match_stat(record[1])
+                and match_value(record[2])
+                and match_tags(record[3])
+            )
         ]
 
     def has_record(self, fun_name=None, stat=None, value=None, tags=None):
-        """Return True/False regarding whether collected metrics match specified criteria."""
+        """Return True/False regarding whether collected metrics match criteria."""
         return bool(
-            self.filter_records(
-                fun_name=fun_name,
-                stat=stat,
-                value=value,
-                tags=tags
-            )
+            self.filter_records(fun_name=fun_name, stat=stat, value=value, tags=tags)
         )
 
     def print_records(self):
