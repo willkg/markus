@@ -50,11 +50,7 @@ setup(
     author="Will Kahn-Greene",
     author_email='willkg@mozilla.com',
     url='https://github.com/willkg/markus',
-    install_requires=[
-        'six',
-    ],
     extras_require={
-        ":python_version<'3.4'": ['statistics'],
         'datadog': ['datadog'],
         'statsd': ['statsd'],
     },
@@ -71,7 +67,7 @@ setup(
     include_package_data=True,
     license="MPLv2",
     zip_safe=False,
-    keywords='metrics statsd',
+    keywords='metrics datadog statsd',
     classifiers=[
         'Development Status :: 5 - Production/Stable',
         'Intended Audience :: Developers',
