@@ -123,6 +123,11 @@ class LoggingRollupMetrics(BackendBase):
 
       Defaults to ``10`` seconds.
 
+    .. Note::
+
+       This backend is experimental, probably has bugs, and may change over
+       time.
+
     """
 
     def __init__(self, options=None, filters=None):
