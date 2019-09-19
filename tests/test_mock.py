@@ -173,4 +173,3 @@ class TestMetricsMock:
                 stat='foobar.key1',
                 value=5,
             )
-
