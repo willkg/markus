@@ -9,3 +9,4 @@ tox==2.6
 twine==1.15.0
 Sphinx==2.2.0
 flake8==3.7.8
+black==19.3b0 ; python_version >= '3.6'

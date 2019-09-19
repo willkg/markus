@@ -8,20 +8,21 @@ from markus.testing import MetricsMock
 
 class TestMetricsMock:
     """Verify the MetricsMock works as advertised"""
+
     def test_print_records(self):
         # NOTE(willkg): .print_records() prints to stdout and is mostly used
         # for debugging tests. So we're just going to run it and make sure it
         # doesn't throw errors.
         with MetricsMock() as mm:
-            mymetrics = markus.get_metrics('foobar')
-            mymetrics.incr('key1')
+            mymetrics = markus.get_metrics("foobar")
+            mymetrics.incr("key1")
 
             mm.print_records()
 
     def test_clear_records(self):
         with MetricsMock() as mm:
-            mymetrics = markus.get_metrics('foobar')
-            mymetrics.incr('key1', value=1, tags=['env:stage'])
+            mymetrics = markus.get_metrics("foobar")
+            mymetrics.incr("key1", value=1, tags=["env:stage"])
 
             assert len(mm.get_records()) == 1
 
@@ -31,107 +32,78 @@ class TestMetricsMock:
 
     def test_filter_records_fun_name(self):
         with MetricsMock() as mm:
-            mymetrics = markus.get_metrics('foobar')
-            mymetrics.incr('key1', value=1, tags=['env:stage'])
+            mymetrics = markus.get_metrics("foobar")
+            mymetrics.incr("key1", value=1, tags=["env:stage"])
+
+            key1_metrics = mm.filter_records(stat="foobar.key1", value=1)
+            assert len(key1_metrics) == 1
 
             key1_metrics = mm.filter_records(
-                stat='foobar.key1',
-                value=1,
+                fun_name="incr", stat="foobar.key1", value=1
             )
             assert len(key1_metrics) == 1
 
             key1_metrics = mm.filter_records(
-                fun_name='incr',
-                stat='foobar.key1',
-                value=1,
-            )
-            assert len(key1_metrics) == 1
-
-            key1_metrics = mm.filter_records(
-                fun_name='timing',
-                stat='foobar.key1',
-                value=1,
+                fun_name="timing", stat="foobar.key1", value=1
             )
             assert len(key1_metrics) == 0
 
     def test_filter_records_key(self):
         with MetricsMock() as mm:
-            mymetrics = markus.get_metrics('foobar')
-            mymetrics.incr('key1', value=1, tags=['env:stage'])
+            mymetrics = markus.get_metrics("foobar")
+            mymetrics.incr("key1", value=1, tags=["env:stage"])
+
+            key1_metrics = mm.filter_records(fun_name="incr", value=1)
+            assert len(key1_metrics) == 1
 
             key1_metrics = mm.filter_records(
-                fun_name='incr',
-                value=1,
+                fun_name="incr", stat="foobar.key1", value=1
             )
             assert len(key1_metrics) == 1
 
             key1_metrics = mm.filter_records(
-                fun_name='incr',
-                stat='foobar.key1',
-                value=1,
+                fun_name="incr", stat="foobar.key1", value=1
             )
             assert len(key1_metrics) == 1
 
             key1_metrics = mm.filter_records(
-                fun_name='incr',
-                stat='foobar.key1',
-                value=1,
-            )
-            assert len(key1_metrics) == 1
-
-            key1_metrics = mm.filter_records(
-                fun_name='incr',
-                stat='foobar.key2',
-                value=1,
+                fun_name="incr", stat="foobar.key2", value=1
             )
             assert len(key1_metrics) == 0
 
     def test_filter_records_value(self):
         with MetricsMock() as mm:
-            mymetrics = markus.get_metrics('foobar')
-            mymetrics.incr('key1', value=1, tags=['env:stage'])
+            mymetrics = markus.get_metrics("foobar")
+            mymetrics.incr("key1", value=1, tags=["env:stage"])
+
+            key1_metrics = mm.filter_records(fun_name="incr", stat="foobar.key1")
+            assert len(key1_metrics) == 1
 
             key1_metrics = mm.filter_records(
-                fun_name='incr',
-                stat='foobar.key1',
+                fun_name="incr", stat="foobar.key1", value=1
             )
             assert len(key1_metrics) == 1
 
             key1_metrics = mm.filter_records(
-                fun_name='incr',
-                stat='foobar.key1',
-                value=1,
-            )
-            assert len(key1_metrics) == 1
-
-            key1_metrics = mm.filter_records(
-                fun_name='incr',
-                stat='foobar.key1',
-                value=5,
+                fun_name="incr", stat="foobar.key1", value=5
             )
             assert len(key1_metrics) == 0
 
     def test_filter_records_tags(self):
         with MetricsMock() as mm:
-            mymetrics = markus.get_metrics('foobar')
-            mymetrics.incr('key1', value=1, tags=['env:stage'])
-            mymetrics.incr('key2', value=3, tags=['env:prod'])
+            mymetrics = markus.get_metrics("foobar")
+            mymetrics.incr("key1", value=1, tags=["env:stage"])
+            mymetrics.incr("key2", value=3, tags=["env:prod"])
 
-            key1_metrics = mm.filter_records(
-                tags=['env:stage'],
-            )
+            key1_metrics = mm.filter_records(tags=["env:stage"])
             assert len(key1_metrics) == 1
-            assert key1_metrics[0][1] == 'foobar.key1'
+            assert key1_metrics[0][1] == "foobar.key1"
 
-            key1_metrics = mm.filter_records(
-                tags=['env:prod'],
-            )
+            key1_metrics = mm.filter_records(tags=["env:prod"])
             assert len(key1_metrics) == 1
-            assert key1_metrics[0][1] == 'foobar.key2'
+            assert key1_metrics[0][1] == "foobar.key2"
 
-            key1_metrics = mm.filter_records(
-                tags=['env:dev'],
-            )
+            key1_metrics = mm.filter_records(tags=["env:dev"])
             assert len(key1_metrics) == 0
 
     def test_has_record(self):
@@ -141,35 +113,19 @@ class TestMetricsMock:
         #
         # If that ever changes, we should update this test.
         with MetricsMock() as mm:
-            mymetrics = markus.get_metrics('foobar')
-            mymetrics.incr('key1', value=1)
+            mymetrics = markus.get_metrics("foobar")
+            mymetrics.incr("key1", value=1)
 
-            assert mm.has_record(
-                fun_name='incr',
-                stat='foobar.key1',
-                value=1,
-            )
+            assert mm.has_record(fun_name="incr", stat="foobar.key1", value=1)
 
-            assert not mm.has_record(
-                fun_name='incr',
-                stat='foobar.key1',
-                value=5,
-            )
+            assert not mm.has_record(fun_name="incr", stat="foobar.key1", value=5)
 
     def test_configure_doesnt_affect_override(self):
         with MetricsMock() as mm:
-            markus.configure([{'class': 'markus.backends.logging.LoggingMetrics'}])
-            mymetrics = markus.get_metrics('foobar')
-            mymetrics.incr('key1', value=1)
+            markus.configure([{"class": "markus.backends.logging.LoggingMetrics"}])
+            mymetrics = markus.get_metrics("foobar")
+            mymetrics.incr("key1", value=1)
 
-            assert mm.has_record(
-                fun_name='incr',
-                stat='foobar.key1',
-                value=1,
-            )
+            assert mm.has_record(fun_name="incr", stat="foobar.key1", value=1)
 
-            assert not mm.has_record(
-                fun_name='incr',
-                stat='foobar.key1',
-                value=5,
-            )
+            assert not mm.has_record(fun_name="incr", stat="foobar.key1", value=5)

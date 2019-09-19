@@ -62,16 +62,18 @@ class StatsdMetrics(BackendBase):
 
     def __init__(self, options=None, filters=None):
         options = options or {}
-        self.host = options.get('statsd_host', 'localhost')
-        self.port = options.get('statsd_port', 8125)
-        self.prefix = options.get('statsd_prefix')
-        self.maxudpsize = options.get('statsd_maxudpsize', 512)
+        self.host = options.get("statsd_host", "localhost")
+        self.port = options.get("statsd_port", 8125)
+        self.prefix = options.get("statsd_prefix")
+        self.maxudpsize = options.get("statsd_maxudpsize", 512)
 
         self.filters = filters or []
 
-        self.client = self._get_client(self.host, self.port, self.prefix, self.maxudpsize)
+        self.client = self._get_client(
+            self.host, self.port, self.prefix, self.maxudpsize
+        )
         logger.info(
-            '%s configured: %s:%s %s',
+            "%s configured: %s:%s %s",
             self.__class__.__name__,
             self.host,
             self.port,
@@ -79,14 +81,13 @@ class StatsdMetrics(BackendBase):
         )
 
     def _get_client(self, host, port, prefix, maxudpsize):
-        return StatsClient(
-            host=host, port=port, prefix=prefix, maxudpsize=maxudpsize)
+        return StatsClient(host=host, port=port, prefix=prefix, maxudpsize=maxudpsize)
 
     def emit(self, record):
         stat_type = record.stat_type
-        if stat_type == 'incr':
+        if stat_type == "incr":
             self.client.incr(stat=record.key, count=record.value)
-        elif stat_type == 'gauge':
+        elif stat_type == "gauge":
             self.client.gauge(stat=record.key, value=record.value)
-        elif stat_type in ('timing', 'histogram'):
+        elif stat_type in ("timing", "histogram"):
             self.client.timing(stat=record.key, delta=record.value)

@@ -10,7 +10,7 @@ import six
 NONE_TYPE = type(None)
 
 # regexp that matches characters that can't be in tags
-BAD_TAG_CHAR_REGEXP = re.compile(r'[^0-9a-zA-Z\._\-/]')
+BAD_TAG_CHAR_REGEXP = re.compile(r"[^0-9a-zA-Z\._\-/]")
 
 
 def generate_tag(key, value=None):
@@ -58,29 +58,31 @@ def generate_tag(key, value=None):
     """
     # Verify the types
     if not isinstance(key, six.string_types):
-        raise ValueError('key must be a string type, but got %r instead' % key)
+        raise ValueError("key must be a string type, but got %r instead" % key)
 
     if not isinstance(value, six.string_types + (NONE_TYPE,)):
-        raise ValueError('value must be None or a string type, but got %r instead' % value)
+        raise ValueError(
+            "value must be None or a string type, but got %r instead" % value
+        )
 
     # Sanitize the key
-    key = BAD_TAG_CHAR_REGEXP.sub('_', key).strip()
+    key = BAD_TAG_CHAR_REGEXP.sub("_", key).strip()
 
     # Build the tag
     if value is None or not value.strip():
         tag = key
     else:
-        value = BAD_TAG_CHAR_REGEXP.sub('_', value).strip()
-        tag = '%s:%s' % (key, value)
+        value = BAD_TAG_CHAR_REGEXP.sub("_", value).strip()
+        tag = "%s:%s" % (key, value)
 
     if tag and not tag[0].isalpha():
-        tag = 'a' + tag
+        tag = "a" + tag
 
     # Lowercase and truncate
     tag = tag.lower()[:200]
 
     # Add _ if it's a reserved word
-    if tag in ['device', 'host', 'source']:
-        tag = tag + '_'
+    if tag in ["device", "host", "source"]:
+        tag = tag + "_"
 
     return tag
