@@ -25,7 +25,7 @@ History
 **Bug fixes**
 
 * Document feature support in backends. (#47)
-* Fix ``MetricsMock.has_record()`` example. (Thanks John!)
+* Fix ``MetricsMock.has_record()`` example. Thank you, John!
 
 
 1.2.0 (April 27th, 2018)
