@@ -1,12 +1,11 @@
 -e .
 
-datadog==0.26.0
+datadog==0.30.0
 statsd==3.3.0
 
-freezegun==0.3.11
-pytest==4.3.0
-pytest-wholenodeid==0.2
+freezegun==0.3.12
+pytest==5.1.2
 tox==2.6
-twine==1.13.0
-Sphinx==1.8.4
-flake8==3.7.6
+twine==1.15.0
+Sphinx==2.2.0
+flake8==3.7.8
