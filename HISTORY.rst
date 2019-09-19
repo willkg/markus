@@ -1,13 +1,13 @@
 History
 =======
 
-2.0.0 (in development)
-----------------------
+2.0.0 (September 19th, 2019)
+----------------------------
 
 **Features**
 
 * Use ``time.perf_counter()`` if available. Thank you, Mike! (#34)
-* Support Python 3.7 more officially.
+* Support Python 3.7 officially.
 * Add filters for adjusting and dropping metrics getting emitted.
   See documentation for more details. (#40)
 
@@ -24,6 +24,8 @@ History
 
 **Bug fixes**
 
+* Document feature support in backends. (#47)
+* Fix ``MetricsMock.has_record()`` example. (Thanks John!)
 
 
 1.2.0 (April 27th, 2018)

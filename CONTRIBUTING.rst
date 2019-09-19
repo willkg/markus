@@ -53,7 +53,8 @@ to build documentation.
 Tests
 =====
 
-Tests are run using the `py.test <http://pytest.org/>`_ test runner.
+Run tests with `tox <https://tox.readthedocs.io/en/latest/>`_. This
+will run all tests across all supported Python versions.
 
 Tests are located in the ``tests/`` directory.
 
@@ -68,7 +69,7 @@ Release process
 
 3. Update version numbers in ``markus/__init__.py``.
 
-   1. Set ``__version__`` to something like ``0.4``.
+   1. Set ``__version__`` to something like ``0.4.0``.
    2. Set ``__releasedate__`` to something like ``20120731``.
 
 4. Update ``HISTORY.rst``
@@ -90,7 +91,7 @@ Release process
 
 7. Push everything::
 
-       $ git push --tags official master
+       $ git push --tags origin master
 
 8. Update PyPI::
 
