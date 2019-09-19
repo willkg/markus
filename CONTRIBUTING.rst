@@ -62,7 +62,7 @@ Tests are located in the ``tests/`` directory.
 Release process
 ===============
 
-1. Checkout master tip.
+1. Checkout master tip and create a prep branch like ``2_0_0_prep``.
 
 2. Check to make sure ``setup.py`` and requirements files
    have correct versions of requirements.
@@ -79,24 +79,28 @@ Release process
 
 5. Verify correctness.
 
-   1. Run tests.
+   1. Run tests with ``tox``.
    2. Build docs (this runs example code).
    3. Verify all that works.
 
-6. Tag the release::
+6. Push that branch and create a PR. If that passes, then merge it.
 
-       $ git tag -a v0.4
+7. Check out and update master branch locally.
+
+8. Tag the release::
+
+       $ git tag -a v0.4.0
 
    Copy the details from ``HISTORY.rst`` into the tag comment.
 
-7. Push everything::
+9. Push everything::
 
        $ git push --tags origin master
 
-8. Update PyPI::
+10. Update PyPI--do this in a Python3 virtualenv::
 
-       $ rm -rf dist/*
-       $ python setup.py sdist bdist_wheel
-       $ twine upload dist/*
+        $ rm -rf dist/*
+        $ python setup.py sdist bdist_wheel
+        $ twine upload dist/*
 
-9. Announce the release.
+11. Announce the release with a blog post and tweet.
