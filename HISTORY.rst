@@ -17,6 +17,7 @@ History
   expected test output.
 * Adjust internals to run ``.emit()`` on backends. If you wrote your own
   backend, you may need to adjust it.
+* Drop support for Python 2.7. (#42)
 * Drop support for Python 3.4. (#39)
 
 **Bug fixes**
