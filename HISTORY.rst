@@ -1,6 +1,16 @@
 History
 =======
 
+2.1.0 (October 7th, 2019)
+-------------------------
+
+**Features**
+
+* Fix ``get_metrics()`` so you can call it without passing in a `thing`
+  and it'll now create a ``MetricsInterface`` that doesn't have a key
+  prefix. (#59)
+
+
 2.0.0 (September 19th, 2019)
 ----------------------------
 
