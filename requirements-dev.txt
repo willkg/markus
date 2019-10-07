@@ -6,7 +6,7 @@ statsd==3.3.0
 black==19.3b0 ; python_version >= '3.6'
 flake8==3.7.8
 freezegun==0.3.12
-pytest==5.1.2
+pytest==5.2.1
 Sphinx==2.2.0
-tox==2.6
-twine==1.15.0
+tox==3.14.0
+twine==2.0.0 ; python_version >= '3.6'
