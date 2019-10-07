@@ -493,7 +493,7 @@ class MetricsInterface:
         return _inner
 
 
-def get_metrics(thing, extra="", filters=None):
+def get_metrics(thing="", extra="", filters=None):
     """Return MetricsInterface instance with specified prefix.
 
     The prefix is prepended to all keys emitted with this
@@ -504,10 +504,15 @@ def get_metrics(thing, extra="", filters=None):
     us to create :py:class:`markus.main.MetricsInterface` classes without
     having to worry about bootstrapping order of the app.
 
-    :arg class/instance/str thing: The prefix to use for keys.
+    :arg class/instance/str thing: The prefix to use for keys generated
+        with this :py:class:`markus.main.MetricsInterface`.
 
-        If this is a class, it uses the dotted Python path. If this is an
-        instance, it uses the dotted Python path plus ``str(instance)``.
+        If this is a string, then it uses it as a prefix.
+
+        If this is a class, it uses the dotted Python path.
+
+        If this is an instance, it uses the dotted Python path plus
+        ``str(instance)``.
 
     :arg str extra: Any extra bits to add to the end of the prefix.
 
