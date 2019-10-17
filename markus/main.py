@@ -55,32 +55,46 @@ def split_clspath(clspath):
     return clspath.rsplit(".", 1)
 
 
-def configure(backends, filters=None, raise_errors=False):
+def configure(backends, raise_errors=False):
     """Instantiate and configures backends.
 
     :arg list-of-dicts backends: the backend configuration as a list of dicts where
         each dict specifies a separate backend.
 
-        Each backend dict consists of two things:
+        Each backend dict consists of three things:
 
         1. ``class`` with a value that is either a Python class or a dotted
            Python path to one
 
-        2. ``options`` dict with options for the backend in question to
-           configure it
+        2. (optional) ``options`` dict with options for the backend in question
+           to configure it
+
+        3. (optional) ``filters`` list of filters to apply to metrics emitted
+           by this backend
 
         See the documentation for the backends you're using to know what is
         configurable in the options dict.
-
-    :arg list of MetricsFilters filters: filters that apply to all emitted
-        records
 
     :arg raise_errors bool: whether or not to raise an exception if something
         happens in configuration; if it doesn't raise an exception, it'll log
         the exception
 
-    For example, this sets up a
+    For example, this sets up a default
     :py:class:`markus.backends.logging.LoggingMetrics` backend::
+
+        import markus
+
+        markus.configure([
+            {
+                'class': 'markus.backends.logging.LoggingMetrics',
+            }
+        ])
+
+    This sets up a
+    :py:class:`markus.backends.logging.LoggingMetrics` backend with
+    options::
+
+        import markus
 
         markus.configure([
             {
@@ -91,8 +105,20 @@ def configure(backends, filters=None, raise_errors=False):
             }
         ])
 
+    This sets up a :py:class:`markus.backends.logging.LoggingMetrics`
+    backend that adds a tag to every metric::
 
-    You can set up as many backends as you like.
+        import markus
+        from markus.filters import AddTagFilter
+
+        markus.configure([
+            {
+                'class': 'markus.backends.logging.LoggingMetrics',
+                'filters': [AddTagFilter("color:blue")],
+            }
+        ])
+
+    You can set up zero or more backends.
 
     .. Note::
 
@@ -110,6 +136,7 @@ def configure(backends, filters=None, raise_errors=False):
     for backend in backends:
         clspath = backend["class"]
         options = backend.get("options", {})
+        filters = backend.get("filters", [])
 
         if isinstance(clspath, str):
             modpath, clsname = split_clspath(clspath)
@@ -126,7 +153,7 @@ def configure(backends, filters=None, raise_errors=False):
             cls = clspath
 
         try:
-            good_backends.append(cls(options))
+            good_backends.append(cls(options=options, filters=filters))
         except Exception:
             logger.exception(
                 "Exception thrown while instantiating %s, %s", clspath, options
@@ -181,6 +208,8 @@ class MetricsFilter:
 
         You can adjust a record, return the record as-is, or return ``None``
         which will drop the record from publishing.
+
+        Records are :py:class:`markus.main.MetricsRecord`.
 
         """
         return record
