@@ -9,14 +9,6 @@ import re
 import sys
 import time
 
-import six
-
-
-if six.PY3:
-    time_func = time.perf_counter
-else:
-    time_func = time.time
-
 
 NOT_ALPHANUM_RE = re.compile(r"[^a-z0-9_\.]", re.I)
 CONSECUTIVE_PERIODS_RE = re.compile(r"\.+")
@@ -473,11 +465,11 @@ class MetricsInterface:
            All timings generated with this are in milliseconds.
 
         """
-        start_time = time_func()
+        start_time = time.perf_counter()
 
         yield
 
-        end_time = time_func()
+        end_time = time.perf_counter()
 
         delta = end_time - start_time
         self.timing(stat, value=delta * 1000.0, tags=tags)

@@ -4,8 +4,6 @@
 
 import re
 
-import six
-
 
 NONE_TYPE = type(None)
 
@@ -57,10 +55,10 @@ def generate_tag(key, value=None):
 
     """
     # Verify the types
-    if not isinstance(key, six.string_types):
+    if not isinstance(key, str):
         raise ValueError("key must be a string type, but got %r instead" % key)
 
-    if not isinstance(value, six.string_types + (NONE_TYPE,)):
+    if not isinstance(value, (str, NONE_TYPE)):
         raise ValueError(
             "value must be None or a string type, but got %r instead" % value
         )

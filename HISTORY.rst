@@ -4,6 +4,10 @@ History
 2.1.1 (in development)
 ----------------------
 
+**Bug fixes**
+
+* Remove use of ``six`` library. (#69)
+
 
 2.1.0 (October 7th, 2019)
 -------------------------
