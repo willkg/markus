@@ -96,3 +96,51 @@ class MetricsMock:
     def clear_records(self):
         """Clear the records list."""
         self.records = []
+
+    def assert_incr(self, stat, value=None, tags=None):
+        """Asserts an incr was emitted at least once."""
+        assert len(self.filter_records(INCR, stat=stat, value=value, tags=tags)) >= 1
+
+    def assert_incr_once(self, stat, value=None, tags=None):
+        """Asserts an incr was emitted exactly once."""
+        assert len(self.filter_records(INCR, stat=stat, value=value, tags=tags)) == 1
+
+    def assert_not_incr(self, stat, value=None, tags=None):
+        """Asserts an incr was not emitted."""
+        assert len(self.filter_records(INCR, stat=stat, value=value, tags=tags)) == 0
+
+    def assert_gauge(self, stat, value=None, tags=None):
+        """Asserts a gauge was emitted at least once."""
+        assert len(self.filter_records(GAUGE, stat=stat, value=value, tags=tags)) >= 1
+
+    def assert_gauge_once(self, stat, value=None, tags=None):
+        """Asserts a gauge was emitted exactly once."""
+        assert len(self.filter_records(GAUGE, stat=stat, value=value, tags=tags)) == 1
+
+    def assert_not_gauge(self, stat, value=None, tags=None):
+        """Asserts a gauge was not emitted."""
+        assert len(self.filter_records(GAUGE, stat=stat, value=value, tags=tags)) == 0
+
+    def assert_timing(self, stat, value=None, tags=None):
+        """Asserts a timing was emitted at least once."""
+        assert len(self.filter_records(TIMING, stat=stat, value=value, tags=tags)) >= 1
+
+    def assert_timing_once(self, stat, value=None, tags=None):
+        """Asserts a timing was emitted exactly once."""
+        assert len(self.filter_records(TIMING, stat=stat, value=value, tags=tags)) == 1
+
+    def assert_not_timing(self, stat, value=None, tags=None):
+        """Asserts a timing was not emitted."""
+        assert len(self.filter_records(TIMING, stat=stat, value=value, tags=tags)) == 0
+
+    def assert_histogram(self, stat, value=None, tags=None):
+        """Asserts a histogram was emitted at least once."""
+        assert len(self.filter_records(HISTOGRAM, stat=stat, value=value, tags=tags)) >= 1
+
+    def assert_histogram_once(self, stat, value=None, tags=None):
+        """Asserts a histogram was emitted exactly once."""
+        assert len(self.filter_records(HISTOGRAM, stat=stat, value=value, tags=tags)) == 1
+
+    def assert_not_histogram(self, stat, value=None, tags=None):
+        """Asserts a histogram was not emitted."""
+        assert len(self.filter_records(HISTOGRAM, stat=stat, value=value, tags=tags)) == 0

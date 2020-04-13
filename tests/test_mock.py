@@ -5,6 +5,8 @@
 import markus
 from markus.testing import MetricsMock
 
+import pytest
+
 
 class TestMetricsMock:
     """Verify the MetricsMock works as advertised"""
@@ -129,3 +131,79 @@ class TestMetricsMock:
             assert mm.has_record(fun_name="incr", stat="foobar.key1", value=1)
 
             assert not mm.has_record(fun_name="incr", stat="foobar.key1", value=5)
+
+    def test_incr_helpers(self):
+        with MetricsMock() as mm:
+            markus.configure([{"class": "markus.backends.logging.LoggingMetrics"}])
+            mymetrics = markus.get_metrics("foobar")
+            mymetrics.incr("key1", value=1)
+            mymetrics.incr("keymultiple", value=1)
+            mymetrics.incr("keymultiple", value=1)
+
+            mm.assert_incr(stat="foobar.key1")
+
+            mm.assert_incr_once(stat="foobar.key1")
+            with pytest.raises(AssertionError):
+                mm.assert_incr_once(stat="foobar.keymultiple")
+
+            mm.assert_not_incr(stat="foobar.keynot")
+            mm.assert_not_incr(stat="foobar.key1", value=5)
+            with pytest.raises(AssertionError):
+                mm.assert_not_incr(stat="foobar.key1")
+
+    def test_gauge_helpers(self):
+        with MetricsMock() as mm:
+            markus.configure([{"class": "markus.backends.logging.LoggingMetrics"}])
+            mymetrics = markus.get_metrics("foobar")
+            mymetrics.gauge("key1", value=5)
+            mymetrics.gauge("keymultiple", value=5)
+            mymetrics.gauge("keymultiple", value=5)
+
+            mm.assert_gauge(stat="foobar.key1")
+
+            mm.assert_gauge_once(stat="foobar.key1")
+            with pytest.raises(AssertionError):
+                mm.assert_gauge_once(stat="foobar.keymultiple")
+
+            mm.assert_not_gauge(stat="foobar.keynot")
+            mm.assert_not_gauge(stat="foobar.key1", value=10)
+            with pytest.raises(AssertionError):
+                mm.assert_not_gauge(stat="foobar.key1")
+
+    def test_timing_helpers(self):
+        with MetricsMock() as mm:
+            markus.configure([{"class": "markus.backends.logging.LoggingMetrics"}])
+            mymetrics = markus.get_metrics("foobar")
+            mymetrics.timing("key1", value=1)
+            mymetrics.timing("keymultiple", value=1)
+            mymetrics.timing("keymultiple", value=1)
+
+            mm.assert_timing(stat="foobar.key1")
+
+            mm.assert_timing_once(stat="foobar.key1")
+            with pytest.raises(AssertionError):
+                mm.assert_timing_once(stat="foobar.keymultiple")
+
+            mm.assert_not_timing(stat="foobar.keynot")
+            mm.assert_not_timing(stat="foobar.key1", value=5)
+            with pytest.raises(AssertionError):
+                mm.assert_not_timing(stat="foobar.key1")
+
+    def test_histogram_helpers(self):
+        with MetricsMock() as mm:
+            markus.configure([{"class": "markus.backends.logging.LoggingMetrics"}])
+            mymetrics = markus.get_metrics("foobar")
+            mymetrics.histogram("key1", value=1)
+            mymetrics.histogram("keymultiple", value=1)
+            mymetrics.histogram("keymultiple", value=1)
+
+            mm.assert_histogram(stat="foobar.key1")
+
+            mm.assert_histogram_once(stat="foobar.key1")
+            with pytest.raises(AssertionError):
+                mm.assert_histogram_once(stat="foobar.keymultiple")
+
+            mm.assert_not_histogram(stat="foobar.keynot")
+            mm.assert_not_histogram(stat="foobar.key1", value=5)
+            with pytest.raises(AssertionError):
+                mm.assert_not_histogram(stat="foobar.key1")
