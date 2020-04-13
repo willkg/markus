@@ -97,15 +97,15 @@ class MetricsMock:
         """Clear the records list."""
         self.records = []
 
-    def assert_incr(self, stat, value=None, tags=None):
+    def assert_incr(self, stat, value=1, tags=None):
         """Asserts an incr was emitted at least once."""
         assert len(self.filter_records(INCR, stat=stat, value=value, tags=tags)) >= 1
 
-    def assert_incr_once(self, stat, value=None, tags=None):
+    def assert_incr_once(self, stat, value=1, tags=None):
         """Asserts an incr was emitted exactly once."""
         assert len(self.filter_records(INCR, stat=stat, value=value, tags=tags)) == 1
 
-    def assert_not_incr(self, stat, value=None, tags=None):
+    def assert_not_incr(self, stat, value=1, tags=None):
         """Asserts an incr was not emitted."""
         assert len(self.filter_records(INCR, stat=stat, value=value, tags=tags)) == 0
 
