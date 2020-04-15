@@ -15,6 +15,6 @@ __author__ = "Will Kahn-Greene"
 __email__ = "willkg@mozilla.com"
 
 # yyyymmdd
-__releasedate__ = "20200415"
+__releasedate__ = ""
 # x.y.z or x.y.z.dev0 -- semver
-__version__ = "2.2.0"
+__version__ = "2.2.1.dev0"
