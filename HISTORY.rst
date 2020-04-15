@@ -1,8 +1,13 @@
 History
 =======
 
-2.1.1 (in development)
-----------------------
+2.2.0 (April 15th, 2020)
+------------------------
+
+**Features**
+
+* Add ``assert_`` methods to ``MetricsMock`` to reduce the boilerplate for
+  testing. Thank you, John! (#68)
 
 **Bug fixes**
 
