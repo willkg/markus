@@ -3,7 +3,6 @@
 # file, You can obtain one at http://mozilla.org/MPL/2.0/.
 
 from markus import INCR, GAUGE, TIMING, HISTOGRAM  # noqa
-
 from markus.main import _override_metrics
 
 
@@ -135,12 +134,18 @@ class MetricsMock:
 
     def assert_histogram(self, stat, value=None, tags=None):
         """Asserts a histogram was emitted at least once."""
-        assert len(self.filter_records(HISTOGRAM, stat=stat, value=value, tags=tags)) >= 1
+        assert (
+            len(self.filter_records(HISTOGRAM, stat=stat, value=value, tags=tags)) >= 1
+        )
 
     def assert_histogram_once(self, stat, value=None, tags=None):
         """Asserts a histogram was emitted exactly once."""
-        assert len(self.filter_records(HISTOGRAM, stat=stat, value=value, tags=tags)) == 1
+        assert (
+            len(self.filter_records(HISTOGRAM, stat=stat, value=value, tags=tags)) == 1
+        )
 
     def assert_not_histogram(self, stat, value=None, tags=None):
         """Asserts a histogram was not emitted."""
-        assert len(self.filter_records(HISTOGRAM, stat=stat, value=value, tags=tags)) == 0
+        assert (
+            len(self.filter_records(HISTOGRAM, stat=stat, value=value, tags=tags)) == 0
+        )
