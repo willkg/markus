@@ -62,7 +62,7 @@ Tests are located in the ``tests/`` directory.
 Release process
 ===============
 
-1. Checkout master tip and create a prep branch like ``2_0_0_prep``.
+1. Checkout main tip and create a prep branch like ``2_0_0_prep``.
 
 2. Check to make sure ``setup.py`` and requirements files
    have correct versions of requirements.
@@ -85,7 +85,7 @@ Release process
 
 6. Push that branch and create a PR. If that passes, then merge it.
 
-7. Check out and update master branch locally.
+7. Check out and update main branch locally.
 
 8. Tag the release::
 
@@ -95,7 +95,7 @@ Release process
 
 9. Push everything::
 
-       $ git push --tags origin master
+       $ git push --tags origin main
 
 10. Update PyPI--do this in a Python3 virtualenv::
 
