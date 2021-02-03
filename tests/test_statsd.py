@@ -8,7 +8,7 @@ from markus.backends import statsd
 from markus.main import MetricsFilter, MetricsRecord
 
 
-class MockStatsd(object):
+class MockStatsd:
     def __init__(self, *args, **kwargs):
         self.initargs = args
         self.initkwargs = kwargs

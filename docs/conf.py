@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 #
 # Markus documentation build configuration file, created by
 # sphinx-quickstart on Fri Apr  7 16:22:43 2017.
@@ -50,9 +49,9 @@ source_suffix = ".rst"
 master_doc = "index"
 
 # General information about the project.
-project = u"Markus"
-copyright = u"2017-2019, Will Kahn-Greene"
-author = u"Will Kahn-Greene"
+project = "Markus"
+copyright = "2017-2021, Will Kahn-Greene"
+author = "Will Kahn-Greene"
 
 # The version info for the project you're documenting, acts as replacement for
 # |version| and |release|, also used in various other places throughout the
@@ -134,7 +133,7 @@ latex_elements = {
 # (source start file, target name, title,
 #  author, documentclass [howto, manual, or own class]).
 latex_documents = [
-    (master_doc, "Markus.tex", u"Markus Documentation", u"Will Kahn-Greene", "manual")
+    (master_doc, "Markus.tex", "Markus Documentation", "Will Kahn-Greene", "manual")
 ]
 
 
@@ -142,7 +141,7 @@ latex_documents = [
 
 # One entry per manual page. List of tuples
 # (source start file, name, description, authors, manual section).
-man_pages = [(master_doc, "markus", u"Markus Documentation", [author], 1)]
+man_pages = [(master_doc, "markus", "Markus Documentation", [author], 1)]
 
 
 # -- Options for Texinfo output -------------------------------------------
@@ -154,7 +153,7 @@ texinfo_documents = [
     (
         master_doc,
         "Markus",
-        u"Markus Documentation",
+        "Markus Documentation",
         author,
         "Markus",
         "One line description of project.",

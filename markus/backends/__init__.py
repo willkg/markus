@@ -3,7 +3,7 @@
 # file, You can obtain one at http://mozilla.org/MPL/2.0/.
 
 
-class BackendBase(object):
+class BackendBase:
     """Markus Backend superclass that defines API backends should follow."""
 
     def __init__(self, options=None, filters=None):

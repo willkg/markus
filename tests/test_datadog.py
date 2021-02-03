@@ -8,7 +8,7 @@ from markus.backends import datadog
 from markus.main import MetricsFilter, MetricsRecord
 
 
-class MockDogStatsd(object):
+class MockDogStatsd:
     def __init__(self, *args, **kwargs):
         self.initargs = args
         self.initkwargs = kwargs
