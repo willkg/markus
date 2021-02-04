@@ -40,7 +40,7 @@ class MetricsMock:
                 # Do things that might record metrics here
 
                 # Assert something about the metrics recorded
-                mm.assert_incr_once(stat='some.random.key', value=1)
+                mm.assert_incr_once(stat="some.random.key", value=1)
 
     When using the ``assert_*`` helper methods, if the assertion fails, it'll
     print the MetricsRecords that were emitted to stdout.

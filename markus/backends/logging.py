@@ -17,10 +17,10 @@ class LoggingMetrics(BackendBase):
     To use, add this to your backends list::
 
         {
-            'class': 'markus.backends.logging.LoggingMetrics',
-            'options': {
-                'logger_name': 'markus',
-                'leader': 'METRICS',
+            "class": "markus.backends.logging.LoggingMetrics",
+            "options": {
+                "logger_name": "markus",
+                "leader": "METRICS",
             }
         }
 
@@ -80,11 +80,11 @@ class LoggingRollupMetrics(BackendBase):
     To use, add this to your backends list::
 
         {
-            'class': 'markus.backends.logging.LoggingRollupMetrics',
-            'options': {
-                'logger_name': 'markus',
-                'leader': 'ROLLUP',
-                'flush_interval': 10
+            "class": "markus.backends.logging.LoggingRollupMetrics",
+            "options": {
+                "logger_name": "markus",
+                "leader": "ROLLUP",
+                "flush_interval": 10
             }
         }
 

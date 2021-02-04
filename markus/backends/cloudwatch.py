@@ -23,10 +23,10 @@ class CloudwatchMetrics(BackendBase):
     To use, add this to your backends list::
 
         {
-            'class': 'markus.backends.cloudwatch.CloudwatchMetrics',
+            "class": "markus.backends.cloudwatch.CloudwatchMetrics",
         }
 
-    This backend doesn't take any options.
+    This backend doesn"t take any options.
 
     .. Note::
 

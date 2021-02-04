@@ -6,6 +6,9 @@ Markus lets you write and use filters to modify generated metrics.
 
 .. versionadded:: 2.0.0
 
+.. contents::
+   :local:
+
 
 Using filters
 =============

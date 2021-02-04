@@ -49,8 +49,9 @@ Quick start
 ===========
 
 Similar to using the logging library, every Python module can create a
-``MetricsInterface`` (loosely equivalent to a Python logging logger) at any time
-including at module import time and use that to generate metrics.
+:py:class:`markus.main.MetricsInterface` (loosely equivalent to a Python
+logging logger) at any time including at module import time and use that to
+generate metrics.
 
 For example::
 
@@ -59,17 +60,18 @@ For example::
     metrics = markus.get_metrics(__name__)
 
 
-Creating a ``MetricsImplementation`` using ``__name__`` will cause it to
-generate all stats keys with a prefix determined from ``__name__`` which
-is a dotted Python path to that module.
+Creating a :py:class:`markus.main.MetricsInterface` using ``__name__``
+will cause it to generate all stats keys with a prefix determined from
+``__name__`` which is a dotted Python path to that module.
 
-Then you can use the ``MetricsImplementation`` anywhere in that module::
+Then you can use the :py:class:`markus.main.MetricsInterface` anywhere in that
+module::
 
-    @metrics.timer_decorator('chopping_vegetables')
+    @metrics.timer_decorator("chopping_vegetables")
     def some_long_function(vegetable):
         for veg in vegetable:
             chop_vegetable()
-            metrics.incr('vegetable', value=1)
+            metrics.incr("vegetable", value=1)
 
 
 At application startup, configure Markus with the backends you want to use to
@@ -83,24 +85,24 @@ For example, lets configure metrics to publish to logs and Datadog::
         backends=[
             {
                 # Log metrics to the logs
-                'class': 'markus.backends.logging.LoggingMetrics',
+                "class": "markus.backends.logging.LoggingMetrics",
             },
             {
                 # Log metrics to Datadog
-                'class': 'markus.backends.datadog.DatadogMetrics',
-                'options': {
-                    'statsd_host': 'example.com',
-                    'statsd_port': 8125,
-                    'statsd_namespace': ''
+                "class": "markus.backends.datadog.DatadogMetrics",
+                "options": {
+                    "statsd_host": "example.com",
+                    "statsd_port": 8125,
+                    "statsd_namespace": ""
                 }
             }
         ]
     )
 
 
-When you're writing your tests, use the ``MetricsMock`` to make testing easier::
+When you're writing your tests, use the :py:class:`markus.testing.MetricsMock`
+to make testing easier::
 
-    import markus
     from markus.testing import MetricsMock
 
 
@@ -108,8 +110,5 @@ When you're writing your tests, use the ``MetricsMock`` to make testing easier::
         with MetricsMock() as mm:
             # ... Do things that might publish metrics
 
-            # This helps you debug and write your test
-            mm.print_records()
-
             # Make assertions on metrics published
-            assert mm.has_record(markus.INCR, 'some.key', value=1)
+            mm.assert_incr_once("some.key", value=1)

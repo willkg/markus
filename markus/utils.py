@@ -39,19 +39,29 @@ def generate_tag(key, value=None):
     Examples:
 
     >>> from markus.utils import generate_tag
-    >>> generate_tag('yellow')
+    >>> generate_tag("yellow")
     'yellow'
-    >>> generate_tag('rule', 'is_yellow')
+    >>> generate_tag("rule", "is_yellow")
     'rule:is_yellow'
 
-    Example with ``incr``:
+    Some examples of sanitizing:
+
+    >>> from markus.utils import generate_tag
+    >>> generate_tag("rule", "THIS$#$%^!@IS[]{$}GROSS!")
+    'rule:this_______is_____gross_'
+    >>> generate_tag("host")
+    'host_'
+
+    Example using it with :py:meth:`markus.main.MetricsInterface.incr`:
 
     >>> import markus
     >>> from markus.utils import generate_tag
     >>> mymetrics = markus.get_metrics(__name__)
-
-    >>> mymetrics.incr('somekey', value=1,
-    ...                tags=[generate_tag('rule', 'is_yellow')])
+    >>> mymetrics.incr(
+    ...     "somekey",
+    ...     value=1,
+    ...     tags=[generate_tag("rule", "is_yellow")]
+    ... )
 
     """
     # Verify the types

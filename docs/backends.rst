@@ -4,6 +4,9 @@ Backends
 
 Markus comes with several backends. You can also write your own.
 
+.. contents::
+   :local:
+
 
 Logging metrics
 ===============
@@ -58,9 +61,7 @@ Writing your own
    :members: __init__, emit
 
 
-The records that get emitted are ``markus.main.MetricsRecord`` instances.
-
-.. autoclass:: markus.main.MetricsRecord
+The records that get emitted are :py:class:`markus.main.MetricsRecord` instances.
 
 
 Here's an example backend that prints metrics to stdout:

@@ -24,12 +24,12 @@ class StatsdMetrics(BackendBase):
     To use, add this to your backends list::
 
         {
-            'class': 'markus.backends.statsd.StatsdMetrics',
-            'options': {
-                'statsd_host': 'statsd.example.com',
-                'statsd_port': 8125,
-                'statsd_prefix': None,
-                'statsd_maxudpsize': 512,
+            "class": "markus.backends.statsd.StatsdMetrics",
+            "options": {
+                "statsd_host": "statsd.example.com",
+                "statsd_port": 8125,
+                "statsd_prefix": None,
+                "statsd_maxudpsize": 512,
             }
         }
 
@@ -38,7 +38,7 @@ class StatsdMetrics(BackendBase):
 
     * statsd_host: the hostname for the statsd daemon to connect to
 
-      Defaults to ``'localhost'``.
+      Defaults to ``"localhost"``.
 
     * statsd_port: the port for the statsd daemon to connect to
 
@@ -54,13 +54,13 @@ class StatsdMetrics(BackendBase):
 
     .. Note::
 
-       The StatsdMetrics backend does not support tags. All tags will
-       be dropped when metrics are emitted by this backend.
+       The StatsdMetrics backend does not support tags. All tags will be
+       dropped when metrics are emitted by this backend.
 
     .. Note::
 
-       statsd doesn't support histograms so histogram metrics are
-       reported as timing metrics.
+       statsd doesn't support histograms so histogram metrics are reported as
+       timing metrics.
 
     .. seealso::
 
