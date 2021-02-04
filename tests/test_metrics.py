@@ -1,6 +1,7 @@
 import pytest
 
 from markus import get_metrics
+from markus.main import MetricsRecord
 from markus.testing import MetricsMock
 
 
@@ -44,7 +45,7 @@ def test_incr(metricsmock):
     with metricsmock as mm:
         metrics.incr("foo", value=5)
 
-    assert mm.get_records() == [("incr", "thing.foo", 5, [])]
+    assert mm.get_records() == [MetricsRecord("incr", "thing.foo", 5, [])]
 
 
 def test_gauge(metricsmock):
@@ -53,7 +54,7 @@ def test_gauge(metricsmock):
     with metricsmock as mm:
         metrics.gauge("foo", value=10)
 
-    assert mm.get_records() == [("gauge", "thing.foo", 10, [])]
+    assert mm.get_records() == [MetricsRecord("gauge", "thing.foo", 10, [])]
 
 
 def test_timing(metricsmock):
@@ -62,7 +63,7 @@ def test_timing(metricsmock):
     with metricsmock as mm:
         metrics.timing("foo", value=1234)
 
-    assert mm.get_records() == [("timing", "thing.foo", 1234, [])]
+    assert mm.get_records() == [MetricsRecord("timing", "thing.foo", 1234, [])]
 
 
 def test_histogram(metricsmock):
@@ -71,7 +72,7 @@ def test_histogram(metricsmock):
     with metricsmock as mm:
         metrics.histogram("foo", value=4321)
 
-    assert mm.get_records() == [("histogram", "thing.foo", 4321, [])]
+    assert mm.get_records() == [MetricsRecord("histogram", "thing.foo", 4321, [])]
 
 
 def test_timer_contextmanager(metricsmock):
