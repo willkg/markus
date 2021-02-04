@@ -4,6 +4,9 @@ Metrics overview
 
 This chapter covers the different types of metrics and what they're useful for.
 
+.. contents::
+   :local:
+
 
 Counters (incr)
 ===============

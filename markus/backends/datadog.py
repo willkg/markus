@@ -24,11 +24,11 @@ class DatadogMetrics(BackendBase):
     To use, add this to your backends list::
 
         {
-            'class': 'markus.backends.datadog.DatadogMetrics',
-            'options': {
-                'statsd_host': 'localhost',
-                'statsd_port': 8125,
-                'statsd_namespace': '',
+            "class": "markus.backends.datadog.DatadogMetrics",
+            "options": {
+                "statsd_host": "localhost",
+                "statsd_port": 8125,
+                "statsd_namespace": "",
             }
         }
 
@@ -45,7 +45,7 @@ class DatadogMetrics(BackendBase):
 
     * statsd_namespace: the namespace to use for statsd data
 
-      Defaults to ``''``.
+      Defaults to ``""``.
 
 
     .. seealso::

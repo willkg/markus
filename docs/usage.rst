@@ -27,6 +27,14 @@ need to do three things:
 .. autofunction:: markus.get_metrics
 
 
+``markus.main.MetricsRecord``
+=============================
+
+.. autoclass:: markus.main.MetricsRecord
+   :members:
+   :member-order: bysource
+
+
 ``markus.main.MetricsInterface``
 ================================
 

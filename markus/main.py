@@ -78,7 +78,7 @@ def configure(backends, raise_errors=False):
 
         markus.configure([
             {
-                'class': 'markus.backends.logging.LoggingMetrics',
+                "class": "markus.backends.logging.LoggingMetrics",
             }
         ])
 
@@ -90,9 +90,9 @@ def configure(backends, raise_errors=False):
 
         markus.configure([
             {
-                'class': 'markus.backends.logging.LoggingMetrics',
-                'options': {
-                    'logger_name': 'metrics'
+                "class": "markus.backends.logging.LoggingMetrics",
+                "options": {
+                    "logger_name": "metrics"
                 }
             }
         ])
@@ -105,8 +105,8 @@ def configure(backends, raise_errors=False):
 
         markus.configure([
             {
-                'class': 'markus.backends.logging.LoggingMetrics',
-                'filters': [AddTagFilter("color:blue")],
+                "class": "markus.backends.logging.LoggingMetrics",
+                "filters": [AddTagFilter("color:blue")],
             }
         ])
 
@@ -159,8 +159,8 @@ def configure(backends, raise_errors=False):
 class MetricsRecord:
     """Record for a single emitted metric.
 
-    :attribute stat_type: the type of the stat ('incr', 'gauge', 'timing',
-        'histogram')
+    :attribute stat_type: the type of the stat ("incr", "gauge", "timing",
+        "histogram")
     :attribute key: the full key for this record
     :attribute value: the value for this record
     :attribute tags: list of tag strings
@@ -295,18 +295,17 @@ class MetricsInterface:
             a value separated by a colon. Tags can make it easier to break down
             metrics for analysis.
 
-            For example ``['env:stage', 'compressed:yes']``.
+            For example ``["env:stage", "compressed:yes"]``.
 
             To pass no tags, either pass an empty list or ``None``.
 
         For example:
 
         >>> import markus
-
-        >>> metrics = markus.get_metrics('foo')
+        >>> metrics = markus.get_metrics("foo")
         >>> def chop_vegetable(kind):
         ...     # chop chop chop
-        ...     metrics.incr('vegetable', value=1)
+        ...     metrics.incr("vegetable", value=1)
 
         You can also use incr to decrement by passing a negative value.
 
@@ -328,17 +327,16 @@ class MetricsInterface:
             a value separated by a colon. Tags can make it easier to break down
             metrics for analysis.
 
-            For example ``['env:stage', 'compressed:yes']``.
+            For example ``["env:stage", "compressed:yes"]``.
 
             To pass no tags, either pass an empty list or ``None``.
 
         For example:
 
         >>> import markus
-
-        >>> metrics = markus.get_metrics('foo')
+        >>> metrics = markus.get_metrics("foo")
         >>> def parse_payload(payload):
-        ...     metrics.gauge('payload_size', value=len(payload))
+        ...     metrics.gauge("payload_size", value=len(payload))
         ...     # parse parse parse
 
         """
@@ -369,7 +367,7 @@ class MetricsInterface:
             a value separated by a colon. Tags can make it easier to break down
             metrics for analysis.
 
-            For example ``['env:stage', 'compressed:yes']``.
+            For example ``["env:stage", "compressed:yes"]``.
 
             To pass no tags, either pass an empty list or ``None``.
 
@@ -377,13 +375,12 @@ class MetricsInterface:
 
         >>> import time
         >>> import markus
-
-        >>> metrics = markus.get_metrics('foo')
+        >>> metrics = markus.get_metrics("foo")
         >>> def upload_file(payload):
         ...     start_time = time.perf_counter()  # this is in seconds
         ...     # upload the file
         ...     timing = (time.perf_counter() - start_time) * 1000.0  # convert to ms
-        ...     metrics.timing('upload_file_time', value=timing)
+        ...     metrics.timing("upload_file_time", value=timing)
 
         .. Note::
 
@@ -419,7 +416,7 @@ class MetricsInterface:
             a value separated by a colon. Tags can make it easier to break down
             metrics for analysis.
 
-            For example ``['env:stage', 'compressed:yes']``.
+            For example ``["env:stage", "compressed:yes"]``.
 
             To pass no tags, either pass an empty list or ``None``.
 
@@ -427,11 +424,10 @@ class MetricsInterface:
 
         >>> import time
         >>> import markus
-
-        >>> metrics = markus.get_metrics('foo')
+        >>> metrics = markus.get_metrics("foo")
         >>> def finalize_sale(cart):
         ...     for item in cart:
-        ...         metrics.histogram('item_cost', value=item.cost)
+        ...         metrics.histogram("item_cost", value=item.cost)
         ...     # finish finalizing
 
         .. Note::
@@ -456,7 +452,7 @@ class MetricsInterface:
             a value separated by a colon. Tags can make it easier to break down
             metrics for analysis.
 
-            For example ``['env:stage', 'compressed:yes']``.
+            For example ``["env:stage", "compressed:yes"]``.
 
             To pass no tags, either pass an empty list or ``None``.
 
@@ -493,15 +489,14 @@ class MetricsInterface:
             a value separated by a colon. Tags can make it easier to break down
             metrics for analysis.
 
-            For example ``['env:stage', 'compressed:yes']``.
+            For example ``["env:stage", "compressed:yes"]``.
 
             To pass no tags, either pass an empty list or ``None``.
 
         For example:
 
         >>> mymetrics = get_metrics(__name__)
-
-        >>> @mymetrics.timer_decorator('long_function')
+        >>> @mymetrics.timer_decorator("long_function")
         ... def long_function():
         ...     # perform some thing we want to keep metrics on
         ...     pass
@@ -559,8 +554,8 @@ def get_metrics(thing="", extra="", filters=None):
     Create a MetricsInterface with the prefix "myapp" and generate a count with
     stat "myapp.thing1" and value 1:
 
-    >>> metrics = get_metrics('myapp')
-    >>> metrics.incr('thing1', value=1)
+    >>> metrics = get_metrics("myapp")
+    >>> metrics.incr("thing1", value=1)
 
     Create a MetricsInterface with the prefix of the Python module it's being
     called in:
@@ -579,7 +574,7 @@ def get_metrics(thing="", extra="", filters=None):
     ...     def __init__(self, myprefix):
     ...         self.metrics = get_metrics(self, extra=myprefix)
     ...
-    >>> foo = Foo('jim')
+    >>> foo = Foo("jim")
 
     Assume that ``Foo`` is defined in the ``myapp`` module. Then this will
     generate the prefix ``myapp.Foo.jim``.
