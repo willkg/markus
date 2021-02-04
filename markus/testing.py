@@ -34,18 +34,16 @@ class MetricsMock:
     To use::
 
         from markus.testing import MetricsMock
-        from markus import INCR, GAUGE, TIMING, HISTOGRAM
-
 
         def test_something():
             with MetricsMock() as mm:
-                # do things that might record metrics
-
-                # Print the metrics recorded (helps with debugging)
-                mm.print_records()
+                # Do things that might record metrics here
 
                 # Assert something about the metrics recorded
-                assert mm.has_record(INCR, stat='some.random.key', value=1)
+                mm.assert_incr_once(stat='some.random.key', value=1)
+
+    When using the ``assert_*`` helper methods, if the assertion fails, it'll
+    print the MetricsRecords that were emitted to stdout.
 
     """
 
@@ -67,11 +65,37 @@ class MetricsMock:
         _override_metrics(None)
 
     def get_records(self):
-        """Return set of collected metrics records."""
+        """Return list of MetricsRecord instances.
+
+        This is the list of :py:class:`markus.main.MetricsRecord` instances
+        that were emitted while this :py:class:`markus.testing.MetricsMock` was
+        active.
+
+        """
         return self.records
 
     def filter_records(self, fun_name=None, stat=None, value=None, tags=None):
-        """Filter collected metircs records for ones that match specified criteria."""
+        """Filter collected metrics records for ones that match specified criteria.
+
+        Filtering is done by ANDing the requirements together. For example::
+
+            with MetricsMock() as mm:
+                # Do something that emits metrics
+
+                assert mm.filter_records("incr", stat="some.key", tags=["color:blue"])
+
+        :py:meth:`markus.testing.MetricsMock.filter_records` will return
+        :py:class:`markus.main.MetricsRecord` instances that are ``"incr"`` AND
+        the stat is ``"some.key"`` AND the tags list is ``["color:blue"]``.
+
+        :arg str fun_name: "incr", "gauge", "timing", "histogram", or ``None``
+        :arg str stat: the stat emitted
+        :arg int/float value: the value
+        :arg list tags: the list of tag strings or ``[]`` or ``None``
+
+        :returns: list of :py:class:`markus.main.MetricsRecord` instances
+
+        """
 
         def match_fun_name(record_fun_name):
             return fun_name is None or fun_name == record_fun_name
@@ -97,7 +121,16 @@ class MetricsMock:
         ]
 
     def has_record(self, fun_name=None, stat=None, value=None, tags=None):
-        """Return True/False regarding whether collected metrics match criteria."""
+        """Return True/False regarding whether collected metrics match criteria.
+
+        :arg str fun_name: "incr", "gauge", "timing", "histogram", or ``None``
+        :arg str stat: the stat emitted
+        :arg int/float value: the value
+        :arg list tags: the list of tag strings or ``[]`` or ``None``
+
+        :returns: bool
+
+        """
         return bool(
             self.filter_records(fun_name=fun_name, stat=stat, value=value, tags=tags)
         )
