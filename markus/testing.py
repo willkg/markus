@@ -2,8 +2,26 @@
 # License, v. 2.0. If a copy of the MPL was not distributed with this
 # file, You can obtain one at http://mozilla.org/MPL/2.0/.
 
+from copy import copy
+
+import functools
+
 from markus import INCR, GAUGE, TIMING, HISTOGRAM  # noqa
 from markus.main import _override_metrics
+
+
+def print_on_failure(fun):
+    """Decorator to print metrics records on assertion failure."""
+
+    @functools.wraps(fun)
+    def _print_on_failure(metricsmock, *args, **kwargs):
+        try:
+            return fun(metricsmock, *args, **kwargs)
+        except Exception:
+            metricsmock.print_records()
+            raise
+
+    return _print_on_failure
 
 
 class MetricsMock:
@@ -34,14 +52,11 @@ class MetricsMock:
     def __init__(self):
         self.records = []
 
-    def _add_record(self, fun_name, stat, value, tags):
-        self.records.append((fun_name, stat, value, tags))
-
     def emit_to_backend(self, record):
         self.emit(record)
 
     def emit(self, record):
-        self._add_record(record.stat_type, record.key, record.value, record.tags)
+        self.records.append(copy(record))
 
     def __enter__(self):
         self.records = []
@@ -74,10 +89,10 @@ class MetricsMock:
             record
             for record in self.get_records()
             if (
-                match_fun_name(record[0])
-                and match_stat(record[1])
-                and match_value(record[2])
-                and match_tags(record[3])
+                match_fun_name(record.stat_type)
+                and match_stat(record.key)
+                and match_value(record.value)
+                and match_tags(record.tags)
             )
         ]
 
@@ -90,60 +105,72 @@ class MetricsMock:
     def print_records(self):
         """Print all the collected metrics."""
         for record in self.get_records():
-            print(record)
+            print(f"{record!r}")
 
     def clear_records(self):
         """Clear the records list."""
         self.records = []
 
+    @print_on_failure
     def assert_incr(self, stat, value=1, tags=None):
         """Asserts an incr was emitted at least once."""
         assert len(self.filter_records(INCR, stat=stat, value=value, tags=tags)) >= 1
 
+    @print_on_failure
     def assert_incr_once(self, stat, value=1, tags=None):
         """Asserts an incr was emitted exactly once."""
         assert len(self.filter_records(INCR, stat=stat, value=value, tags=tags)) == 1
 
+    @print_on_failure
     def assert_not_incr(self, stat, value=1, tags=None):
         """Asserts an incr was not emitted."""
         assert len(self.filter_records(INCR, stat=stat, value=value, tags=tags)) == 0
 
+    @print_on_failure
     def assert_gauge(self, stat, value=None, tags=None):
         """Asserts a gauge was emitted at least once."""
         assert len(self.filter_records(GAUGE, stat=stat, value=value, tags=tags)) >= 1
 
+    @print_on_failure
     def assert_gauge_once(self, stat, value=None, tags=None):
         """Asserts a gauge was emitted exactly once."""
         assert len(self.filter_records(GAUGE, stat=stat, value=value, tags=tags)) == 1
 
+    @print_on_failure
     def assert_not_gauge(self, stat, value=None, tags=None):
         """Asserts a gauge was not emitted."""
         assert len(self.filter_records(GAUGE, stat=stat, value=value, tags=tags)) == 0
 
+    @print_on_failure
     def assert_timing(self, stat, value=None, tags=None):
         """Asserts a timing was emitted at least once."""
         assert len(self.filter_records(TIMING, stat=stat, value=value, tags=tags)) >= 1
 
+    @print_on_failure
     def assert_timing_once(self, stat, value=None, tags=None):
         """Asserts a timing was emitted exactly once."""
         assert len(self.filter_records(TIMING, stat=stat, value=value, tags=tags)) == 1
 
+    @print_on_failure
     def assert_not_timing(self, stat, value=None, tags=None):
         """Asserts a timing was not emitted."""
         assert len(self.filter_records(TIMING, stat=stat, value=value, tags=tags)) == 0
 
+    @print_on_failure
     def assert_histogram(self, stat, value=None, tags=None):
         """Asserts a histogram was emitted at least once."""
         assert (
             len(self.filter_records(HISTOGRAM, stat=stat, value=value, tags=tags)) >= 1
         )
 
+    @print_on_failure
     def assert_histogram_once(self, stat, value=None, tags=None):
         """Asserts a histogram was emitted exactly once."""
         assert (
             len(self.filter_records(HISTOGRAM, stat=stat, value=value, tags=tags)) == 1
         )
 
+    @print_on_failure
     def assert_not_histogram(self, stat, value=None, tags=None):
         """Asserts a histogram was not emitted."""
         assert (

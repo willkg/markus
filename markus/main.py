@@ -174,11 +174,21 @@ class MetricsRecord:
         self.tags = tags or []
 
     def __repr__(self):
-        return "<MetricsRecord %r %r %r %r>" % (
-            self.stat_type,
-            self.key,
-            self.value,
-            self.tags,
+        return (
+            f"<MetricsRecord "
+            f"type={self.stat_type} "
+            f"key={self.key} "
+            f"value={self.value} "
+            f"tags={self.tags!r}>"
+        )
+
+    def __eq__(self, obj):
+        return (
+            isinstance(obj, MetricsRecord)
+            and obj.stat_type == self.stat_type
+            and obj.key == self.key
+            and obj.value == self.value
+            and obj.tags == self.tags
         )
 
     def __copy__(self):

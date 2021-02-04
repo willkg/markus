@@ -99,11 +99,11 @@ class TestMetricsMock:
 
             key1_metrics = mm.filter_records(tags=["env:stage"])
             assert len(key1_metrics) == 1
-            assert key1_metrics[0][1] == "foobar.key1"
+            assert key1_metrics[0].key == "foobar.key1"
 
             key1_metrics = mm.filter_records(tags=["env:prod"])
             assert len(key1_metrics) == 1
-            assert key1_metrics[0][1] == "foobar.key2"
+            assert key1_metrics[0].key == "foobar.key2"
 
             key1_metrics = mm.filter_records(tags=["env:dev"])
             assert len(key1_metrics) == 0
@@ -207,3 +207,22 @@ class TestMetricsMock:
             mm.assert_not_histogram(stat="foobar.key1", value=5)
             with pytest.raises(AssertionError):
                 mm.assert_not_histogram(stat="foobar.key1")
+
+    def test_print_on_failure(self, capsys):
+        with MetricsMock() as mm:
+            markus.configure([{"class": "markus.backends.logging.LoggingMetrics"}])
+            mymetrics = markus.get_metrics("foobar")
+            mymetrics.histogram("keymultiple", value=1)
+            mymetrics.histogram("keymultiple", value=1)
+
+            with pytest.raises(AssertionError):
+                mm.assert_histogram_once(stat="foobar.keymultiple")
+
+            # On assertion error, the assert_* methods will print the metrics
+            # records to stdout.
+            captured = capsys.readouterr()
+            expected = (
+                "<MetricsRecord type=histogram key=foobar.keymultiple value=1 tags=[]>\n"
+                "<MetricsRecord type=histogram key=foobar.keymultiple value=1 tags=[]>\n"
+            )
+            assert captured.out == expected
