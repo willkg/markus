@@ -33,7 +33,7 @@ class PyTest(TestCommand):
 def get_version():
     fn = os.path.join("markus", "__init__.py")
     vsre = r"""^__version__ = ['"]([^'"]*)['"]"""
-    version_file = open(fn, "rt").read()
+    version_file = open(fn).read()
     return re.search(vsre, version_file, re.M).group(1)
 
 
