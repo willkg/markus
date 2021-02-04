@@ -1,6 +1,29 @@
 History
 =======
 
+3.0.0 (In development)
+----------------------
+
+**Features**
+
+* Added support for Python 3.9 (#79). Thank you, Brady!
+
+* Changed ``assert_*`` helper methods on :py:class:`markus.testing.MetricsMock`
+  to print the records to stdout if the assertion fails. This can save some
+  time debugging failing tests. (#74)
+
+**Bug fixes**
+
+**Backwards incompatible changes**
+
+* Dropped support for Python 3.5 (#78). Thank you, Brady!
+
+* :py:meth:`markus.testing.MetricsMock.get_records` and
+  :py:meth:`markus.testing.MetricsMock.filter_records` return
+  :py:class:`markus.main.MetricsRecord` instances now. This might require
+  you to rewrite/update tests that use the ``MetricsMock``.
+
+
 2.2.0 (April 15th, 2020)
 ------------------------
 
