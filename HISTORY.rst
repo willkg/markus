@@ -1,8 +1,8 @@
 History
 =======
 
-3.0.0 (In development)
-----------------------
+3.0.0 (February 5th, 2021)
+--------------------------
 
 **Features**
 
@@ -11,8 +11,6 @@ History
 * Changed ``assert_*`` helper methods on :py:class:`markus.testing.MetricsMock`
   to print the records to stdout if the assertion fails. This can save some
   time debugging failing tests. (#74)
-
-**Bug fixes**
 
 **Backwards incompatible changes**
 
