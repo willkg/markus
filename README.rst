@@ -49,7 +49,7 @@ Quick start
 ===========
 
 Similar to using the logging library, every Python module can create a
-:py:class:`markus.main.MetricsInterface` (loosely equivalent to a Python
+``markus.main.MetricsInterface`` (loosely equivalent to a Python
 logging logger) at any time including at module import time and use that to
 generate metrics.
 
@@ -60,11 +60,11 @@ For example::
     metrics = markus.get_metrics(__name__)
 
 
-Creating a :py:class:`markus.main.MetricsInterface` using ``__name__``
+Creating a ``markus.main.MetricsInterface`` using ``__name__``
 will cause it to generate all stats keys with a prefix determined from
 ``__name__`` which is a dotted Python path to that module.
 
-Then you can use the :py:class:`markus.main.MetricsInterface` anywhere in that
+Then you can use the ``markus.main.MetricsInterface`` anywhere in that
 module::
 
     @metrics.timer_decorator("chopping_vegetables")
@@ -100,7 +100,7 @@ For example, lets configure metrics to publish to logs and Datadog::
     )
 
 
-When you're writing your tests, use the :py:class:`markus.testing.MetricsMock`
+When you're writing your tests, use the ``markus.testing.MetricsMock``
 to make testing easier::
 
     from markus.testing import MetricsMock
