@@ -1,6 +1,18 @@
 History
 =======
 
+4.0.0 (October 22nd, 2021)
+--------------------------
+
+**Features**
+
+* Added support for Python 3.10 (#88)
+
+**Backwards incompatibel changes**
+
+* Dropped support for Python 3.6 (#89)
+
+
 3.0.0 (February 5th, 2021)
 --------------------------
 
