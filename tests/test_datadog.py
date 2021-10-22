@@ -27,7 +27,7 @@ class MockDogStatsd:
         self.calls.append(("histogram", args, kwargs))
 
 
-@pytest.yield_fixture
+@pytest.fixture
 def mockdogstatsd():
     """Mocks DogStatsd class to capture method call data"""
     _old_datadog = datadog.DogStatsd

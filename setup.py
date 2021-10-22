@@ -42,6 +42,25 @@ def get_file(fn):
         return fp.read()
 
 
+INSTALL_REQUIRES = []
+EXTRAS_REQUIRE = {
+    "datadog": ["datadog"],
+    "statsd": ["statsd"],
+    "dev": [
+        "black==21.9b0",
+        "check-manifest==0.47",
+        "flake8==4.0.1",
+        "freezegun==1.1.0",
+        "pytest==6.2.5",
+        "Sphinx==4.2.0",
+        "tox==3.24.4",
+        "tox-gh-actions==2.8.1",
+        "twine==3.4.2",
+        "wheel==0.37.0",
+    ],
+}
+TESTS_REQUIRES = ["pytest"]
+
 setup(
     name="markus",
     version=get_version(),
@@ -55,17 +74,16 @@ setup(
         "Source": "https://github.com/willkg/markus/",
         "Tracker": "https://github.com/willkg/markus/issues",
     },
-    extras_require={
-        "datadog": ["datadog"],
-        "statsd": ["statsd"],
-    },
-    tests_requires=["pytest"],
+    install_requires=INSTALL_REQUIRES,
+    extras_require=EXTRAS_REQUIRE,
+    tests_requires=TESTS_REQUIRES,
     packages=["markus"],
     package_dir={"markus": "markus"},
     cmdclass={"test": PyTest},
     include_package_data=True,
     license="MPLv2",
     zip_safe=False,
+    python_requires=">=3.7",
     keywords="metrics datadog statsd",
     classifiers=[
         "Development Status :: 5 - Production/Stable",
@@ -73,9 +91,9 @@ setup(
         "License :: OSI Approved :: Mozilla Public License 2.0 (MPL 2.0)",
         "Natural Language :: English",
         "Programming Language :: Python :: 3 :: Only",
-        "Programming Language :: Python :: 3.6",
         "Programming Language :: Python :: 3.7",
         "Programming Language :: Python :: 3.8",
         "Programming Language :: Python :: 3.9",
+        "Programming Language :: Python :: 3.10",
     ],
 )

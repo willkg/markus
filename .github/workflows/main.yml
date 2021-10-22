@@ -8,38 +8,26 @@ jobs:
 
     runs-on: ubuntu-latest
 
+    strategy:
+      matrix:
+        python-version: ['3.7', '3.8', '3.9', '3.10']
+
+    name: Python ${{ matrix.python-version}}
     steps:
-      - uses: actions/checkout@v2.3.4
+      - uses: actions/checkout@v2.3.5
 
-      - name: Set up Python 3.6
-        uses: actions/setup-python@v2.2.1
+      - name: Set up Python
+        uses: actions/setup-python@v2.2.2
         with:
-          python-version: 3.6
+          python-version: ${{ matrix.python-version }}
 
-      - name: Set up Python 3.7
-        uses: actions/setup-python@v2.2.1
-        with:
-          python-version: 3.7
-
-      - name: Set up Python 3.8
-        uses: actions/setup-python@v2.2.1
-        with:
-          python-version: 3.8
-
-      - name: Set up Python 3.9
-        uses: actions/setup-python@v2.2.1
-        with:
-          python-version: 3.9
-
-      - name: Install CI dependencies
+      - name: Update pip and install dev requirements
         run: |
           python -m pip install --upgrade pip
-          pip install -r requirements-dev.txt
+          pip install '.[dev,datadog.statsd]'
 
       - name: Lint
-        run: |
-          black --target-version=py36 markus tests
-          flake8 tests
+        run: make lint
 
-      - name: Run tests
+      - name: Test
         run: tox
