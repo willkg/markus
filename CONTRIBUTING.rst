@@ -68,7 +68,7 @@ Release process
 
    Update dev dependencies: ``make checkrot``
 
-3. Update version numbers in ``markus/__init__.py``.
+3. Update version numbers in ``src/markus/__init__.py``.
 
    1. Set ``__version__`` to something like ``0.4.0`` (use semver).
    2. Set ``__releasedate__`` to something like ``20120731``.

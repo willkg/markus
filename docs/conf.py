@@ -20,6 +20,7 @@ import sys
 
 cwd = os.getcwd()
 project_root = os.path.dirname(cwd)
+src_root = os.path.join(project_root, "src")
 sys.path.insert(0, project_root)
 
 import markus  # noqa
