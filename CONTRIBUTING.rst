@@ -39,13 +39,13 @@ Run::
     ...
 
     # Install Markus and dev requirements
-    $ pip install -r requirements-dev.txt
+    $ pip install -e '.[dev,datadog,statsd]'
 
 
 Documentation
 =============
 
-Documentation is written in restructuredText and is in the ``docs/``
+Documentation is written in reStructuredText and is in the ``docs/``
 directory. We use `Sphinx <http://www.sphinx-doc.org/en/stable/>`_
 to build documentation.
 
@@ -64,12 +64,13 @@ Release process
 
 1. Checkout main tip and create a prep branch like ``2_0_0_prep``.
 
-2. Check to make sure ``setup.py`` and requirements files
-   have correct versions of requirements.
+2. Check to make sure ``setup.py`` and requirements are updated.
+
+   Update dev dependencies: ``make checkrot``
 
 3. Update version numbers in ``markus/__init__.py``.
 
-   1. Set ``__version__`` to something like ``0.4.0``.
+   1. Set ``__version__`` to something like ``0.4.0`` (use semver).
    2. Set ``__releasedate__`` to something like ``20120731``.
 
 4. Update ``HISTORY.rst``
@@ -79,9 +80,10 @@ Release process
 
 5. Verify correctness.
 
-   1. Run tests with ``tox``.
-   2. Build docs (this runs example code).
-   3. Verify all that works.
+   1. Check manifest: ``check-manifest``
+   2. Run tests: ``make test``
+   3. Lint: ``make lint``
+   4. Build docs (this runs example code).
 
 6. Push that branch and create a PR. If that passes, then merge it.
 
@@ -89,18 +91,18 @@ Release process
 
 8. Tag the release::
 
-       $ git tag -a v0.4.0
+       $ git tag -s v0.4.0
 
-   Copy the details from ``HISTORY.rst`` into the tag comment.
+   Copy details from ``HISTORY.rst`` into the tag comment.
 
-9. Push everything::
-
-       $ git push --tags origin main
-
-10. Update PyPI--do this in a Python3 virtualenv::
+9. Update PyPI--do this in a Python3 virtualenv::
 
         $ rm -rf dist/*
         $ python setup.py sdist bdist_wheel
         $ twine upload dist/*
+
+10. Push everything::
+
+       $ git push --tags origin main
 
 11. Announce the release with a blog post and tweet.

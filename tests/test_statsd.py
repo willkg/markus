@@ -24,7 +24,7 @@ class MockStatsd:
         self.calls.append(("timing", args, kwargs))
 
 
-@pytest.yield_fixture
+@pytest.fixture
 def mockstatsd():
     """Mocks Statsd class to capture method call data"""
     _old_statsd = statsd.StatsClient
