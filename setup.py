@@ -8,7 +8,7 @@
 import os
 import re
 import sys
-from setuptools import setup
+from setuptools import find_packages, setup
 from setuptools.command.test import test as TestCommand
 
 
@@ -31,7 +31,7 @@ class PyTest(TestCommand):
 
 
 def get_version():
-    fn = os.path.join("markus", "__init__.py")
+    fn = os.path.join("src", "markus", "__init__.py")
     vsre = r"""^__version__ = ['"]([^'"]*)['"]"""
     version_file = open(fn).read()
     return re.search(vsre, version_file, re.M).group(1)
@@ -77,8 +77,8 @@ setup(
     install_requires=INSTALL_REQUIRES,
     extras_require=EXTRAS_REQUIRE,
     tests_requires=TESTS_REQUIRES,
-    packages=["markus"],
-    package_dir={"markus": "markus"},
+    packages=find_packages(where="src"),
+    package_dir={"": "src"},
     cmdclass={"test": PyTest},
     include_package_data=True,
     license="MPLv2",

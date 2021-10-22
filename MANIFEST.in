@@ -5,9 +5,9 @@ include LICENSE
 include CONTRIBUTORS
 include setup.cfg
 include setup.py
-include requirements-dev.txt
-include readthedocs.yml
+include .readthedocs.yml
 include tox.ini
+include Makefile
 
 recursive-include docs *.py
 recursive-include docs *.rst
