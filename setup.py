@@ -47,7 +47,7 @@ EXTRAS_REQUIRE = {
     "datadog": ["datadog"],
     "statsd": ["statsd"],
     "dev": [
-        "black==21.9b0",
+        "black==22.3.0",
         "check-manifest==0.47",
         "flake8==4.0.1",
         "freezegun==1.1.0",
@@ -96,4 +96,7 @@ setup(
         "Programming Language :: Python :: 3.9",
         "Programming Language :: Python :: 3.10",
     ],
+    entry_points={
+        "pytest11": ["markus=markus.pytest_plugin"],
+    },
 )
