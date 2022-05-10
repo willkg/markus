@@ -29,3 +29,9 @@ checkrot:  ## Check package rot for dev dependencies
 	./tmpvenv/bin/pip install '.[dev,datadog,statsd]'
 	./tmpvenv/bin/pip list -o
 	rm -rf ./tmpvenv/
+
+.PHONY: docs
+docs:  ## Build docs
+	make -C docs/ clean
+	make -C docs/ doctest
+	make -C docs/ html

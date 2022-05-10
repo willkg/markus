@@ -38,11 +38,15 @@ To install Markus, run::
 
     $ pip install markus
 
+(Optional) To install the requirements for the
+``markus.backends.statsd.StatsdMetrics`` backend::
+
+    $ pip install 'markus[statsd]'
 
 (Optional) To install the requirements for the
 ``markus.backends.datadog.DatadogMetrics`` backend::
 
-    $ pip install markus[datadog]
+    $ pip install 'markus[datadog]'
 
 
 Quick start
@@ -77,7 +81,7 @@ module::
 At application startup, configure Markus with the backends you want to use to
 publish metrics and any options they require.
 
-For example, lets configure metrics to publish to logs and Datadog::
+For example, let us configure metrics to publish to logs and Datadog::
 
     import markus
 
