@@ -1,6 +1,15 @@
 History
 =======
 
+4.0.1 (May 10th, 2022)
+----------------------
+
+**Bug fixes**
+
+* Move pytest import to a pytest plugin so it's easier to determine when pytest
+  is running. (#95) Thank you, John!
+
+
 4.0.0 (October 22nd, 2021)
 --------------------------
 
