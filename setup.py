@@ -48,15 +48,15 @@ EXTRAS_REQUIRE = {
     "statsd": ["statsd"],
     "dev": [
         "black==22.3.0",
-        "check-manifest==0.47",
+        "check-manifest==0.48",
         "flake8==4.0.1",
-        "freezegun==1.1.0",
-        "pytest==6.2.5",
-        "Sphinx==4.2.0",
-        "tox==3.24.4",
-        "tox-gh-actions==2.8.1",
-        "twine==3.4.2",
-        "wheel==0.37.0",
+        "freezegun==1.2.1",
+        "pytest==7.1.2",
+        "Sphinx==4.3.0",
+        "tox==3.25.0",
+        "tox-gh-actions==2.9.1",
+        "twine==4.0.0",
+        "wheel==0.37.1",
     ],
 }
 TESTS_REQUIRES = ["pytest"]
