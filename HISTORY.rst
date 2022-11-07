@@ -1,6 +1,22 @@
 History
 =======
 
+4.1.0 (November 7th, 2022)
+--------------------------
+
+**Features**
+
+* Add support for Python 3.11 (#100)
+
+**Bug fixes**
+
+* Redo how dev environment works so it's no longer installed via an extras but
+  is now in a separate requirements-dev.txt file.
+
+* Split flake8 tou a separate requirements-flake8.txt and tox environment to
+  handle conflicts with installing other things.
+
+
 4.0.1 (May 10th, 2022)
 ----------------------
 

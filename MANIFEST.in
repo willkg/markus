@@ -6,6 +6,8 @@ include CONTRIBUTORS
 include setup.cfg
 include setup.py
 include .readthedocs.yml
+include requirements-dev.txt
+include requirements-flake8.txt
 include tox.ini
 include Makefile
 
