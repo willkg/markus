@@ -7,27 +7,7 @@
 
 import os
 import re
-import sys
 from setuptools import find_packages, setup
-from setuptools.command.test import test as TestCommand
-
-
-class PyTest(TestCommand):
-    user_options = [("pytest-args=", "a", "Arguments to pass to pytest")]
-
-    def initialize_options(self):
-        TestCommand.initialize_options(self)
-        self.pytest_args = []
-
-    def run_tests(self):
-        import shlex
-
-        # import here, cause outside the eggs aren't loaded
-        import pytest
-
-        pytest_args = shlex.split(self.pytest_args) if self.pytest_args else []
-        errno = pytest.main(pytest_args)
-        sys.exit(errno)
 
 
 def get_version():
@@ -46,20 +26,8 @@ INSTALL_REQUIRES = []
 EXTRAS_REQUIRE = {
     "datadog": ["datadog"],
     "statsd": ["statsd"],
-    "dev": [
-        "black==22.3.0",
-        "check-manifest==0.48",
-        "flake8==4.0.1",
-        "freezegun==1.2.1",
-        "pytest==7.1.2",
-        "Sphinx==4.3.0",
-        "tox==3.25.0",
-        "tox-gh-actions==2.9.1",
-        "twine==4.0.0",
-        "wheel==0.37.1",
-    ],
 }
-TESTS_REQUIRES = ["pytest"]
+
 
 setup(
     name="markus",
@@ -76,10 +44,8 @@ setup(
     },
     install_requires=INSTALL_REQUIRES,
     extras_require=EXTRAS_REQUIRE,
-    tests_requires=TESTS_REQUIRES,
     packages=find_packages(where="src"),
     package_dir={"": "src"},
-    cmdclass={"test": PyTest},
     include_package_data=True,
     license="MPLv2",
     zip_safe=False,

@@ -16,7 +16,7 @@ clean:  ## Clean build artifacts
 .PHONY: lint
 lint:  ## Lint and black reformat files
 	black --target-version=py37 --line-length=88 src setup.py tests
-	tox -e py37-lint
+	tox -e py37-flake8
 
 .PHONY: test
 test:  ## Run tox to test across supported Python versions
@@ -26,7 +26,7 @@ test:  ## Run tox to test across supported Python versions
 checkrot:  ## Check package rot for dev dependencies
 	python -m venv ./tmpvenv/
 	./tmpvenv/bin/pip install -U pip
-	./tmpvenv/bin/pip install '.[dev,datadog,statsd]'
+	./tmpvenv/bin/pip install -r requirements-dev.txt
 	./tmpvenv/bin/pip list -o
 	rm -rf ./tmpvenv/
 
