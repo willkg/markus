@@ -16,7 +16,7 @@ clean:  ## Clean build artifacts
 .PHONY: lint
 lint:  ## Lint and black reformat files
 	black --target-version=py37 --line-length=88 src setup.py tests
-	flake8 src tests
+	tox -e py37-lint
 
 .PHONY: test
 test:  ## Run tox to test across supported Python versions
