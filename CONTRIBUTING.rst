@@ -39,7 +39,7 @@ Run::
     ...
 
     # Install Markus and dev requirements
-    $ pip install -e '.[dev,datadog,statsd]'
+    $ pip install -r requirements-dev.txt
 
 
 Documentation
