@@ -11,14 +11,14 @@ class AddTagFilter(MetricsFilter):
     Contrived example that adds the host for all metrics generated in this
     module::
 
-        import markus
-        from markus.main import AddTagFilter
+        import socket
 
-        from someplace import get_host
+        import markus
+        from markus.filters import AddTagFilter
 
         metrics = markus.get_metrics(
             __name__,
-            filters=[AddTag("host:" + get_host())]
+            filters=[AddTag(f"host:{socket.gethostname()}")]
         )
 
     """
