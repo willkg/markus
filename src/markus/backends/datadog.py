@@ -47,6 +47,10 @@ class DatadogMetrics(BackendBase):
 
       Defaults to ``""``.
 
+    * origin_detection_enabled: whether or not the client should fill the
+      container field (part of datadog protocol v1.2).
+
+      Defaults to ``False``.
 
     .. seealso::
 
@@ -61,18 +65,30 @@ class DatadogMetrics(BackendBase):
         self.host = options.get("statsd_host", "localhost")
         self.port = options.get("statsd_port", 8125)
         self.namespace = options.get("statsd_namespace", "")
+        self.origin_detection_enabled = options.get("origin_detection_enabled", False)
 
-        self.client = self._get_client(self.host, self.port, self.namespace)
-        logger.info(
-            "%s configured: %s:%s %s",
+        self.client = self._get_client(
+            host=self.host,
+            port=self.port,
+            namespace=self.namespace,
+            origin_detection_enabled=self.origin_detection_enabled,
+        )
+        logger.debug(
+            "%s configured: %s:%s %s %s",
             self.__class__.__name__,
             self.host,
             self.port,
             self.namespace,
+            self.origin_detection_enabled,
         )
 
-    def _get_client(self, host, port, namespace):
-        return DogStatsd(host=host, port=port, namespace=namespace)
+    def _get_client(self, host, port, namespace, origin_detection_enabled):
+        return DogStatsd(
+            host=host,
+            port=port,
+            namespace=namespace,
+            origin_detection_enabled=origin_detection_enabled,
+        )
 
     def emit(self, record):
         stat_type_to_fun = {

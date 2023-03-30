@@ -46,17 +46,28 @@ def test_default_options(mockdogstatsd):
 
     # NOTE(willkg): ddm.client is the mock instance
     assert ddm.client.initargs == ()
-    assert ddm.client.initkwargs == {"host": "localhost", "port": 8125, "namespace": ""}
+    assert ddm.client.initkwargs == {
+        "host": "localhost",
+        "port": 8125,
+        "namespace": "",
+        "origin_detection_enabled": False,
+    }
 
 
 def test_options(mockdogstatsd):
     ddm = datadog.DatadogMetrics(
-        {"statsd_host": "example.com", "statsd_port": 5000, "statsd_namespace": "joe"}
+        options={
+            "statsd_host": "example.com",
+            "statsd_port": 5000,
+            "statsd_namespace": "joe",
+            "origin_detection_enabled": True,
+        }
     )
 
     assert ddm.host == "example.com"
     assert ddm.port == 5000
     assert ddm.namespace == "joe"
+    assert ddm.origin_detection_enabled is True
 
     # NOTE(willkg): ddm.client is the mock instance
     assert ddm.client.initargs == ()
@@ -64,6 +75,7 @@ def test_options(mockdogstatsd):
         "host": "example.com",
         "port": 5000,
         "namespace": "joe",
+        "origin_detection_enabled": True,
     }
 
 
