@@ -1,18 +1,16 @@
-include README.rst
-include HISTORY.rst
 include CONTRIBUTING.rst
-include LICENSE
 include CONTRIBUTORS
-include setup.cfg
-include setup.py
+include HISTORY.rst
+include LICENSE
+include Makefile
+include pyproject.toml
+include README.rst
 include .readthedocs.yml
 include requirements-dev.txt
-include requirements-flake8.txt
-include tox.ini
-include Makefile
+include setup.py
 
+recursive-include docs Makefile
 recursive-include docs *.py
 recursive-include docs *.rst
-recursive-include docs Makefile
 recursive-include markus *.py
 recursive-include tests *.py

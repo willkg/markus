@@ -1,0 +1,56 @@
+[tool.ruff]
+# Enable pycodestyle (E), pyflakes (F), and bugbear (B) rules
+select = ["E", "F", "B"]
+
+# Ignore line length violations--Black handles those
+line-length = 88
+ignore = ["E501"]
+
+target-version = "py37"
+
+src = ["src"]
+
+[tool.ruff.flake8-quotes]
+docstring-quotes = "double"
+
+
+[tool.black]
+line-length = 88
+target-version = ["py37"]
+
+
+[tool.pytest.ini_options]
+filterwarnings = [
+    "error",
+    # datadog kicks up a DeprecationWarning for collections use.
+    "ignore:.*ABCs:DeprecationWarning",
+]
+
+
+[tool.tox]
+legacy_tox_ini = """
+[tox]
+envlist = py37,py38,py39,py310,py311,py37-lint
+
+[gh-actions]
+python =
+    3.7: py37
+    3.8: py38
+    3.9: py39
+    3.10: py310
+    3.11: py311
+
+[testenv]
+deps = -rrequirements-dev.txt
+extras = datadog,statsd
+commands =
+    pytest tests/
+    pytest --doctest-modules --pyargs markus
+
+[testenv:py37-lint]
+basepython = python3.7
+changedir = {toxinidir}
+commands = 
+    black --check src setup.py tests
+    ruff src setup.py tests
+"""
