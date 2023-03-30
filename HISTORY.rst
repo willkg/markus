@@ -1,6 +1,17 @@
 History
 =======
 
+4.2.0 (March 30th, 2023)
+------------------------
+
+**Bug fixes**
+
+* Add support for setting ``origin_detection_enabled`` in Datadog backend.
+  (#108)
+
+* Switch from Flake8 to Ruff. (#109)
+
+
 4.1.0 (November 7th, 2022)
 --------------------------
 
