@@ -24,7 +24,7 @@ def get_file(fn):
 
 INSTALL_REQUIRES = []
 EXTRAS_REQUIRE = {
-    "datadog": ["datadog"],
+    "datadog": ["datadog>=0.45.0"],
     "statsd": ["statsd"],
 }
 

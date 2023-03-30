@@ -80,7 +80,7 @@ class StatsdMetrics(BackendBase):
         self.client = self._get_client(
             self.host, self.port, self.prefix, self.maxudpsize
         )
-        logger.info(
+        logger.debug(
             "%s configured: %s:%s %s",
             self.__class__.__name__,
             self.host,
