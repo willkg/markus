@@ -44,7 +44,7 @@ python =
 deps = -rrequirements-dev.txt
 extras = datadog,statsd
 commands =
-    pytest tests/
+    pytest {posargs} tests/
     pytest --doctest-modules --pyargs markus
 
 [testenv:py37-lint]
