@@ -78,21 +78,22 @@ module::
             metrics.incr("vegetable", value=1)
 
 
-At application startup, configure Markus with the backends you want to use to
-publish metrics and any options they require.
+At application startup, configure Markus with the backends you want and any
+options they require to publish metrics.
 
-For example, let us configure metrics to publish to logs and Datadog::
+For example, let us configure Markus to publish metrics to the Python logging
+infrastructure and Datadog::
 
     import markus
 
     markus.configure(
         backends=[
             {
-                # Log metrics to the logs
+                # Publish metrics to the Python logging infrastructure
                 "class": "markus.backends.logging.LoggingMetrics",
             },
             {
-                # Log metrics to Datadog
+                # Publish metrics to Datadog
                 "class": "markus.backends.datadog.DatadogMetrics",
                 "options": {
                     "statsd_host": "example.com",
@@ -104,8 +105,9 @@ For example, let us configure metrics to publish to logs and Datadog::
     )
 
 
-When you're writing your tests, use the ``markus.testing.MetricsMock``
-to make testing easier::
+Once you've added code that publishes metrics, you'll want to test it and make
+sure it's working correctly. Markus comes with a ``markus.testing.MetricsMock``
+to make testing and asserting specific outcomes easier::
 
     from markus.testing import MetricsMock
 
