@@ -18,7 +18,7 @@ class AddTagFilter(MetricsFilter):
 
         metrics = markus.get_metrics(
             __name__,
-            filters=[AddTag(f"host:{socket.gethostname()}")]
+            filters=[AddTagFilter(f"host:{socket.gethostname()}")]
         )
 
     """
