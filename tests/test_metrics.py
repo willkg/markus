@@ -1,6 +1,7 @@
 import pytest
 
 from markus import get_metrics
+from markus.filters import AddTagFilter
 from markus.main import MetricsRecord
 from markus.testing import MetricsMock
 
@@ -37,6 +38,13 @@ class Foo:
 )
 def test_get_metrics(thing, extra, expected):
     assert get_metrics(thing, extra=extra).prefix == expected
+
+
+def test_dunders():
+    record = MetricsRecord("incr", "foo", 10, [])
+    record2 = record.__copy__()
+    assert record is not record2
+    assert record == record2
 
 
 def test_incr(metricsmock):
@@ -96,3 +104,14 @@ def test_timer_decorator(metricsmock):
         something()
 
     assert mm.has_record(fun_name="timing", stat="thing.long_fun")
+
+
+def test_tag_filter(metricsmock):
+    metrics = get_metrics("thing", filters=[AddTagFilter("foo:bar")])
+
+    with metricsmock as mm:
+        metrics.incr("foo", value=5)
+
+    assert mm.get_records() == [
+        MetricsRecord("incr", "thing.foo", 5, ["foo:bar"]),
+    ]
