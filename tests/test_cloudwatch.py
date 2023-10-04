@@ -2,14 +2,22 @@
 # License, v. 2.0. If a copy of the MPL was not distributed with this
 # file, You can obtain one at http://mozilla.org/MPL/2.0/.
 
-from freezegun import freeze_time
+import datetime
+
+import pytest
 
 from markus.backends.cloudwatch import CloudwatchMetrics
 from markus.main import MetricsFilter, MetricsRecord
 
 
-@freeze_time("2017-03-06 16:30:00", tz_offset=0)
 class TestCloudwatch:
+    @pytest.fixture(autouse=True)
+    def set_time(self, time_machine):
+        time_machine.move_to(
+            datetime.datetime(2017, 3, 6, 16, 30, 0, tzinfo=datetime.timezone.utc),
+            tick=False,
+        )
+
     def test_incr(self, capsys):
         rec = MetricsRecord("incr", key="foo", value=10, tags=["key1:val", "key2:val"])
         ddcm = CloudwatchMetrics()

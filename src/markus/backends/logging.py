@@ -64,7 +64,8 @@ class LoggingMetrics(BackendBase):
             "%(leader)s|%(timestamp)s|%(kind)s|%(stat)s|%(value)s|%(tags)s"
             % {
                 "leader": self.leader,
-                # FIXME(willkg): Make this utc?
+                # NOTE(willkg): This is a tz-naive datetstamp so it'll be in
+                # local time.
                 "timestamp": datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S"),
                 "kind": record.stat_type,
                 "stat": record.key,

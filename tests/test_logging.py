@@ -2,14 +2,22 @@
 # License, v. 2.0. If a copy of the MPL was not distributed with this
 # file, You can obtain one at http://mozilla.org/MPL/2.0/.
 
-from freezegun import freeze_time
+import datetime
+
+import pytest
 
 from markus.backends.logging import LoggingMetrics, LoggingRollupMetrics
 from markus.main import MetricsFilter, MetricsRecord
 
 
-@freeze_time("2017-03-06 16:30:00", tz_offset=0)
 class TestLoggingMetrics:
+    @pytest.fixture(autouse=True)
+    def set_time(self, time_machine):
+        # NOTE(willkg): this takes advantage of a bug in time_machine where if
+        # you use string parsing and don't provide a timezone, it uses the
+        # local timezone
+        time_machine.move_to("2017-03-06 16:30:00", tick=False)
+
     def test_incr(self, caplog):
         caplog.set_level("DEBUG")
         rec = MetricsRecord("incr", key="foo", value=10, tags=["key1:val", "key2:val"])
@@ -81,30 +89,33 @@ class TestLoggingMetrics:
 
 
 class TestLoggingRollupMetrics:
-    def test_rollup(self, caplog):
+    def test_rollup(self, caplog, time_machine):
         caplog.set_level("DEBUG")
-        with freeze_time("2017-04-19 12:00:00"):
-            lm = LoggingRollupMetrics()
-            lm.emit_to_backend(MetricsRecord("incr", key="foo", value=1, tags=None))
-            lm.emit_to_backend(MetricsRecord("incr", key="foo", value=1, tags=None))
-            lm.emit_to_backend(
-                MetricsRecord("gauge", key="widget", value=10, tags=None)
-            )
-            lm.emit_to_backend(MetricsRecord("incr", key="foo", value=1, tags=None))
-            lm.emit_to_backend(MetricsRecord("incr", key="bar", value=1, tags=None))
-            lm.emit_to_backend(
-                MetricsRecord("gauge", key="widget", value=20, tags=None)
-            )
-            lm.emit_to_backend(MetricsRecord("gauge", key="widget", value=5, tags=None))
-            lm.emit_to_backend(
-                MetricsRecord("histogram", key="save_time", value=50, tags=None)
-            )
-            lm.emit_to_backend(
-                MetricsRecord("histogram", key="save_time", value=60, tags=None)
-            )
 
-        with freeze_time("2017-04-19 12:00:11"):
-            lm.emit_to_backend(MetricsRecord("incr", key="bar", value=1, tags=None))
+        time_machine.move_to(
+            datetime.datetime(2017, 4, 19, 12, 0, 0, tzinfo=datetime.timezone.utc),
+            tick=False,
+        )
+        lm = LoggingRollupMetrics()
+        lm.emit_to_backend(MetricsRecord("incr", key="foo", value=1, tags=None))
+        lm.emit_to_backend(MetricsRecord("incr", key="foo", value=1, tags=None))
+        lm.emit_to_backend(MetricsRecord("gauge", key="widget", value=10, tags=None))
+        lm.emit_to_backend(MetricsRecord("incr", key="foo", value=1, tags=None))
+        lm.emit_to_backend(MetricsRecord("incr", key="bar", value=1, tags=None))
+        lm.emit_to_backend(MetricsRecord("gauge", key="widget", value=20, tags=None))
+        lm.emit_to_backend(MetricsRecord("gauge", key="widget", value=5, tags=None))
+        lm.emit_to_backend(
+            MetricsRecord("histogram", key="save_time", value=50, tags=None)
+        )
+        lm.emit_to_backend(
+            MetricsRecord("histogram", key="save_time", value=60, tags=None)
+        )
+
+        time_machine.move_to(
+            datetime.datetime(2017, 4, 19, 12, 0, 11, tzinfo=datetime.timezone.utc),
+            tick=False,
+        )
+        lm.emit_to_backend(MetricsRecord("incr", key="bar", value=1, tags=None))
 
         assert caplog.record_tuples == [
             ("markus", 20, "ROLLUP INCR bar: count:1|rate:1/10"),
