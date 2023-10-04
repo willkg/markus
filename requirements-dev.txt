@@ -3,9 +3,9 @@
 black==23.3.0
 build==0.10.0
 check-manifest==0.49
-freezegun==1.2.2
 pytest==7.2.2
 ruff==0.0.260
+time-machine==2.13.0
 tox==4.4.8
 tox-gh-actions==3.1.0
 twine==4.0.2
