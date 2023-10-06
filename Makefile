@@ -10,8 +10,8 @@ help:
 clean:  ## Clean build artifacts
 	rm -rf build dist src/${PROJECT}.egg-info .tox
 	rm -rf docs/_build/*
-	find ${PROJECT}/ tests/ -name __pycache__ | xargs rm -rf
-	find ${PROJECT}/ tests/ -name '*.pyc' | xargs rm -rf
+	find src/${PROJECT}/ tests/ -name __pycache__ | xargs rm -rf
+	find src/${PROJECT}/ tests/ -name '*.pyc' | xargs rm -rf
 
 .PHONY: lint
 lint:  ## Lint and black reformat files
