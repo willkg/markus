@@ -13,9 +13,12 @@ clean:  ## Clean build artifacts
 	find src/${PROJECT}/ tests/ -name __pycache__ | xargs rm -rf
 	find src/${PROJECT}/ tests/ -name '*.pyc' | xargs rm -rf
 
+.PHONY: format
+format:  ## Format files
+	tox exec -e py38-lint -- ruff format
+
 .PHONY: lint
-lint:  ## Lint and black reformat files
-	black src setup.py tests
+lint:  ## Lint files
 	tox -e py38-lint
 
 .PHONY: test

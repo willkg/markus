@@ -32,15 +32,15 @@ release = "%s %s" % (markus.__version__, markus.__releasedate__)
 
 extensions = ["sphinx.ext.doctest", "sphinx.ext.autodoc"]
 
-templates_path = ['_templates']
-exclude_patterns = ['_build', 'Thumbs.db', '.DS_Store']
+templates_path = ["_templates"]
+exclude_patterns = ["_build", "Thumbs.db", ".DS_Store"]
 
 
 # -- Options for HTML output -------------------------------------------------
 # https://www.sphinx-doc.org/en/master/usage/configuration.html#options-for-html-output
 
-html_theme = 'alabaster'
-html_static_path = ['_static']
+html_theme = "alabaster"
+html_static_path = ["_static"]
 
 html_sidebars = {
     "**": ["about.html", "navigation.html", "relations.html", "searchbox.html"]
