@@ -1,15 +1,14 @@
 -e .[datadog,statsd]
 
-black==23.9.1
 build==1.0.3
 check-manifest==0.49
-pytest==7.4.2
-ruff==0.0.292
+pytest==7.4.3
+ruff==0.1.9
 time-machine==2.13.0
-tox==4.11.3
+tox==4.11.4
 tox-gh-actions==3.1.3
 twine==4.0.2
-wheel==0.41.2
+wheel==0.42.0
 
 tomli>=1.1.0; python_version < '3.11'
 

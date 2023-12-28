@@ -2,7 +2,7 @@
 # Enable pycodestyle (E), pyflakes (F), and bugbear (B) rules
 select = ["E", "F", "B"]
 
-# Ignore line length violations--Black handles those
+# Ignore line length violations
 line-length = 88
 ignore = ["E501"]
 
@@ -12,11 +12,6 @@ src = ["src"]
 
 [tool.ruff.flake8-quotes]
 docstring-quotes = "double"
-
-
-[tool.black]
-line-length = 88
-target-version = ["py38"]
 
 
 [tool.pytest.ini_options]
@@ -57,6 +52,6 @@ commands =
 basepython = python3.8
 changedir = {toxinidir}
 commands = 
-    black --check src setup.py tests
-    ruff src setup.py tests
+    ruff format --check src setup.py tests
+    ruff check src setup.py tests
 """
