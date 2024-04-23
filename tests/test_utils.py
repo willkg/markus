@@ -24,7 +24,7 @@ from markus.utils import generate_tag
             "abcdefghijklmnopqrstuvwxyz0123456789-_/.",
         ),
         # Ok with unicode
-        ("joe\u018Ajoe", None, "joe_joe"),
+        ("joe\u018ajoe", None, "joe_joe"),
         # Test bad characters get converted to _
         ("a&b", None, "a_b"),
         ("email", "foo@example.com", "email:foo_example.com"),
