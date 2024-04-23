@@ -6,8 +6,6 @@ include Makefile
 include pyproject.toml
 include README.rst
 include .readthedocs.yml
-include requirements-dev.txt
-include setup.py
 
 recursive-include docs Makefile
 recursive-include docs *.py

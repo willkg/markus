@@ -1,3 +1,53 @@
+[project]
+name = "markus"
+description = "Metrics system for generating statistics about your app"
+version = "4.2.0"
+readme = "README.rst"
+keywords = ["metrics", "datadog", "statsd"]
+authors = [{name = "Will Kahn-Greene"}]
+license = {text = "MPLv2"}
+requires-python = ">=3.8"
+dependencies = []
+classifiers = [
+    "Development Status :: 5 - Production/Stable",
+    "Intended Audience :: Developers",
+    "License :: OSI Approved :: Mozilla Public License 2.0 (MPL 2.0)",
+    "Natural Language :: English",
+    "Programming Language :: Python :: 3 :: Only",
+    "Programming Language :: Python :: 3.8",
+    "Programming Language :: Python :: 3.9",
+    "Programming Language :: Python :: 3.10",
+    "Programming Language :: Python :: 3.11",
+    "Programming Language :: Python :: 3.12",
+]
+urls.Homepage = "https://github.com/willkg/markus"
+urls.Documentation = "https://markus.readthedocs.io/"
+urls.Source = "https://github.com/willkg/markus/"
+urls.Issues = "https://github.com/willkg/markus/issues"
+
+[project.entry-points.pytest11]
+markus = "markus.pytest_plugin"
+
+[project.optional-dependencies]
+datadog = ["datadog>=0.45.0"]
+statsd = ["statsd"]
+dev = [
+    "build",
+    "check-manifest",
+    "pytest",
+    "ruff",
+    "Sphinx==6.2.1; python_version <= '3.8'",
+    "Sphinx; python_version > '3.8'",
+    "sphinx_rtd_theme",
+    "time-machine",
+    "tomli>=1.1.0; python_version < '3.11'",
+    "tox",
+    "tox-gh-actions",
+    "twine",
+    "wheel",
+]
+
+
 [tool.ruff]
 # Enable pycodestyle (E), pyflakes (F), and bugbear (B) rules
 select = ["E", "F", "B"]
@@ -42,8 +92,7 @@ python =
     3.12: py312
 
 [testenv]
-deps = -rrequirements-dev.txt
-extras = datadog,statsd
+extras = dev,datadog,statsd
 commands =
     pytest {posargs} tests/
     pytest --doctest-modules --pyargs markus
@@ -52,6 +101,6 @@ commands =
 basepython = python3.8
 changedir = {toxinidir}
 commands = 
-    ruff format --check src setup.py tests
-    ruff check src setup.py tests
+    ruff format --check src tests
+    ruff check src tests
 """

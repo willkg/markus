@@ -25,14 +25,6 @@ lint:  ## Lint files
 test:  ## Run tox to test across supported Python versions
 	tox
 
-.PHONY: checkrot
-checkrot:  ## Check package rot for dev dependencies
-	python -m venv ./tmpvenv/
-	./tmpvenv/bin/pip install -U pip
-	./tmpvenv/bin/pip install -r requirements-dev.txt
-	./tmpvenv/bin/pip list -o
-	rm -rf ./tmpvenv/
-
 .PHONY: docs
 docs:  ## Build docs
 	make -C docs/ clean
