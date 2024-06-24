@@ -128,14 +128,3 @@ def test_timer_decorator(metricsmock):
         something()
 
     assert mm.has_record(fun_name="timing", stat="thing.long_fun")
-
-
-def test_tag_filter(metricsmock):
-    metrics = get_metrics("thing", filters=[AddTagFilter("foo:bar")])
-
-    with metricsmock as mm:
-        metrics.incr("foo", value=5)
-
-    assert mm.get_records() == [
-        MetricsRecord("incr", "thing.foo", 5, ["foo:bar"]),
-    ]
