@@ -1,6 +1,45 @@
 History
 =======
 
+5.0.0 (June 24th, 2024)
+-----------------------
+
+**Features**
+
+* Add support for Python 3.12 (#122)
+
+* Add ``AnyTagValue`` for asserting that metrics are emitted with certain tags,
+  but ignoring the tag values in tests. (#141)
+
+  Example::
+
+      def test_somekey_emitted():
+          with metricsmock() as mm:
+              # emit some metrics
+
+              mm.assert_incr("somekey", value=1, tags=[AnyTagValue("host")])
+
+* Add ``MetricsInterface.extend_prefix()`` to iteratively hone a metrics
+  interface prefix. (#142)
+
+  Example::
+
+      metrics = markus.get_metrics("project")
+
+      module_metrics = metrics.extend_prefix("somemodule")
+
+      module_metrics.incr("key1")  # prefix is project.somemodule.key1
+
+* Add ``metricsmock`` pytest fixture. (#118)
+
+* Add ``RegisteredMetricsFilter`` metrics filter making it easier to enforce
+  metrics can only be emitted if documented. (#15)
+
+**Backwards incompatibel changes**
+
+* Dropped support for Python 3.7 (#121)
+
+
 4.2.0 (March 30th, 2023)
 ------------------------
 
