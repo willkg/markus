@@ -3,6 +3,7 @@
 # file, You can obtain one at http://mozilla.org/MPL/2.0/.
 
 from copy import copy
+from functools import total_ordering
 
 import functools
 
@@ -22,6 +23,35 @@ def print_on_failure(fun):
             raise
 
     return _print_on_failure
+
+
+@total_ordering
+class AnyTagValue:
+    """Matches a markus metrics tag with any value"""
+
+    def __init__(self, key):
+        self.key = key
+
+    def __repr__(self):
+        return f"<AnyTagValue {self.key}>"
+
+    def get_other_key(self, other):
+        # This is comparing against a tag string
+        if ":" in other:
+            other_key, _ = other.split(":")
+        else:
+            other_key = other
+        return other_key
+
+    def __eq__(self, other):
+        if isinstance(other, AnyTagValue):
+            return self.key == other.key
+        return self.key == self.get_other_key(other)
+
+    def __lt__(self, other):
+        if isinstance(other, AnyTagValue):
+            return self.key < other.key
+        return self.key < self.get_other_key(other)
 
 
 class MetricsMock:
