@@ -205,6 +205,9 @@ class MetricsFilter:
 
     """
 
+    def __repr__(self):
+        return "<MetricsFilter>"
+
     def filter(self, record):
         """Filter a record
 
@@ -283,6 +286,14 @@ class MetricsInterface:
             # backends
             fresh_record = record.__copy__()
             backend.emit_to_backend(fresh_record)
+
+    def extend_prefix(self, prefix):
+        prefix = prefix.strip(".")
+
+        return MetricsInterface(
+            f"{self.prefix}.{prefix}",
+            filters=list(self.filters),
+        )
 
     def incr(self, stat, value=1, tags=None):
         """Incr is used for counting things.
