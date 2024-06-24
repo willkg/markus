@@ -18,13 +18,11 @@ import markus  # noqa
 # https://www.sphinx-doc.org/en/master/usage/configuration.html#project-information
 
 project = "Markus"
-copyright = "2017-2022, Will Kahn-Greene"
+copyright = "2017-2024, Will Kahn-Greene"
 author = "Will Kahn-Greene"
 
-# The short X.Y version.
 version = markus.__version__
-# The full version, including alpha/beta/rc tags.
-release = "%s %s" % (markus.__version__, markus.__releasedate__)
+release = version
 
 
 # -- General configuration ---------------------------------------------------
@@ -34,6 +32,11 @@ extensions = ["sphinx.ext.doctest", "sphinx.ext.autodoc"]
 
 templates_path = ["_templates"]
 exclude_patterns = ["_build", "Thumbs.db", ".DS_Store"]
+
+
+# -- autodoc configuration
+autoclass_content = "both"
+autodoc_typehints = "description"
 
 
 # -- Options for HTML output -------------------------------------------------
