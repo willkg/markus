@@ -288,6 +288,23 @@ class MetricsInterface:
             backend.emit_to_backend(fresh_record)
 
     def extend_prefix(self, prefix):
+        """Returns a duplicate MetricsInterface with prefix extended
+
+        :arg prefix: the prefix to append to the end of the existing prefix
+
+        :returns: a new MetricsInterface with adjusted prefix
+
+        Example::
+
+            import markus
+
+            metrics = markus.get_metrics("key1")
+            metrics.incr("stat1")                      # key1.stat1
+
+            sub_metrics = metrics.with_prefix("key2")
+            sub_metrics.incr("stat1")                  # key1.key2.stat1
+
+        """
         prefix = prefix.strip(".")
 
         return MetricsInterface(
