@@ -26,6 +26,9 @@ class AddTagFilter(MetricsFilter):
     def __init__(self, tag):
         self.tag = tag
 
+    def __repr__(self):
+        return f"<AddTagFilter {self.tag}>"
+
     def filter(self, record):
         record.tags.append(self.tag)
         return record

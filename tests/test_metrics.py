@@ -36,8 +36,32 @@ class Foo:
         ("foo", "namespace1", "foo.namespace1"),
     ],
 )
-def test_get_metrics(thing, extra, expected):
+def test_get_metrics_prefix(thing, extra, expected):
     assert get_metrics(thing, extra=extra).prefix == expected
+
+
+def test_metricsinterface_extend_prefix():
+    metrics = get_metrics("a")
+    sub_metrics = metrics.extend_prefix("b")
+    assert sub_metrics.prefix == "a.b"
+    assert sub_metrics.filters == []
+
+    sub_metrics = metrics.extend_prefix(".b.")
+    assert sub_metrics.prefix == "a.b"
+    assert sub_metrics.filters == []
+
+    tag_filter_host_foo = AddTagFilter("host:foo")
+
+    metrics.filters.append(tag_filter_host_foo)
+    sub_metrics = metrics.extend_prefix("b")
+    assert sub_metrics.prefix == "a.b"
+    assert sub_metrics.filters == [tag_filter_host_foo]
+
+    tag_filter_env_prod = AddTagFilter("env:prod")
+    # Add a second tag filter and make sure the two lists are independent
+    metrics.filters.append(tag_filter_env_prod)
+    assert metrics.filters == [tag_filter_host_foo, tag_filter_env_prod]
+    assert sub_metrics.filters == [tag_filter_host_foo]
 
 
 def test_dunders():
