@@ -623,7 +623,7 @@ def get_metrics(thing="", extra="", filters=None):
     if not isinstance(thing, str):
         # If it's not a str, it's either a class or an instance. Handle
         # accordingly.
-        if type(thing) == type:
+        if type(thing) is type:
             thing = "%s.%s" % (thing.__module__, thing.__name__)
         else:
             thing = "%s.%s" % (thing.__class__.__module__, thing.__class__.__name__)
