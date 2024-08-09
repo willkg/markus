@@ -21,6 +21,3 @@ TIMING = "timing"
 HISTOGRAM = "histogram"
 
 __all__ = ["configure", "get_metrics", "INCR", "GAUGE", "TIMING", "HISTOGRAM"]
-
-# x.y.z or x.y.z.dev0 -- semver
-__version__ = "4.2.0"
