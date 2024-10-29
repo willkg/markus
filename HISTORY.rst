@@ -4,6 +4,10 @@ History
 5.1.0 (in development)
 ----------------------
 
+**Features**
+
+* Add support for Python 3.13 (#159)
+
 **Backwards incompatible changes**
 
 * Dropped support for Python 3.8 (#160)
