@@ -11,6 +11,9 @@ import time
 from markus.backends import BackendBase
 
 
+UTC = datetime.timezone.utc
+
+
 class LoggingMetrics(BackendBase):
     """Metrics backend that publishes to Python logging.
 
@@ -24,16 +27,24 @@ class LoggingMetrics(BackendBase):
             }
         }
 
-    The :py:class:`markus.backends.logging.LoggingMetrics` backend generates
-    logging messages in this format::
+    By default the :py:class:`markus.backends.logging.LoggingMetrics` backend
+    generates logging messages in this format::
 
-        leader|timestamp|metric_type|stat|value|#tags
-
+        leader|metric_type|stat|value|#tags
 
     For example::
 
-        METRICS|2017-03-06 11:30:00|histogram|foo|4321|#key1:val
+        METRICS|histogram|foo|4321|#key1:val
 
+    If you set the ``"timestamp_mode"`` option to ``"utc"`` for a UTC timestamp
+    or ``"local"`` for a local timezone timestamp, then it'll have this
+    format::
+
+        leader|timestamp|metric_type|stat|value|#tags
+
+    For example::
+
+        METRICS|2017-03-06T11:30:00|histogram|foo|4321|#key1:val
 
     This will log at the ``logging.INFO`` level.
 
@@ -50,6 +61,14 @@ class LoggingMetrics(BackendBase):
 
       Defaults to ``"METRICS"``.
 
+    * ``timestamp_mode``: mode for timestamp
+
+      * ``"utc"``: UTC timestamp
+      * ``"local"``: local timezone timestamp
+      * anything else: no timestamp
+
+      Defaults to no timestamp.
+
     """
 
     def __init__(self, options=None, filters=None):
@@ -58,15 +77,29 @@ class LoggingMetrics(BackendBase):
         self.logger_name = options.get("logger_name", "markus")
         self.logger = logging.getLogger(self.logger_name)
         self.leader = options.get("leader", "METRICS")
+        self.timestamp_mode = options.get("timestamp_mode", None)
+
+        tmpl = [
+            "%(leader)s",
+            "%(kind)s",
+            "%(stat)s",
+            "%(value)s",
+            "%(tags)s",
+        ]
+        if self.timestamp_mode == "utc":
+            tmpl.insert(1, "%(utc_timestamp)s")
+        elif self.timestamp_mode == "local":
+            tmpl.insert(1, "%(local_timestamp)s")
+
+        self.tmpl = "|".join(tmpl)
 
     def emit(self, record):
         self.logger.info(
-            "%(leader)s|%(timestamp)s|%(kind)s|%(stat)s|%(value)s|%(tags)s"
+            self.tmpl
             % {
                 "leader": self.leader,
-                # NOTE(willkg): This is a tz-naive datetstamp so it'll be in
-                # local time.
-                "timestamp": datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S"),
+                "local_timestamp": datetime.datetime.now().isoformat(),
+                "utc_timestamp": datetime.datetime.now(tz=UTC).isoformat(),
                 "kind": record.stat_type,
                 "stat": record.key,
                 "value": record.value,

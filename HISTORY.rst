@@ -12,6 +12,39 @@ History
 
 * Dropped support for Python 3.8 (#160)
 
+* Changed timestamp field in LoggingBackend. The LoggingBackend now defaults to
+  not emitting a timestamp at all. If you would like a timestamp, you can
+  provide the ``"timestamp_mode"`` option with either ``"utc"`` for UTC
+  timestamps or ``"local"`` for local timezone timestamps.
+
+  No timestamp example::
+
+      LoggingBackend()
+
+  emits lines like::
+
+      METRICS|histogram|foo|4321|#key1:val
+
+  ``"utc"`` timestamp mode example::
+
+      LoggingBackend(options={"timestamp_mode": "utc"})
+
+  emits lines like::
+
+      METRICS|2017-03-06T11:30:00+00:00:00|histogram|foo|4321|#key1:val
+
+  ``"local"`` timestamp mode example::
+
+      LoggingBackend(options={"timestamp_mode": "local"})
+
+  emits lines like::
+
+      METRICS|2017-03-06T11:30:00|histogram|foo|4321|#key1:val
+
+  If you want the original behavior, add set ``timestamp_mode`` to ``local``.
+  (#11)
+
+
 
 5.0.0 (June 24th, 2024)
 -----------------------

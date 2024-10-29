@@ -4,27 +4,18 @@
 
 import datetime
 
-import pytest
-
 from markus.backends.logging import LoggingMetrics, LoggingRollupMetrics
 from markus.main import MetricsFilter, MetricsRecord
 
 
 class TestLoggingMetrics:
-    @pytest.fixture(autouse=True)
-    def set_time(self, time_machine):
-        # NOTE(willkg): this takes advantage of a bug in time_machine where if
-        # you use string parsing and don't provide a timezone, it uses the
-        # local timezone
-        time_machine.move_to("2017-03-06 16:30:00", tick=False)
-
     def test_incr(self, caplog):
         caplog.set_level("DEBUG")
         rec = MetricsRecord("incr", key="foo", value=10, tags=["key1:val", "key2:val"])
         lm = LoggingMetrics()
         lm.emit_to_backend(rec)
         assert caplog.record_tuples == [
-            ("markus", 20, "METRICS|2017-03-06 16:30:00|incr|foo|10|#key1:val,key2:val")
+            ("markus", 20, "METRICS|incr|foo|10|#key1:val,key2:val")
         ]
 
     def test_gauge(self, caplog):
@@ -38,7 +29,7 @@ class TestLoggingMetrics:
             (
                 "markus",
                 20,
-                "METRICS|2017-03-06 16:30:00|gauge|foo|100|#key1:val,key2:val",
+                "METRICS|gauge|foo|100|#key1:val,key2:val",
             )
         ]
 
@@ -53,7 +44,7 @@ class TestLoggingMetrics:
             (
                 "markus",
                 20,
-                "METRICS|2017-03-06 16:30:00|timing|foo|1234|#key1:val,key2:val",
+                "METRICS|timing|foo|1234|#key1:val,key2:val",
             )
         ]
 
@@ -68,7 +59,7 @@ class TestLoggingMetrics:
             (
                 "markus",
                 20,
-                "METRICS|2017-03-06 16:30:00|histogram|foo|4321|#key1:val,key2:val",
+                "METRICS|histogram|foo|4321|#key1:val,key2:val",
             )
         ]
 
@@ -83,8 +74,30 @@ class TestLoggingMetrics:
         lm = LoggingMetrics(filters=[BlueFilter()])
         lm.emit_to_backend(MetricsRecord("incr", key="foo", value=1, tags=[]))
         lm.emit_to_backend(MetricsRecord("incr", key="foo.blue", value=2, tags=[]))
+        assert caplog.record_tuples == [("markus", 20, "METRICS|incr|foo.blue|2|")]
+
+    def test_utc_timezone_incr(self, caplog, time_machine):
+        time_machine.move_to("2017-03-06 16:30:00 +0000", tick=False)
+        caplog.set_level("DEBUG")
+        rec = MetricsRecord("incr", key="foo", value=10, tags=["key1:val", "key2:val"])
+        lm = LoggingMetrics(options={"timestamp_mode": "utc"})
+        lm.emit_to_backend(rec)
         assert caplog.record_tuples == [
-            ("markus", 20, "METRICS|2017-03-06 16:30:00|incr|foo.blue|2|")
+            (
+                "markus",
+                20,
+                "METRICS|2017-03-06T16:30:00+00:00|incr|foo|10|#key1:val,key2:val",
+            )
+        ]
+
+    def test_local_timezone_incr(self, caplog, time_machine):
+        time_machine.move_to("2017-03-06 16:30:00", tick=False)
+        caplog.set_level("DEBUG")
+        rec = MetricsRecord("incr", key="foo", value=10, tags=["key1:val", "key2:val"])
+        lm = LoggingMetrics(options={"timestamp_mode": "local"})
+        lm.emit_to_backend(rec)
+        assert caplog.record_tuples == [
+            ("markus", 20, "METRICS|2017-03-06T16:30:00|incr|foo|10|#key1:val,key2:val")
         ]
 
 
