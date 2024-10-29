@@ -15,11 +15,11 @@ clean:  ## Clean build artifacts
 
 .PHONY: format
 format:  ## Format files
-	tox exec -e py38-lint -- ruff format
+	tox exec -e py39-lint -- ruff format
 
 .PHONY: lint
 lint:  ## Lint files
-	tox -e py38-lint
+	tox -e py39-lint
 
 .PHONY: test
 test:  ## Run tox to test across supported Python versions

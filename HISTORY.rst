@@ -1,6 +1,14 @@
 History
 =======
 
+5.1.0 (in development)
+----------------------
+
+**Backwards incompatible changes**
+
+* Dropped support for Python 3.8 (#160)
+
+
 5.0.0 (June 24th, 2024)
 -----------------------
 
@@ -35,7 +43,7 @@ History
 * Add ``RegisteredMetricsFilter`` metrics filter making it easier to enforce
   metrics can only be emitted if documented. (#15)
 
-**Backwards incompatibel changes**
+**Backwards incompatible changes**
 
 * Dropped support for Python 3.7 (#121)
 
