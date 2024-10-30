@@ -12,14 +12,14 @@ History
 
 * Dropped support for Python 3.8 (#160)
 
-* Changed timestamp field in LoggingBackend. The LoggingBackend now defaults to
-  not emitting a timestamp at all. If you would like a timestamp, you can
-  provide the ``"timestamp_mode"`` option with either ``"utc"`` for UTC
+* Changed timestamp field in ``LoggingMetrics``. The ``LoggingMetrics`` now
+  defaults to not emitting a timestamp at all. If you would like a timestamp,
+  you can provide the ``"timestamp_mode"`` option with either ``"utc"`` for UTC
   timestamps or ``"local"`` for local timezone timestamps.
 
   No timestamp example::
 
-      LoggingBackend()
+      LoggingMetrics()
 
   emits lines like::
 
@@ -27,7 +27,7 @@ History
 
   ``"utc"`` timestamp mode example::
 
-      LoggingBackend(options={"timestamp_mode": "utc"})
+      LoggingMetrics(options={"timestamp_mode": "utc"})
 
   emits lines like::
 
@@ -35,7 +35,7 @@ History
 
   ``"local"`` timestamp mode example::
 
-      LoggingBackend(options={"timestamp_mode": "local"})
+      LoggingMetrics(options={"timestamp_mode": "local"})
 
   emits lines like::
 
