@@ -41,6 +41,7 @@ dev = [
     "tomli>=1.1.0; python_version < '3.11'",
     "tox",
     "tox-gh-actions",
+    "tox-uv",
     "twine",
     "wheel",
 ]
@@ -83,6 +84,7 @@ envlist =
     py311
     py312
     py313
+uv_python_preferences = only-managed
 
 [gh-actions]
 python =
