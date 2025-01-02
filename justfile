@@ -10,7 +10,7 @@ devenv:
 
 # Run tests and linting
 test *args: devenv
-    tox {{args}}
+    uv run tox {{args}}
 
 # Format files
 format: devenv
