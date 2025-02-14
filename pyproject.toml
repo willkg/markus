@@ -20,10 +20,10 @@ classifiers = [
     "Programming Language :: Python :: 3.12",
     "Programming Language :: Python :: 3.13",
 ]
-urls.Homepage = "https://github.com/willkg/markus"
+urls.Homepage = "https://github.com/mozilla-services/markus"
 urls.Documentation = "https://markus.readthedocs.io/"
-urls.Source = "https://github.com/willkg/markus/"
-urls.Issues = "https://github.com/willkg/markus/issues"
+urls.Source = "https://github.com/mozilla-services/markus/"
+urls.Issues = "https://github.com/mozilla-services/markus/issues"
 
 [project.entry-points.pytest11]
 markus = "markus.pytest_plugin"
