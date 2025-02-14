@@ -16,7 +16,7 @@ Writing up issues
 =================
 
 Please write up issues in the
-`issue tracker <https://github.com/willkg/markus/issues>`__.
+`issue tracker <https://github.com/mozilla-services/markus/issues>`__.
 
 If the issue is about a bug in Markus, please specify:
 
@@ -38,7 +38,7 @@ Requirements:
 Run::
 
     # Clone the repository
-    $ git clone https://github.com/willkg/markus
+    $ git clone https://github.com/mozilla-services/markus
 
     # Create virtual environment and install Markus and dev requirements
     $ just devenv

@@ -4,8 +4,8 @@ Markus
 
 Markus is a Python library for generating metrics.
 
-:Code:          https://github.com/willkg/markus
-:Issues:        https://github.com/willkg/markus/issues
+:Code:          https://github.com/mozilla-services/markus
+:Issues:        https://github.com/mozilla-services/markus/issues
 :License:       MPL v2
 :Documentation: http://markus.readthedocs.io/en/latest/
 
